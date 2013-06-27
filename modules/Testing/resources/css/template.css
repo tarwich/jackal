@@ -1,0 +1,113 @@
+/**
+ * 
+ * Testing styles
+ * 
+ */
+ 
+	@font-face {
+		font-family: "digital";
+		src: url('<?php echo url("Testing/resources/fonts/digital.ttf");?>') format("truetype");
+	}
+	@font-face {
+		font-family: "digital bold";
+		src: url('<?php echo url("Testing/resources/fonts/digital-bold.ttf");?>') format("truetype");
+	}
+ 	div#wrapper {
+ 	}
+ 	#header {
+ 		height: 100px;
+ 		background: url(<?php echo url("Testing/resources/img/header-tile.gif");?>) repeat-x;
+ 	}
+ 	#header td {
+ 		text-align: right;
+ 	}
+ 	#header div.title {
+ 		white-space: nowrap;
+ 		height: 100px;
+ 		width: 300px;
+ 		line-height: 100px;
+ 		padding: 0px 20px;
+ 		text-transform: uppercase;
+ 		text-align: center;
+ 		vertical-align: middle;
+ 		font-family: 'digital bold';
+ 		font-weight: normal;
+ 		font-size: 16px;
+ 		letter-spacing: .1em;
+ 		color: #427788;
+ 		background:
+ 			url(<?php echo url("Testing/resources/img/title-left.gif");?>) no-repeat top left,
+ 			url(<?php echo url("Testing/resources/img/title-right.gif");?>) no-repeat top right,
+ 			url(<?php echo url("Testing/resources/img/title-tile.gif");?>) repeat-x top left;
+ 	}
+ 	#header div.timer {
+ 		display: inline-block;
+ 		height: 100px;
+ 		margin: 0px 50px 0px auto;
+ 		line-height: 100px;
+ 		color: #4a5b6c;
+ 		padding: 0px 15px;
+ 		font-family: 'digital bold';
+ 		font-size: 16px;
+ 		letter-spacing: .1em;
+ 		text-align: center;
+ 		white-space: nowrap;
+ 		background:
+ 			url(<?php echo url("Testing/resources/img/time-left.gif");?>) no-repeat top left,
+ 			url(<?php echo url("Testing/resources/img/time-right.gif");?>) no-repeat top right,
+ 			url(<?php echo url("Testing/resources/img/time-tile.gif");?>) repeat-x top left;
+ 	}
+ 	#header div.timer b {
+ 		display: inline-block;
+ 		width: 10px;
+ 		font-family: 'digital bold';
+ 		font-size: 16px;
+ 		font-weight: normal;
+ 		text-align: right;
+ 		letter-spacing: .1em;
+ 		color: #add5ff;
+ 	}
+ 	#header div.buttons {
+ 		width: 100px;
+ 		margin: 0 auto 0 50px;
+ 	}
+ 	#header div.buttons span {
+ 		display: inline-block;
+ 		height: 100px;
+ 		cursor: pointer;
+ 		padding: 0px 2px;
+ 	}
+ 	#header div.buttons span a {
+ 		display: block;
+ 		cursor: pointer;
+ 		position: relative;
+ 	}
+ 	#header div.buttons span.run-all {
+ 		background: url(<?php echo url("Testing/resources/img/button-run-all.gif");?>) no-repeat;
+ 	}
+ 	#header div.buttons span.run-failed {
+ 		background: url(<?php echo url("Testing/resources/img/button-run-failed.gif");?>) no-repeat;
+ 	}
+ 	#header div.buttons span.run-all a:hover {
+ 		background-position: 0px -50px !important;
+ 	}
+ 	#header div.buttons span.run-failed a:hover {
+ 		background-position: 0px -30px !important;
+ 	}
+ 	#header div.buttons span.run-all a {
+ 		display: block;
+ 		height: 50px;
+ 		width: 50px;
+ 		top: 25px;
+ 		background: url(<?php echo url("Testing/resources/img/button-run-all.png");?>) no-repeat;
+ 	}
+ 	#header div.buttons span.run-failed a {
+ 		display: block;
+ 		height: 30px;
+ 		width: 30px;
+ 		top: 35px;
+ 		background: url(<?php echo url("Testing/resources/img/button-run-failed.png");?>) no-repeat;
+ 	}
+
+ 	
+ 

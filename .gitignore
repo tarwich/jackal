@@ -1,0 +1,21 @@
+
+# --------------------------------------------------
+#
+#  Jackal intermediate files
+#
+# --------------------------------------------------
+
+# Jackal tries to write errors to this file
+error.log
+
+# --------------------------------------------------
+#
+#  Litter
+#
+# --------------------------------------------------
+
+# .DS_Store is an OSX metadata file 
+.DS_Store
+# desktop.ini is a Windows metadata file
+desktop.ini
+

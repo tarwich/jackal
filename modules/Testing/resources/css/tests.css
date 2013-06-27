@@ -1,0 +1,225 @@
+/**
+ *
+ * test styles
+ *
+ */
+ 	div.tests {
+ 		background: #e9eef4;
+ 	}
+ 	
+ 	/* component */
+	 	div.tests ul {
+	 		list-style-type: none;
+	 		margin: 0px;
+	 		padding: 0px;
+	 	}
+	 	div.tests ul li {
+	 		position: relative;
+	 		margin: 0px;
+	 		border-top: 1px solid #a6b5c9;
+	 	}
+	 	div.tests ul li a.module {
+	 		display: block;
+	 		background: #c0ccdc;
+	 		color: #354964;
+	 		font-weight: bold;
+	 		padding: 10px 10px 10px 70px;
+	 		cursor: pointer;
+	 	}
+	 	div.tests ul li:hover a.module {
+	 		color: #146e14;
+	 		background: #99ff99;
+	 	}
+	 	div.tests ul li:hover a.test {
+	 		color: #328e32;
+	 		background: #ccffcc;
+	 	}
+	 	div.tests ul li:hover ul li:hover a.test {
+	 		background: #e4ffe4;
+	 	}
+	 
+	 /* component tests */
+	 	div.tests ul li ul {
+	 		margin: 0px 0px 0px 0px;
+	 	}
+	 	div.tests ul li ul li {
+	 		border-top: 1px solid #a6b5c9;
+	 		margin-top: -1px;
+	 	}
+	 	div.tests ul li ul li a.test {
+	 		display: block;
+	 		background: #e9eef4;
+	 		color: #5c738e;
+	 		padding: 10px 10px 10px 80px;
+	 	}
+	 
+	 /* test buttons */
+	 	div.tests ul li span {
+	 		display: block;
+	 		position: absolute;
+	 		top: 5px;
+	 		left: 10px;
+	 	}
+	 	div.tests ul li span a {
+	 		display: inline-block;
+	 		width: 20px;
+	 		height: 20px;
+	 		padding: 0px;
+	 		margin: 0px 2px 0px 0px;
+	 	}
+	 	div.tests ul li ul li span a {
+	 		width: 14px;
+	 		height: 14px;
+	 		padding: 0px;
+	 		margin: 0px 2px 0px 0px;
+	 	}
+	 	div.tests ul li ul li span {
+	 		top: 8px;
+	 		left: 30px;
+	 	}
+	 
+	 /* run button */
+	 	div.tests a.run {
+	 		cursor: pointer;
+	 		background: url("<?php echo url("Testing/resources/img/button-play.png");?>") no-repeat 0px 0px;
+	 	}
+	 	div.tests a.run:hover {
+	 		background-position: 0px -20px;
+	 	}
+	 	div.tests ul li ul li a.run {
+	 		width: 14px;
+	 		height: 14px;
+	 		cursor: pointer;
+	 		background: url("<?php echo url("Testing/resources/img/button-play-small.png");?>") no-repeat 0px 0px;
+	 	}
+	 	div.tests ul li ul li a.run:hover {
+	 		background-position: 0px -14px;
+	 	}
+	 
+	 /* status icons */
+	 	div.tests a.status-failed {
+	 		background: url("<?php echo url("Testing/resources/img/status-failed.png");?>") no-repeat 0px 0px;
+	 	}
+	 	div.tests a.status-success {
+	 		background: url("<?php echo url("Testing/resources/img/status-success.png");?>") no-repeat 0px 0px;
+	 	}
+	 	div.tests a.status-waiting {
+	 		background: url("<?php echo url("Testing/resources/img/status-waiting.png");?>") no-repeat 0px 0px;
+	 	}
+	 	div.tests ul li ul li a.status-failed {
+	 		background: url("<?php echo url("Testing/resources/img/status-failed-small.png");?>") no-repeat 0px 0px;
+	 	}
+	 	div.tests ul li ul li a.status-success {
+	 		background: url("<?php echo url("Testing/resources/img/status-success-small.png");?>") no-repeat 0px 0px;
+	 	}
+	 	div.tests ul li ul li a.status-waiting {
+	 		background: url("<?php echo url("Testing/resources/img/status-waiting-small.png");?>") no-repeat 0px 0px;
+	 	}
+	 
+	 /**
+	  *
+	  * test-results
+	  *
+	  */
+	  	div.test-results {
+	  		font-size: 12px;
+	  		line-height: 18px;
+	  	}
+	  	div.test-results h2 {
+	  		font-size: 14px;
+	  		font-weight: bold;
+	  		height: 30px;
+	  		line-height: 30px;
+	  		padding: 0px 10px;
+	  		cursor: pointer;
+	  	}
+	  	div.test-results h2 i {
+	  		font-weight: normal;
+	  		font-size: 12px;
+	  	}
+	  	div.test-results div.subtest {
+	  		margin: 10px 10px 0px 10px;
+	  		padding: 2px;
+	  		position: relative;
+	  	}
+	  	div.test-results a.status {
+	  		position: absolute;
+	  		display: inline-block;
+	  		top: 7px;
+	  		right: 7px;
+	  		white-space: nowrap;
+	  		padding: 0px 10px;
+	  		height: 20px;
+	  		line-height: 20px;
+	  		font-size: 11px;
+	  		text-transform: uppercase;
+	  		-moz-border-radius: 4px;
+	  		-webkit-border-radius: 4px;
+	  		border-radius: 4px;
+	  	}
+	  	
+	  	/* results without a table */
+	  		div.test-results div.results div.single {
+	  			padding: 5px 10px;
+	  			color: #333333;
+	  			font-size: 12px;
+	  			font-family: courier new, courier;
+	  			line-height: 14px;
+	  		}
+	  	
+	  	/* results */
+	  		div.test-results div.results {
+	  			padding: 0px;
+	  		}
+	  		div.test-results div.results table {
+	  			width: 100%;
+	  		}
+	  		div.test-results div.results table td {
+	  			width: 50%;
+	  			padding: 5px 10px;
+	  		}
+	  		div.test-results div.results table thead td {
+	  			font-size: 11px;
+	  			font-weight: bold;
+	  			color: #999999;
+	  			text-transform: uppercase;
+	  			border-bottom: 1px dashed #cccccc;
+	  		}
+	  		div.test-results div.results table tbody td {
+	  			color: #333333;
+	  			font-size: 12px;
+	  			font-family: courier new, courier;
+	  			line-height: 14px;
+	  		}
+	  	
+	  	/* pass */
+		  	div.subtest-pass {
+		  		border: 1px dashed #009900;
+		  	}
+		  	div.subtest-pass h2 {
+		  		color: #009900;
+		  		background: #dcffdc;
+		  	}
+		  	div.subtest-pass h2:hover {
+		  		background: #eaffea;
+		  	}
+		  	div.subtest-pass a.status {
+		  		background: #009900;
+		  		color: #ffffff;
+		  	}
+		
+		/* fail */
+		  	div.subtest-fail {
+		  		border: 1px dashed #990000;
+		  	}
+		  	div.subtest-fail h2 {
+		  		color: #990000;
+		  		background: #ffcccc;
+		  	}
+		  	div.subtest-fail h2:hover {
+		  		background: #ffe2e2;
+		  	}
+		  	div.subtest-fail a.status {
+		  		background: #990000;
+		  		color: #ffffff;
+		  	}

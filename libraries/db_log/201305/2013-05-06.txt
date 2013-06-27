@@ -1,0 +1,73 @@
+1367878015 : SELECT * FROM account  ORDER BY `account`.`account_name` , `account`.`account_name` 
+	1	SIMPLE	account	ALL					6	Using filesort
+1367878015 : SELECT * FROM brand  INNER JOIN account ON account.account_id=brand.account_id  WHERE (`brand`.`brand_id` = '9' AND (brand.deactivated=0))
+	1	SIMPLE	brand	const	PRIMARY	PRIMARY	8	const	1	
+	1	SIMPLE	account	const	PRIMARY	PRIMARY	8	const	1	
+1367878016 : SELECT * FROM account  WHERE (`account`.`account_id` = '4')
+	1	SIMPLE	account	const	PRIMARY	PRIMARY	8	const	1	
+1367878016 : SELECT * FROM brand  WHERE (`brand`.`brand_id` = '9')
+	1	SIMPLE	brand	const	PRIMARY	PRIMARY	8	const	1	
+1367878016 : UPDATE brand SET `brand`.`brand_id`=9, `brand`.`account_id`=4, `brand`.`image_id`=25, `brand`.`brand_name`='Primary brand', `brand`.`brand_created`=1367431296, `brand`.`deactivated`=0  WHERE (`brand`.`brand_id` = '9')
+1367878016 : UPDATE brand SET `brand`.`brand_id`=9, `brand`.`account_id`=4, `brand`.`image_id`=25, `brand`.`brand_name`='Primary brand', `brand`.`brand_created`=1367431296, `brand`.`deactivated`=0  WHERE (`brand`.`brand_id` = '9')
+1367878016 : SELECT * ,`brand`.`brand_id` FROM brand  INNER JOIN account ON account.account_id=brand.account_id INNER JOIN brand_image ON brand_image.image_id=brand.image_id LEFT JOIN (SELECT brand_id, SUM(brand_id) AS count FROM brand_space  GROUP BY brand_id) AS brand_space ON brand_space.brand_id=brand.brand_id  WHERE ((brand.deactivated=0)) ORDER BY `account`.`account_name` 
+	1	PRIMARY	<derived2>	system					0	const row not found
+	1	PRIMARY	brand_image	ALL	PRIMARY				1	Using temporary; Using filesort
+	1	PRIMARY	brand	ALL					8	Using where; Using join buffer
+	1	PRIMARY	account	eq_ref	PRIMARY	PRIMARY	8	ad_manager.brand.account_id	1	
+	2	DERIVED	brand_space	index		brand_id	9		17	Using index
+1367878016 : SELECT * FROM account  ORDER BY `account`.`account_name` ASC
+	1	SIMPLE	account	ALL					6	Using filesort
+1367878016 : SELECT * FROM brand_space  INNER JOIN brand ON brand.brand_id=brand_space.brand_id INNER JOIN space ON space.space_id=brand_space.space_id  WHERE ((brand_space.deactivated=0))
+	1	SIMPLE	brand	ALL	PRIMARY				8	
+	1	SIMPLE	brand_space	ref	brand_id	brand_id	9	ad_manager.brand.brand_id	1	Using where
+	1	SIMPLE	space	eq_ref	PRIMARY	PRIMARY	8	ad_manager.brand_space.space_id	1	
+1367878016 : SELECT * ,`brand`.`brand_id` FROM brand  INNER JOIN account ON account.account_id=brand.account_id LEFT JOIN (SELECT brand_id, SUM(hits) AS hits FROM brand_space  GROUP BY brand_id) AS brand_space ON brand_space.brand_id=brand.brand_id  WHERE (`brand`.`brand_id` = '9' AND (brand.deactivated=0))
+	1	PRIMARY	<derived2>	system					0	const row not found
+	1	PRIMARY	brand	const	PRIMARY	PRIMARY	8	const	1	
+	1	PRIMARY	account	const	PRIMARY	PRIMARY	8	const	1	
+	2	DERIVED	brand_space	index		brand_id	9		17	
+1367878016 : SELECT * FROM brand_space  INNER JOIN brand ON brand.brand_id=brand_space.brand_id INNER JOIN space ON space.space_id=brand_space.space_id  WHERE ((brand_space.deactivated=0))
+	1	SIMPLE	brand	ALL	PRIMARY				8	
+	1	SIMPLE	brand_space	ref	brand_id	brand_id	9	ad_manager.brand.brand_id	1	Using where
+	1	SIMPLE	space	eq_ref	PRIMARY	PRIMARY	8	ad_manager.brand_space.space_id	1	
+1367878016 : SELECT * FROM brand_space  INNER JOIN brand ON brand.brand_id=brand_space.brand_id INNER JOIN space ON space.space_id=brand_space.space_id  WHERE (`brand_space`.`brand_id` = '9' AND (brand_space.deactivated=0)) GROUP BY space.icon
+	1	SIMPLE	brand	const	PRIMARY	PRIMARY	8	const	1	Using temporary; Using filesort
+	1	SIMPLE	brand_space	ref	brand_id	brand_id	9	const	1	Using where
+	1	SIMPLE	space	eq_ref	PRIMARY	PRIMARY	8	ad_manager.brand_space.space_id	1	
+1367878017 : SELECT * FROM space  ORDER BY `space`.`space_name` 
+	1	SIMPLE	space	ALL					12	Using filesort
+1367878017 : SELECT * FROM brand_space  INNER JOIN brand ON brand.brand_id=brand_space.brand_id INNER JOIN space ON space.space_id=brand_space.space_id  WHERE ((brand_space.deactivated=0))
+	1	SIMPLE	brand	ALL	PRIMARY				8	
+	1	SIMPLE	brand_space	ref	brand_id	brand_id	9	ad_manager.brand.brand_id	1	Using where
+	1	SIMPLE	space	eq_ref	PRIMARY	PRIMARY	8	ad_manager.brand_space.space_id	1	
+1367878017 : SELECT * FROM brand  INNER JOIN account ON account.account_id=brand.account_id INNER JOIN brand_image ON brand_image.image_id=brand.image_id  WHERE ((brand.deactivated=0)) ORDER BY `account`.`account_name` 
+	1	SIMPLE	brand_image	ALL	PRIMARY				1	Using temporary; Using filesort
+	1	SIMPLE	brand	ALL					8	Using where; Using join buffer
+	1	SIMPLE	account	eq_ref	PRIMARY	PRIMARY	8	ad_manager.brand.account_id	1	
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '6' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '4' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '10' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '9' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '5' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '12' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '8' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '13' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '1' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '3' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '2' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand_space  WHERE ((brand_space.deactivated=0) AND `brand_space`.`space_id` = '11' AND (brand_space.space_start <= 1367878017 AND brand_space.space_expires >= 1367878017))
+	1	SIMPLE	brand_space	ALL					17	Using where
+1367878017 : SELECT * FROM brand  INNER JOIN brand_image ON brand_image.image_id=brand.image_id  WHERE (`brand`.`brand_id` = '9')
+	1	SIMPLE	brand	const	PRIMARY	PRIMARY	8	const	1	
+	1	SIMPLE	brand_image	const	PRIMARY	PRIMARY	8	const	1	

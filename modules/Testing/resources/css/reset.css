@@ -1,0 +1,66 @@
+/* ////    BROWSER INITIALIZATION TO COMMON CSS  //// */
+/* //// Eric Meyer's reset-reloaded, modified    //// */
+/* ////       plus csshover from peterned.nl     //// */
+/* ////        and ODY table positioning         //// */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+	color: inherit;
+	}
+
+h1, h2, h3, h4, h5, h6 {font-weight:normal;}
+
+/* restore a bit of basic formatting */
+h1 {font-size:190%;}
+h2 {font-size:175%;}
+h3 {font-size:160%;}
+h4 {font-size:145%;}
+h5 {font-size:130%;}
+h6 {font-size:115%;}
+em {font-style:italic; font-weight:normal;}
+strong {font-weight:bold;}
+blockquote {padding:0 30px 0 30px;}
+li {margin-left:1em;list-style-type:auto;}
+
+/* remember to define focus styles! */
+:focus { outline: 0; }
+
+body {
+	line-height: 1;
+	color: black;
+	background: white;
+	behavior:url("/common/csshover.htc");
+	font-family: Arial, helvetica, san-serif;
+	font-size: 12px;
+	}
+
+/* FYI: tables still need 'cellspacing="0"' in the markup */
+caption, table, td, tr {
+	vertical-align:top;
+	text-align:left;
+	font-weight: normal;	/*inherit?*/
+	border-collapse: collapse;	/*what ody used*/
+	border-collapse: separate;	/*what meyerweb used*/
+	border-spacing:0px;
+	}
+
+blockquote:before, blockquote:after, q:before, q:after {content: "";}
+blockquote, q {quotes: "" "";}
+
+html, body {
+	height: 100%;
+	}
