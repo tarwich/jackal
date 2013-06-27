@@ -1,4 +1,3 @@
-
 # --------------------------------------------------
 #
 #  Jackal intermediate files
@@ -14,8 +13,18 @@ error.log
 #
 # --------------------------------------------------
 
-# .DS_Store is an OSX metadata file 
+# --------------------------------------------------
+#  Litter caused by OS
+# --------------------------------------------------
+
+# .DS_Store is an OSX metadata file
 .DS_Store
 # desktop.ini is a Windows metadata file
 desktop.ini
 
+# --------------------------------------------------
+#  Litter caused by IDE(s)
+# --------------------------------------------------
+
+# JetBrains
+.idea
