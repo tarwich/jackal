@@ -118,6 +118,7 @@ if(headers_sent()) {
 }
 
 ?><script type="text/javascript">
+if(typeof(jQuery) != "undefined")
 (function(NS, $) {
 	//  __________________________________________
 	// /---------- Initialize namespace ----------\

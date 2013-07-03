@@ -450,7 +450,7 @@ class JackalModel {
 		// If the delegate exists, then run it instead of load
 		if(method_exists($this, $delegate)) return $this->$delegate($derivation);
 		// Let load handle the rest
-		$result = $this->load($tables, $derivation, $paths);
+		$result = $this->load($tables, $derivation);
 		// Cache the response
 		$this->_cache[$tables] = (array) @$this->_cache[$tables];
 		$this->_cache[$tables][serialize($derivation)] = $result;
@@ -1075,7 +1075,7 @@ class JackalModel {
 		
 		// Make sure a class was found
 		if(!$class) {
-			Jackal::error(500, "Unable to find table $tableName");
+			Jackal::error(500, "Unable to find table '$tableName'");
 			return false;
 		}
 		
@@ -1138,24 +1138,38 @@ class JackalModel {
 	 */
 	protected function load($tables, $filter, $paths="", $query=null) {
 		// Initialize variables
-		$fields 			= array(); 			// A list of fields we're going to add
-		$currentTables 		= array(); 	// A list of tables already present in the query
+		$fields 			= array(); // A list of fields we're going to add
+		$currentTables 		= array(); // A list of tables already present in the query
 		$tableStructures 	= array(); // The structure of all the tables in the query
-		
+
 		// Parse the table structure for this model
 		$this->getStructure();
 		// Break apart tables by comma
-		preg_match_all('/(\w+)(?:\.([^,]+))?(?:\s*AS\s*([\w+$]+))?,?/', $tables, $tables, PREG_SET_ORDER);
-		@list($nothing, $tables["table"], $tables["field"], $tables["tag"]) = $tables;
-		
-		// Get rid of the ordered matches, because it's confusing when they are present
-		if(Jackal::debugging()) foreach($tables as $i=>$table) $tables[$i] = array_diff_key($table, array_values($table));
-		
+		preg_match_all('/'.
+			'(\w+)'                 . //      (table name)
+			'(?:\.([^,]+))?'        . // .*   (field)
+			'(?:\s*AS\s*([\w+$]+))?'. // AS * (table aliases)
+			',?'                    . // ,    (delimiter)
+		'/i', $tables, $matches, PREG_SET_ORDER);
+//		@list($nothing, $tables["table"], $tables["field"], $tables["tag"]) = @$tables;
+
+		// Change tables from the scan string to the
+		$tables = array();
+
+		// Convert tables into an array, and assign each result
+		foreach($matches as $i=>$result) {
+			$tables[$i] = array(
+				"table" => @$result[1],
+				"field" => @$result[2],
+				"alias" => @$result[3],
+			);
+		}
+
 		//  _________________________________
 		// /---------- Table paths ----------\
 		
 		// Break apart the path by comma
-		$paths = explode(",", $paths);
+		$paths = explode(",", implode("", (array) $paths));
 		// Break apart each path by ->
 		foreach($paths as $i=>$path) ($path = $paths[$i] = explode("->", $path)) && ($target = end($path)) && ($paths[$target] = $path); 
 		// Get the QueryBuilder instance
@@ -1188,7 +1202,7 @@ class JackalModel {
 			// Go through the rest of the tables and add them all as joins
 			foreach($tables as $i=>$table) {
 				// Find the structure of the first table
-				$tableStructure = $this->getTable($table["table"], $this->getStructure());
+				$tableStructure = $this->getTable(@$table["table"], $this->getStructure());
 				// Find the name of the primary table
 				$tableName = $tableStructure["name"];
 				
@@ -1365,42 +1379,6 @@ class JackalModel {
 		@list($result) = $result;
 		if(!$result) $result = $this->getBlank($URI);
 		return $result;
-	}
-	
-	/**
-	 * [Phasing out] Convert a reference from ->table to the definition from the primary key
-	 * of that table (minus auto_increment)
-	 * 
-	 * This method is planned for deprecation
-	 *  
-	 * @param string $table name of foreign table  
-	 * 
-	 * @return string definition from foreign key
-	 */
-	private function _resolveReference($tableName) {
-		// Check to see if the table is local to this model
-		($theTable = @$this->_structures[$tableName])
-		// even check for prefixes
-		|| ($theTable = @$this->_structures[$this->_primaryTable["prefix"]."_$tableName"]);
-		
-		// If the table was found locally, then get the definition
-		if($theTable) $definition = $theTable["fields"][$theTable["primary"]];
-		else {
-			// Find the table we're looking for
-			$theTable = self::getTable($tableName);
-			// And get the definition of its primary key
-			$definition = $theTable["fields"][$theTable["primary"]];
-		}
-		
-		// Let the definition default to INT
-		if(!$definition) $definition = "int";
-		// Strip illogical definitions
-		$definition = preg_replace('/(\bnot null\b|\bauto.?increment\b|\bprimary\b|\bkey\b)/', '', $definition);
-		// Clean up a bit
-		$definition = trim($definition);
-		
-		// Return the result
-		return $definition;
 	}
 	
 	/**

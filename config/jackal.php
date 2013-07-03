@@ -122,7 +122,18 @@ Jackal::putSettings("
 		# |__________________________________________________|
 		aliases:
 			'/^resources/': JackalModule/resources
-					
+
+		# |
+		#  _[ Super Quiet Mode ]_____________________________
+		# | This mode makes Jackal not show the least amount |
+		# | of error information possible. The idea is to    |
+		# | make the server architecture and configuration   |
+		# | undetectable in production environments. Turn    |
+		# | this option OFF if you can't figure out what's   |
+		# | wrong with Jackal                                |
+		# |__________________________________________________|
+		super-quiet-mode: false
+
 		#  _[ Trackback ]____________________________________
 		# |                                                  |
 		# | Set this to 'private' to omit your information   |

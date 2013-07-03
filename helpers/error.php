@@ -7,7 +7,7 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 	error_log("$errstr $errfile:$errline");
 	
 	// If display errors is off, then don't show the error
-	if(!ini_get("display_errors")) return;
+	if(!ini_get("display_errors")) return false;
 	
 	$backtrace = debug_backtrace();
 	$omitPath = dirname(dirname(dirname(__FILE__)));

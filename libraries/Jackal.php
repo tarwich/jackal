@@ -738,9 +738,10 @@ END;
 	 */
 	private static function flagCheck() {
 		$flaggers = (array) Jackal::setting("flaggers");
+		$flaggers[] = Jackal::setting("debug-path");
 		// Get the flaggers and querystring parts of the URL
-		preg_match(',((?:'.implode("|", $flaggers).'|DEBUG|/)*)(.*$),', $_SERVER["QUERY_STRING"], $components);
-		
+		preg_match(',((?:'.implode("|", $flaggers).'|/)*)(.*$),', $_SERVER["QUERY_STRING"], $components);
+
 		$components["flags"] = $components[1];
 		$components["url"]   = $components[2];
 		
@@ -798,8 +799,19 @@ END;
 
 			// No files found
 			if(!count($files)) {
-				if(error_reporting()) Jackal::error(501, "$className does not exist", NULL, true);
-				self::$_classes[$className] = false;// new stdClass();
+				// If we're trying to be quiet, then show the minimum information
+				if(@self::$_settings["super-quiet-mode"]) {
+					if(error_reporting()) Jackal::error(501, "$className does not exist", NULL, true);
+					self::$_classes[$className] = new stdClass();
+				}
+
+				// Otherwise, show helpful information about the problem
+				else {
+					// Tell the user what happen
+					if(error_reporting()) Jackal::error(501, "$className does not exist", "Jackal was unable to find class $className");
+					self::$_classes[$className] = false;
+				}
+
 				return self::$_classes[$className];
 			}
 
@@ -1894,7 +1906,11 @@ END;
 
 		// Parse the QUERY_STRING
 		$_SERVER["QUERY_STRING"] = substr($_SERVER["REQUEST_URI"], strlen(dirname($_SERVER["SCRIPT_NAME"])));
-		
+		// Rip INDEX out of the query string
+		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("index-url"), "", $_SERVER["QUERY_STRING"]);
+		// Rip SUFFIX out of the query string
+		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("suffix"), "", $_SERVER["QUERY_STRING"]);
+
 		// Pull flags out of URI
 		Jackal::flagCheck();
 
@@ -1921,13 +1937,9 @@ END;
 			$helpers = (array) Jackal::setting("debug-helpers", array());
 			foreach($helpers as $helper) if($helper) Jackal::loadHelper($helper);
 		}
-		
-		// Rip INDEX out of the query string
-		$queryString = $_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("index-url"), "", $_SERVER["QUERY_STRING"]);
-		// Rip SUFFIX out of the query string
-		$queryString = $_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("suffix"), "", $_SERVER["QUERY_STRING"]);
+
 		// Handle the request
-		self::handleRequest($queryString);
+		self::handleRequest($_SERVER["QUERY_STRING"]);
 		
 		// Call the shutdown functions
 		foreach(self::$_classes as $class) 
@@ -1953,11 +1965,25 @@ END;
 		if($logPath = Jackal::setting("error-log", "")) {
 			// Resolve the path of the log folder
 			@list($logFile) = Jackal::files($logPath);
-				
+
+			// If the log file isn't found, then try to find a way to make it
+			if(!$logFile) {
+				// If we're here, then $logPath wasn't found, so look for its parent (grab the first item)
+				$parentFolder = @reset(Jackal::files(dirname($logPath)));
+
+				// If we were successful in finding the parent folder
+				if($parentFolder) {
+					// Try to make the error folder inside the parent folder
+					mkdir("$parentFolder/" . basename($logPath));
+					// Resolve the path of the log folder (again)
+					@list($logFile) = Jackal::files($logPath);
+				}
+			}
+
 			// Determine what file to log errors to
 			if(is_dir($logFile)) $logFile = "$logFile/error.log";
 			Jackal::putSettings("error-log", $logFile);
-			
+
 			// Make sure the log file exists
 			file_exists($logFile) || @touch($logFile);
 			// Make sure the logFile is writeable
@@ -1980,8 +2006,15 @@ END;
 
 				// Log the error
 				error_log($message);
+
 				// Report the error
-				Jackal::error(501, $message, "Jackal could not start due to server misconfiguration.", true);
+				if(Jackal::setting("super-quiet-mode")) {
+					// Super quiet mode: Show the least information possible
+					Jackal::error(501, $message, "This site is currently not accepting requests.", $die=true);
+				} else {
+					// Be as helpful as possible
+					Jackal::error(501, $message, $message, $die=false);
+				}
 			}
 		}
 	}
