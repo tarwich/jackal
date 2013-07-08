@@ -291,7 +291,6 @@ class QueryBuilder {
 	 * 
 	 */
 	public function connect($connection=array()) {
-		
 		// Prepare directory for logging
 		if(self::$logging) {
 			$folder = dirname(__FILE__)."/db_log/".date("Ym");
@@ -314,14 +313,17 @@ class QueryBuilder {
 		if(is_array($connection["port"])) {
 			foreach($connection["port"] as $port) {
 				// Don't bother trying to make a database connection if the port is not open
-				if(@fsockopen($connection["host"], $port, $errno, $errstr, 30)) {
+				if($sock = @fsockopen($connection["host"], $port, $errno, $errstr, 30)) {
 					if($this->db = mysqli_connect($connection["host"], $connection["username"], $connection["password"], $connection["database"], $port)) {
 						break;
 					}
+
+					// Close the socket
+					fclose($sock);
 				}
 			}
 		} else {
-			$this->db = mysqli_connect($connection["host"], $connection["username"], $connection["password"], $connection["database"], $connection["port"]);
+			$this->db = mysqli_connect($connection["host"], $connection["username"], $connection["password"], $connection["database"], $connection["port"], @$connection["socket"]);
 		}
 		
 		// Trigger an error if unable to connect
