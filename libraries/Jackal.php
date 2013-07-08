@@ -1980,28 +1980,49 @@ END;
 				}
 			}
 
-			// Determine what file to log errors to
-			if(is_dir($logFile)) $logFile = "$logFile/error.log";
-			Jackal::putSettings("error-log", $logFile);
+			// If $logFile currently points to a folder, then point it to a file in said folder
+			if(is_dir($logFile)) {
+				// Point to a file
+				$logFile = "$logFile/error.log";
+				// Update the setting (in memory)
+				Jackal::putSettings("error-log", $logFile);
+			}
 
 			// Make sure the log file exists
-			file_exists($logFile) || @touch($logFile);
-			// Make sure the logFile is writeable
-			is_writable($logFile) || @chmod($logFile, 0777);
-				
+			if(!file_exists($logFile)) @touch($logFile);
+			// Make sure the logFile is writable
+			if(!is_writable($logFile)) {
+				// Perms: (UGO = User, Group, Other)
+				//                RWX    RWX    RWX
+				//                421    421    421
+				//Example: 761 =  XXX    XX_    __X
+				if(!@chmod($logFile, 0766)) {
+					@chmod(dirname($logFile), 0766);
+					@chmod($logFile, 0766);
+				}
+			}
+
 			// Set the settings regardless of the result of the previous checks
 			ini_set("log_errors", 1);
 			ini_set("error_log", $logFile);
-				
+
 			// Make sure we're going to be able to write to the error log
 			if(!is_writable($logFile)) {
 				$whoami = get_current_user();
 
 				// See if the location exists
 				if(file_exists($logFile)) {
-					$message = "Could not write to $logFile.  The folder exists, but is not writeable.  Either make the folder writeable by $whoami, or make the 'error-log' setting an empty string.";
+					$message = "Could not write to $logFile.  The file exists, but is not writable.  Either make the folder writable by $whoami, or make the 'error-log' setting an empty string.";
 				} else {
-					$message = "Could not write to ".htmlentities($logPath).".  The folder does not exist.  Either create the folder, or make the 'error-log' setting an empty string.";
+					// Log folder found, but not writable
+					if(file_exists(dirname($logFile))) {
+						$message = "Could not write to ".dirname($logFile).". The folder exists, but I can't make a ".basename($logFile)." file in it. Either make it yourself, or change the 'error-log' setting to an empty string.";
+					}
+
+					else {
+						// Log folder not found
+						$message = "Could not write to ".htmlentities($logPath).".  The folder does not exist.  Either create the folder, or make the 'error-log' setting an empty string.";
+					}
 				}
 
 				// Log the error
