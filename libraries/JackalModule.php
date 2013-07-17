@@ -71,14 +71,6 @@ class JackalModule {
 	 */
 	public static $DEFAULT_RESOURCE_PATH = "<ROOT>/{<LOCAL>/,<JACKAL>/}{modules/<MODULE>/,}resources/{,<TYPE>}<FILE>";
 	
-	public function autorun() {
-		Jackal::putSettings("
-			users:
-				acl:
-					IP * ACCESS JackalModule/resources ALLOW
-		");
-	}
-	
 	/**
 	 * Consider all the parameters in URI and return an array of parameters as
 	 * requested by the caller.
