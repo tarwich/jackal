@@ -1,0 +1,476 @@
+@CHARSET "UTF-8";
+
+/*
+ *
+ * Global styles
+ *
+ */
+	body {
+		font-family: Tahoma,Verdana,Arial,Helvetica,sans-serif;
+		}
+	a {
+		color: #2558a2;
+		text-decoration: none;
+		cursor: pointer;
+	}
+	a:hover {
+		color: #ff5400;
+		text-decoration: underline;
+	}
+	h1, h2, h3, h4 {
+		font-family: Tahoma,Verdana,Arial,Helvetica,sans-serif;
+	}
+	.scroll {
+		overflow: scroll;
+	}
+
+/*
+ *
+ * Welcome
+ *
+ */
+	div.welcome {
+		background: url(<?php echo url("Documentation/resources/img/logo.jpg");?>) no-repeat center 50px;
+		font-size: 12px;
+		line-height: 18px;
+	}
+	div.welcome div {
+		text-align: center;
+		margin: 320px 0px 0px 0px;
+		padding: 0px 50px 0px 50px;
+	}
+	div.welcome h2 {
+		font-family: Tahoma,Verdana,Arial,Helvetica,sans-serif;
+		font-size: 24px;
+		color: #2e70bb;
+		margin: 0px 0px 20px 0px;
+		font-weight: normal;
+	}
+
+/*
+ *
+ * Title
+ *
+ */
+ 	div.title-spacer {
+ 		height: 70px;
+ 	}
+	div.title {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+ 		background: #2a96ee url(<?php echo url("Documentation/resources/img/bg.jpg")?>) no-repeat top left;
+ 		height: 70px;
+ 		color: #ffffff;
+ 		-moz-box-shadow: 0px 3px 3px rgba(0,0,0,.5);
+ 		-webkit-box-shadow: 0px 3px 3px rgba(0,0,0,.5);
+	}
+	div.title div {
+		padding: 10px 10px 0px 10px;
+	}
+	div.title div.toc {
+		background: none;
+	}
+	div.title h1 {
+		font-size: 24px;
+		font-weight: normal;
+		margin: 10px 0px 0px 0px;
+		padding: 0px;
+		color: #ffffff;
+	}
+	div.title h2 {
+		height: 20px;
+		line-height: 20px;
+	}
+	div.title h4 {
+		color: #ffffff;
+		font-weight: normal;
+		font-size: 12px;
+		height: 20px;
+		line-height: 20px;
+		margin: 0px;
+		padding: 0px;
+	}
+	div.title div.shortcuts {
+		margin: 30px 0px 0px 0px;
+		color: #9ec5e0;
+	}
+	div.title div.shortcuts a {
+		color: #ffffff;
+	}
+	div.title div.shortcuts a:hover {
+	}
+	div.title input {
+		width: 100%;
+		padding: 2px 5px;
+		margin-left: -5px;
+		background: #ffffff;
+		border: 1px inset #e8e8e8;
+	}
+	div.title input:focus {
+		background: #ffffde;
+	}
+
+/*
+ *
+ * Property Details
+ *
+ */
+ 	div.method-details,
+ 	div.property-details {
+ 		background: #ffffff;
+ 		margin: 10px 0px 0px 0px;
+ 		border: 1px solid #dbe3ee;
+ 		padding: 10px;
+ 		font-size: 12px;
+ 		line-height: 18px;
+ 		font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+ 	}
+ 	
+ 	div.reference tr.header th.left,
+ 	div.reference tr.header th.right {
+ 		padding: 3px 30px;
+ 	}
+ 	
+ 	div.method-details p,
+ 	div.property-details p {
+ 		line-height: 18px;
+ 		font-size: 12px;
+ 		font-family: "Arial", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+ 	}
+ 	
+ 	div.property-details h1,
+ 	div.method-details h1 {
+ 		font-family: "Trebuchet MS","Bitstream Vera Sans",verdana,lucida,arial,helvetica,sans-serif;
+ 		background: #d8e1ee;
+ 		padding: 0px 10px;
+ 		height: 30px;
+ 		line-height: 30px;
+ 		border-bottom: 5px solid #bfccdf;
+ 		color: #000000;
+ 		font-size: 18px;
+ 	}
+ 	div.property-details div.description,
+ 	div.method-details div.description {
+ 		padding: 10px;
+ 		margin: 0px;
+ 	}
+ 	div.property-details h2,
+ 	div.method-details h2 {
+ 		padding: 5px;
+ 		margin: 10px 0px 0px 0px;
+ 	}
+ 	div.method-details div.method div.description {
+ 		padding: 10px 30px;
+ 	}
+ 	div.method-parameter-details h4 {
+ 		padding: 5px;
+ 	}
+ 	div.method-parameter-details td,
+ 	div.method-parameter-details th {
+ 		padding: 5px 10px;
+ 		line-height: 18px;
+ 		font-size: 12px;
+ 		border: 1px solid #d2ddef;
+ 		font-family: "Lucida Console","Courier New",Courier,monospace;
+ 	}
+ 	div.method-parameter-details th {
+ 		text-align: left;
+ 		font-weight: bold;
+ 		white-space: nowrap;
+ 		background: #e6ecf7;
+ 	}
+ 	div.method-parameter-details thead th {
+ 		font-family: Tahoma,Verdana,Arial,Helvetica,sans-serif;
+ 		background: #cad6eb;
+ 		color: #5b7aad;
+ 		font-weight: normal;
+ 		font-size: 11px;
+ 		padding: 2px 10px;
+ 	}
+ 	div.method-parameter-details td {
+ 		background: #ffffff;
+ 		text-transform: lowercase;
+ 	}
+ 	div.method-parameter-details table,
+ 	div.class-properties table,
+ 	div.class-methods table {
+ 		border: 1px solid #d2ddef;
+ 	}
+ 	div.class-properties table tr td,
+ 	div.class-methods table tr td {
+ 		font-size: 12px;
+ 		line-height: 18px;
+ 		padding: 3px 30px;
+ 	}
+ 	div.class-properties table tr td a,
+ 	div.class-methods table tr td a {
+ 		font-weight: bold;
+ 	}
+ 	div.class-properties table tr td a.return,
+ 	div.class-methods table tr td a.return,
+ 	div.class-properties table tr td a.return:hover,
+ 	div.class-methods table tr td a.return:hover {
+ 		font-weight: normal;
+ 		cursor: default;
+ 		text-decoration: none;
+ 	}
+ 	div.flag {
+ 		color: #666666;
+ 	}
+ 	div.inherited-links {
+ 		padding: 5px 0px;
+ 	}
+
+/*
+ *
+ * Segments
+ *
+ */
+ 	div.segments {
+ 		margin: 0px 0px 5px 0px;
+ 	}
+	div.segments table {
+		width: auto;
+		border: 1px solid #D2DDEF;
+	}
+	div.segments table tr th.title {
+		color: #5B7AAD;
+		padding: 5px 10px;
+		background: #E6ECF7;
+		text-align: left;
+	}
+	div.segments table tr th {
+		background: #E6ECF7;
+		text-align: center;
+		font-weight: normal;
+		color: #999999;
+		padding: 5px;
+		border-bottom: 1px solid #D2DDEF;
+	}
+	div.segments table tr td {
+		font-family: "Lucida Console","Courier New",Courier,monospace;
+		background: #ffffff;
+		text-align: left;
+		font-weight: bold;
+		padding: 5px;
+		border-bottom: 1px solid #D2DDEF;
+	}
+	div.segments table tr td.slash {
+		font-weight: normal;
+		color: #666666;
+	}
+	div.segments table tr th b {
+		color: #0c5de2;
+		font-weight: normal;
+	}
+
+/*
+ *
+ * Class reference
+ *
+ */
+ 	div.class-description {
+ 		padding: 0px;
+ 		font-family: Arial, Helvetica, sans-serif;
+ 	}
+ 	div.documentation-reference-section {
+ 		padding: 20px;
+ 	}
+
+/*
+ *
+ * Module reference / home page
+ *
+ */
+	div.modules {
+		padding: 0px;
+	}
+	div.modules div.toc {
+	}
+	div.modules div.toc div.list {
+		padding: 20px;
+	}
+	div.modules table {
+		width: 100%;
+		border: 1px solid #d2ddef;
+	}
+	div.modules table td,
+	div.modules table th {
+		padding: 5px 10px;
+	}
+	div.modules table tr.header th {
+		background: #7f97bd;
+		color: #ffffff;
+		padding: 2px 10px;
+		font-weight: bold;
+		font-size: 12px;
+		white-space: nowrap;
+	}
+
+/*
+ *
+ * Small table of contents
+ *
+ */
+	div.smalltoc {
+		height: 70px;
+		margin: 0px !important;
+		padding: 0px !important;
+		border: 0px !important;
+	}
+	div.smalltoc div.class-list {
+		overflow: scroll;
+	}
+	div.smalltoc h2 {
+		font-size: 14px;
+		font-weight: bold;
+		line-height: 18px;
+		font-family: Arial, Helvetica;
+		margin-bottom: 7px;
+	}
+	div.smalltoc ul {
+		list-style-type: none;
+		padding: 0px;
+	}
+	div.smalltoc ul a {
+		display: block;
+		padding: 5px 20px;
+		color: #3f73be;
+		text-decoration: none;
+	}
+	div.smalltoc ul li.current a {
+		background: #2064ae;
+		color: #ffffff;
+	}
+	div.smalltoc ul a:hover {
+		text-decoration: underline;
+		background: #ffffdc;
+	}
+	div.smalltoc li {
+		display: block;
+		margin: 0px;
+		padding: 0px;
+		border-bottom: 1px solid #e8e8e8;
+	}
+
+/*
+ *
+ * Reference page
+ *
+ */
+	
+	.documentation-reference-section h1 {
+		color: #000000;
+		font-size: 24px;
+		font-weight: normal;
+		line-height: 30px;
+	}
+	.documentation-reference-section h2 {
+		margin: 20px 0px 0px 0px;
+		color: #000000;
+		font-size: 18px;
+		line-height: 22px;
+		font-weight: bold;
+	}
+	.documentation-reference-section h4 {
+		font-size: 12px;
+		font-weight: bold;
+		line-height: 18px;
+	}
+	.documentation-reference-section ul {
+		list-style-type: none;
+		margin: 0px;
+		padding: 0px 10px;
+	}
+	.documentation-reference-section .description {
+		padding: 0px;
+		margin: 0px 0px 10px 0px;
+	}
+	
+	.reference p {
+		margin: 0px 0px 10px 0px;
+		font-size: 12px;
+		line-height: 14px;
+	}
+	
+	.documentation-reference-section .class-jump-menu ul { margin: 0; padding: 0; }
+	.documentation-reference-section .class-jump-menu li {
+		display: inline-block;
+		background: none;
+		margin: 0;
+		padding: 0 10px;
+		border: 0px solid #222;
+		border-left-width: 1px;
+	}
+	.documentation-reference-section .class-jump-menu li.first { border-left-width: 0px; }
+	
+	.documentation-reference-section table {
+		border-collapse: collapse;
+		border-spacing: 0px 0px;
+		width: 100%;
+		background-color: #F6F6F6;
+	}
+	
+	.documentation-reference-section .flag { 
+		display: inline-block; 
+		margin-right: 3px; 
+	} 
+	.documentation-reference-section q { 
+		quotes: "[", "]"; 
+	}
+	.documentation-reference-section q:before { content: "[" }
+	.documentation-reference-section q:after { content: "]" }
+	
+	/*
+	 *
+	 * Table and rows
+	 *
+	 */
+	 	.reference table {
+	 	}
+		.reference table tr td {
+			padding: 3px 10px;
+		}
+		.reference table tr.header th {
+			background: #7f97bd;
+			color: #ffffff;
+			padding: 2px 10px;
+			font-weight: bold;
+			font-size: 12px;
+			white-space: nowrap;
+		}
+		table tr.even {
+			background: #ffffff;
+		}
+		table tr.odd {
+			background: #edf2f9 url(<?php echo url("Documentation/resources/img/row-odd.gif");?>) repeat-x;
+		}
+		table tr.even td,
+		table tr.even th {
+			border-bottom: 1px solid #d2ddef;
+		}
+		table tr.odd td,
+		table tr.odd th {
+			border-bottom: 1px solid #d2ddef;
+		}
+		table tr:last-child td,
+		table tr:last-child th {
+			border-bottom: none !important;
+		}
+		th.left {
+			text-align: left;
+		}
+		th.right {
+			text-align: right;
+		}
+
+	/*
+	 *
+	 * Disable SyntaxHighlighter ad 
+	 *
+	 */
+	 #RightPage .syntaxhighlighter .toolbar {
+	 	display: none !important;
+	 }

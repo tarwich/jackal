@@ -1,0 +1,21 @@
+<?php
+
+// Load every CSS formatter into one CSS file
+
+// Get the path
+$path = dirname(__FILE__)."/css/formatter";
+
+// The desired styles
+$files = array(
+	"shCore.css",
+	"shCoreDefault.css"
+);
+
+// Now include all the javascript files
+foreach ($files as $file) {
+	echo "/* $file.css */\n";
+	@include("$path/$file");
+	echo "\n\n\n";
+}
+
+?>
