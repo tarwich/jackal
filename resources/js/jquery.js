@@ -1,3 +1,3 @@
 <?php
 
-include(dirname(__FILE__)."/jquery-1.6.4.min.js");
+include(dirname(__FILE__)."/jquery-1.10.2.min.js");

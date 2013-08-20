@@ -214,7 +214,7 @@ class QueryBuilder {
 		
 		// Return results if necessary
 		$results = array();
-		if (mysqli_affected_rows($this->db)>0 || mysqli_num_rows($result)>0)
+		if( @(mysqli_affected_rows($this->db)>0) || @(mysqli_num_rows($result)>0))
 			$results = $this->get_results($result);
 		return $results;
 	}
