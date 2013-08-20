@@ -1190,7 +1190,7 @@ END;
 	 * @return void
 	 */
 	private static function _loadConfigs() {
-		$files = Jackal::files("<ROOT>/{<JACKAL>/,<LOCAL>/}{,modules/*/,modules/extra-modules/*/,libraries/*/,libraries/extra-libraries/*/}config/{jackal,*}.php", array());
+		$files = Jackal::files("<ROOT>/{<JACKAL>/,<LOCAL>/}{,modules/*/,modules/extra-modules/*/,libraries/*/,libraries/extra-libraries/*/}config/{jackal,*}.{php,yaml,yml}", array());
 
 		// Put all the jackalish configs first
 		$firstFiles = preg_grep('#jackal.php$#i', $files);
@@ -1199,7 +1199,13 @@ END;
 		// Put everything back in the original array, and dedupe
 		$files = array_unique(array_merge($firstFiles, $secondFiles, $files));
 		// Load each config
-		foreach($files as $file) Jackal::_include($file);
+		foreach($files as $file) {
+            switch(strtolower(pathinfo($file, PATHINFO_EXTENSION))) {
+            case "php" : Jackal::_include($file)                       ; break;
+            case "yml" :
+            case "yaml": Jackal::putSettings(file_get_contents($file)) ; break;
+            }
+        }
 
 		// Flaggers is bugging me
 		self::$_settings["jackal"]["flaggers"] = array_unique((array) self::$_settings["jackal"]["flaggers"]);
