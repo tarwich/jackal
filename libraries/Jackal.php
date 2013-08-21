@@ -528,10 +528,10 @@ END;
 			error_reporting(E_ALL);
 		}
 
-		assert_options(ASSERT_ACTIVE, 		$debug);
-		assert_options(ASSERT_WARNING, 		$debug);
-		assert_options(ASSERT_BAIL, 		$debug);
-		assert_options(ASSERT_QUIET_EVAL, 	!$debug);
+		assert_options(ASSERT_ACTIVE,      $debug);
+		assert_options(ASSERT_WARNING,    $debug);
+		assert_options(ASSERT_BAIL,       $debug);
+		assert_options(ASSERT_QUIET_EVAL, !$debug);
 	}
 
 	/**
@@ -1192,27 +1192,29 @@ END;
 	private static function _loadConfigs() {
 		$files = Jackal::files("<ROOT>/{<JACKAL>/,<LOCAL>/}{,modules/*/,libraries/*/}config/{jackal,*}.{yaml,yml,php}", array());
 		// Order the array with jackal first, then everything, followed by 'MY_*' files
-        foreach(array("jackal", "MY_", "") as $iteration) {
-            // Load each config
-            foreach($files as $i=>$file) {
-                // Order the array with jackal first, then everything, followed by 'MY_*' files
-                switch($iteration) {
-                case "jackal" : if(substr($file, 0, 6) == "jackal") break; else continue;
-                case "MY_"    : if(substr($file, 0, 3) != "MY_")    break; else continue;
-                case ""       : break;
-                }
-                
-                // Load php files one way and yaml files another
-                switch(strtolower(pathinfo($file, PATHINFO_EXTENSION))) {
-                case "php" : Jackal::_include($file)                       ; break;
-                case "yml" :
-                case "yaml": Jackal::putSettings(file_get_contents($file)) ; break;
-                }
-                
-                unset($files[$i]);
-            }
-        }
-		        
+		foreach(array("jackal", "MY_", "_", "") as $iteration) {
+			// Load each config  
+			foreach($files as $i=>$file) {
+				// Order the array with jackal first, then everything, followed by 'MY_*' files
+				switch($iteration) {
+                    case "jackal": if(substr($file, 0, 6) == "jackal") continue; else break;
+                    case "MY_"   : if(substr($file, 0, 3) != "MY_")    continue; else break;
+                    case "_"     : if(!preg_match('/_\./', $file))     continue; else break;
+                    case ""      : break;
+				}
+				
+				// Load php files one way and yaml files another
+				switch(strtolower(pathinfo($file, PATHINFO_EXTENSION))) {
+					case "php" : Jackal::_include($file)                       ; break;
+					case "yml" :
+					case "yaml": Jackal::putSettings(file_get_contents($file)) ; break;
+				}
+				
+				// Remove this item from the list of things to process
+				unset($files[$i]);
+			}
+		}
+		
 		// Flaggers is bugging me
 		self::$_settings["jackal"]["flaggers"] = array_unique((array) self::$_settings["jackal"]["flaggers"]);
 	}
@@ -1899,21 +1901,21 @@ END;
 	 * @return void
 	 */
 	private static function _start($argv) {
+        // TODO: Remove this if we're not using error-based-routing
 		header("HTTP/1.0 200 OK");
-
 		// Mark the time
 		JackalTimes::mark("core");
-
 		// Import settings
 		Jackal::$_settings = @$GLOBALS["jackal-settings"];
-		
 		// Load the base config
 		Jackal::_loadConfigs();
-		
+        // Set the timezone
+        date_default_timezone_set(self::$_settings["jackal"]["timezone"]);
+        
 		// Remove magic quotes
 		if (get_magic_quotes_gpc()) {
-		    $gpc = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
-		    array_walk_recursive($gpc, create_function('&$value, $key', '$value = stripslashes($value);'));
+			$gpc = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
+			array_walk_recursive($gpc, create_function('&$value, $key', '$value = stripslashes($value);'));
 		}
 
 		// Parse the QUERY_STRING
@@ -2206,5 +2208,3 @@ class JackalTimes {
 		return self::$dbMarks;
 	}
 }
-
-
