@@ -1,4 +1,14 @@
 jackal:
+    #  _[ Aliases ]______________________________________
+    # |                                                  |
+    # | Jackal will replace all the aliases with their   |
+    # | values when handling a request. These are not    |
+    # | evaluated in call, but only handleRequest.       |
+    # | Aliases may be regular expressions               |
+    # |__________________________________________________|
+    aliases:
+        '/^resources/': JackalModule/resources
+
     #  _[ Autoload Helpers ]_____________________________
     # |                                                  |
     # | A list of helpers to include by default          |
@@ -110,18 +120,8 @@ jackal:
     # |__________________________________________________|
     helper-path: <ROOT>/{<JACKAL>,<LOCAL>}{,/modules/*}/helpers/{,*/}{,<MY>_}<FILE>{.php,}
 
-    #  _[ Aliases ]______________________________________
-    # |                                                  |
-    # | Jackal will replace all the aliases with their   |
-    # | values when handling a request. These are not    |
-    # | evaluated in call, but only handleRequest.       |
-    # | Aliases may be regular expressions               |
-    # |__________________________________________________|
-    aliases:
-        '/^resources/': JackalModule/resources
-
-    # |
     #  _[ Super Quiet Mode ]_____________________________
+    # |
     # | This mode makes Jackal not show the least amount |
     # | of error information possible. The idea is to    |
     # | make the server architecture and configuration   |
