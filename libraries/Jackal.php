@@ -1190,23 +1190,29 @@ END;
 	 * @return void
 	 */
 	private static function _loadConfigs() {
-		$files = Jackal::files("<ROOT>/{<JACKAL>/,<LOCAL>/}{,modules/*/,modules/extra-modules/*/,libraries/*/,libraries/extra-libraries/*/}config/{jackal,*}.{php,yaml,yml}", array());
-
-		// Put all the jackalish configs first
-		$firstFiles = preg_grep('#jackal.php$#i', $files);
-		// Then NOT MY_* configs
-		$secondFiles = preg_grep('#/MY_[^/]+#', $files, PREG_GREP_INVERT);
-		// Put everything back in the original array, and dedupe
-		$files = array_unique(array_merge($firstFiles, $secondFiles, $files));
-		// Load each config
-		foreach($files as $file) {
-            switch(strtolower(pathinfo($file, PATHINFO_EXTENSION))) {
-            case "php" : Jackal::_include($file)                       ; break;
-            case "yml" :
-            case "yaml": Jackal::putSettings(file_get_contents($file)) ; break;
+		$files = Jackal::files("<ROOT>/{<JACKAL>/,<LOCAL>/}{,modules/*/,libraries/*/}config/{jackal,*}.{yaml,yml,php}", array());
+		// Order the array with jackal first, then everything, followed by 'MY_*' files
+        foreach(array("jackal", "MY_", "") as $iteration) {
+            // Load each config
+            foreach($files as $i=>$file) {
+                // Order the array with jackal first, then everything, followed by 'MY_*' files
+                switch($iteration) {
+                case "jackal" : if(substr($file, 0, 6) == "jackal") break; else continue;
+                case "MY_"    : if(substr($file, 0, 3) != "MY_")    break; else continue;
+                case ""       : break;
+                }
+                
+                // Load php files one way and yaml files another
+                switch(strtolower(pathinfo($file, PATHINFO_EXTENSION))) {
+                case "php" : Jackal::_include($file)                       ; break;
+                case "yml" :
+                case "yaml": Jackal::putSettings(file_get_contents($file)) ; break;
+                }
+                
+                unset($files[$i]);
             }
         }
-
+		        
 		// Flaggers is bugging me
 		self::$_settings["jackal"]["flaggers"] = array_unique((array) self::$_settings["jackal"]["flaggers"]);
 	}
