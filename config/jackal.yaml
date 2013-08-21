@@ -139,6 +139,14 @@ jackal:
     # |__________________________________________________|
     trackback: true
 
+    #  _[ TimeZone ]____________________________________
+    # |                                                  |
+    # | Set to the desired timezone identifier. A list   |
+    # | of valid timezones can be located at             |
+    # | http://www.php.net/manual/en/timezones.php.      |
+    # |__________________________________________________|
+    timezone: America/Chicago
+
 #  _[ Database Connection ]__________________________
 # |                                                  |
 # | @param host string                               |
