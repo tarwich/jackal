@@ -1911,7 +1911,7 @@ END;
 		Jackal::_loadConfigs();
         // Set the timezone
         date_default_timezone_set(self::$_settings["jackal"]["timezone"]);
-		
+        
 		// Remove magic quotes
 		if (get_magic_quotes_gpc()) {
 			$gpc = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
