@@ -13,14 +13,14 @@ jackal:
     # |                                                  |
     # | A list of helpers to include by default          |
     # |__________________________________________________|
-    autoload-helpers: [error, template]
+    autoload-helpers: [ error, template ]
 
     #  _[ Autoload Libraries ]___________________________
     # |                                                  |
     # | A list of libraries to load automatically at the |
     # | beginning of the script                          |
     # |__________________________________________________|
-    autoload-libraries: [Jarkup]
+    autoload-libraries: [ Jarkup ]
 
     #  _[ Autoload Modules ]_____________________________
     # |                                                  |
