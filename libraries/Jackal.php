@@ -309,9 +309,6 @@ class Jackal {
 		}
 		//$URI["segments"] = (array) @array_intersect_key($URI, array_values($URI));
 
-		// Record the call
-		JackalTimes::mark($tag="call: $module/$action");
-
 		// Remember the current scope
 		self::$_scope[] = array($module, $action);
 		
@@ -354,9 +351,6 @@ class Jackal {
 		// Discard the current scope
 		array_pop(self::$_scope);
 
-		// Record the end of the call
-		JackalTimes::endMark(0, $tag);
-		
 		return $result;
 	}
 	
@@ -1034,21 +1028,22 @@ END;
 	 * Jackal::handleRequest("http://www.example.com/Foo/bar.php");
 	 * </code>
 	 * 
-	 * @param string $queryString The request string
+	 * @param string $queryString 	 The request string. This will default to $_SERVER["QUERY_STRING"] if not provided.
 	 * @param boolean $returnContent If this variable is true, then the content
-	 * 		will be returned instead of output to the browser. Defaults to 
-	 * 		false.
+	 * 								 will be returned instead of output to the browser. Defaults to 
+	 * 								 false.
 	 * 
 	 * @return mixed The result of call()
 	 */
-	public static function handleRequest($queryString, $returnContent=false) {
+	public static function handleRequest($queryString=null, $returnContent=false) {
+        // Default queryString to the one in the headers
+        if($queryString == null) $queryString = $_SERVER["QUERY_STRING"];
 		// Get the base URL of the currently running application
 		$baseURL = Jackal::siteURL("");
 		// Remove the URL portion of the request
 		$queryString = implode("", explode($baseURL, $queryString));
-		
+		// Start an additional output buffer for returning the content
 		if($returnContent) ob_start();
-		
 		// Remove leading slash if it's there
 		$queryString = ltrim($queryString, "/?");
 
@@ -1186,11 +1181,9 @@ END;
      * 
      * return void
      */
-    public static function load() {
+    public static function load($argv=null) {
         // TODO: Remove this if we're not using error-based-routing
 		header("HTTP/1.0 200 OK");
-		// Mark the time
-		JackalTimes::mark("core");
 		// Import settings
 		Jackal::$_settings = @$GLOBALS["jackal-settings"];
 		// Load the base config
@@ -1804,7 +1797,7 @@ END;
 	public static function setting($name=NULL, $default=false) {
 		// Break apart name into module/key components
 		$components = explode("/", $name);
-		
+        
 		// If there aren't enough components, then guess at the namespace
 		if(count($components) < 2) {
 			// Allow retreival of root nodes
@@ -1844,6 +1837,19 @@ END;
 		//		return $default;
 		return self::$_settings[$section][$key] = $default;
 	}
+    
+	/**
+     * Run shutdown code for Jackal and all loaded libraries / modules
+     * 
+     * This method basically just calls __shutdown() for all Jackal-loaded libraries. If in the future
+     * there is more shutdown code needed for Jackal, then this method will run that too.
+     */
+    public static function shutdown() {
+        // Call the shutdown functions
+		foreach(self::$_classes as $class) 
+			if(method_exists($class, "__shutdown")) 
+				self::call(get_class($class)."/__shutdown");
+    }
 
 	/**
 	 * Return the url in a form that Jackal prefers
@@ -1961,13 +1967,12 @@ END;
 	 * @return void
 	 */
 	private static function _start($argv) {
+        // Load Jackal
+        self::load($argv);
 		// Handle the request
 		self::handleRequest($_SERVER["QUERY_STRING"]);
-		
-		// Call the shutdown functions
-		foreach(self::$_classes as $class) 
-			if(method_exists($class, "__shutdown")) 
-				self::call(get_class($class)."/__shutdown");
+        // Handle shutdown
+        self::shutdown();
 	}
 
 	/**
@@ -2124,6 +2129,4 @@ END;
 		return Jackal::info("BASE_DIR")."/jackal/settings.php";
 	}
 }
-
-Jackal::start(@$argv);
 

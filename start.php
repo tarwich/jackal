@@ -7,4 +7,5 @@ error_reporting(E_ALL | E_NOTICE);
 
 include("libraries/Jackal.php");
 
-?>
+Jackal::start(@$argv);
+
