@@ -184,10 +184,8 @@ class JackalModule {
 		$moduleName = get_class($this);
 		// Reassemble the file from the URI
 		$file = @join("/", $segments);
-		
 		// LPK ~ Include the $URI in the resource
-		$action = create_function('$a,$URI', @self::$actions[$type].";");
-
+		$action = create_function('$a,$URI=null', @self::$actions[$type].";");
 		// Will be used for freshness
 		date_default_timezone_set("GMT");
 		
