@@ -1179,6 +1179,66 @@ END;
 		include_once(func_get_arg(0));
 	}
 	
+    /**
+     * Initialize Jackal and load necessary configs and libraries 
+     * 
+     * This method does not process the url. That is what handleRequest() or start() are for.
+     * 
+     * return void
+     */
+    public static function load() {
+        // TODO: Remove this if we're not using error-based-routing
+		header("HTTP/1.0 200 OK");
+		// Mark the time
+		JackalTimes::mark("core");
+		// Import settings
+		Jackal::$_settings = @$GLOBALS["jackal-settings"];
+		// Load the base config
+		Jackal::_loadConfigs();
+        // Set the timezone
+        date_default_timezone_set(self::$_settings["jackal"]["timezone"]);
+        
+		// Remove magic quotes
+		if (get_magic_quotes_gpc()) {
+			$gpc = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
+			array_walk_recursive($gpc, create_function('&$value, $key', '$value = stripslashes($value);'));
+		}
+
+		// Parse the QUERY_STRING
+		$_SERVER["QUERY_STRING"] = substr($_SERVER["REQUEST_URI"], strlen(dirname($_SERVER["SCRIPT_NAME"])));
+		// Rip INDEX out of the query string
+		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("index-url"), "", $_SERVER["QUERY_STRING"]);
+		// Rip SUFFIX out of the query string
+		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("suffix"), "", $_SERVER["QUERY_STRING"]);
+
+		// Pull flags out of URI
+		Jackal::flagCheck();
+
+		// Turn debugging on
+		self::_debuggingCheck();
+
+		// Turn on error logging
+		Jackal::_startLogging();
+		
+		// Load default helpers
+		$helpers = (array) Jackal::setting("autoload-helpers");
+		foreach($helpers as $helper) if($helper) Jackal::loadHelper($helper);
+
+		// Load default libraries
+		$libraries = Jackal::setting("autoload-libraries", array());
+		foreach($libraries as $library) if($library) Jackal::loadLibrary($library);
+		
+		// Load default modules
+		$modules = (array) Jackal::setting("autoload-modules");
+		foreach($modules as $module) if($module) Jackal::loadLibrary($module);
+
+		// Load debug helpers
+		if(Jackal::debugging()) {
+            $helpers = (array) Jackal::setting("debug-helpers", array());
+			foreach($helpers as $helper) if($helper) Jackal::loadHelper($helper);
+		}
+    }
+    
 	/**
 	 * Load all the config files for the application
 	 * 
@@ -1901,57 +1961,6 @@ END;
 	 * @return void
 	 */
 	private static function _start($argv) {
-        // TODO: Remove this if we're not using error-based-routing
-		header("HTTP/1.0 200 OK");
-		// Mark the time
-		JackalTimes::mark("core");
-		// Import settings
-		Jackal::$_settings = @$GLOBALS["jackal-settings"];
-		// Load the base config
-		Jackal::_loadConfigs();
-        // Set the timezone
-        date_default_timezone_set(self::$_settings["jackal"]["timezone"]);
-        
-		// Remove magic quotes
-		if (get_magic_quotes_gpc()) {
-			$gpc = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
-			array_walk_recursive($gpc, create_function('&$value, $key', '$value = stripslashes($value);'));
-		}
-
-		// Parse the QUERY_STRING
-		$_SERVER["QUERY_STRING"] = substr($_SERVER["REQUEST_URI"], strlen(dirname($_SERVER["SCRIPT_NAME"])));
-		// Rip INDEX out of the query string
-		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("index-url"), "", $_SERVER["QUERY_STRING"]);
-		// Rip SUFFIX out of the query string
-		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("suffix"), "", $_SERVER["QUERY_STRING"]);
-
-		// Pull flags out of URI
-		Jackal::flagCheck();
-
-		// Turn debugging on
-		self::_debuggingCheck();
-
-		// Turn on error logging
-		Jackal::_startLogging();
-		
-		// Load default helpers
-		$helpers = (array) Jackal::setting("autoload-helpers");
-		foreach($helpers as $helper) if($helper) Jackal::loadHelper($helper);
-
-		// Load default libraries
-		$libraries = Jackal::setting("autoload-libraries", array());
-		foreach($libraries as $library) if($library) Jackal::loadLibrary($library);
-		
-		// Load default modules
-		$modules = (array) Jackal::setting("autoload-modules");
-		foreach($modules as $module) if($module) Jackal::loadLibrary($module);
-
-		// Load debug helpers
-		if(Jackal::debugging()) {
-			$helpers = (array) Jackal::setting("debug-helpers", array());
-			foreach($helpers as $helper) if($helper) Jackal::loadHelper($helper);
-		}
-
 		// Handle the request
 		self::handleRequest($_SERVER["QUERY_STRING"]);
 		
