@@ -13,7 +13,6 @@ class Jarkup {
 	}
 	
 	public function __shutdown() {
-		
 		Jackal::loadHelper("lambda"); // For create_function2
 
 		// For certain content types we do not perform output translation, see if any of those are present
