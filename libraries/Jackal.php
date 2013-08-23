@@ -2002,7 +2002,7 @@ END;
 				// If we were successful in finding the parent folder
 				if($parentFolder) {
 					// Try to make the error folder inside the parent folder
-					mkdir("$parentFolder/" . basename($logPath));
+					@mkdir("$parentFolder/" . basename($logPath));
 					// Resolve the path of the log folder (again)
 					@list($logFile) = Jackal::files($logPath);
 				}
@@ -2036,8 +2036,10 @@ END;
 
 			// Make sure we're going to be able to write to the error log
 			if(!is_writable($logFile)) {
+                // TODO: Make Jackal error log problems show up in admin
+                return;
 				$whoami = get_current_user();
-
+                
 				// See if the location exists
 				if(file_exists($logFile)) {
 					$message = "Could not write to $logFile.  The file exists, but is not writable.  Either make the folder writable by $whoami, or make the 'error-log' setting an empty string.";
