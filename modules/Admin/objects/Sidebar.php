@@ -14,14 +14,14 @@ class Admin__Sidebar {
                 // Break apart the name of this section by '/'
                 list($a, $b) = explode('/', (string) @$section["name"]);
                 // Add this section to the results
-                $sections[$a][$b][] = $section;
+                $sections[trim($a)][trim($b)][] = $section;
             }
         }
 
         $html .= "<ul class='Admin-Sidebar'>";
         
         foreach($sections as $sectionName=>$section) {
-            $html .= "<li><b>$sectionName</b></li>";
+            $html .= "<li><b section='$sectionName'>$sectionName</b></li>";
         }
         
         $html .= "</ul>";

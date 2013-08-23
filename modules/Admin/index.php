@@ -8,12 +8,12 @@
  * @return void
  */
 
-// Get the modules that admin will show
-$modules = $this->getSections();
 // Load jQuery
 js("resources/jquery-1.10.2.min.js");
 // Load the admin.js
 js("admin.js");
+// Ensure url.js is available
+js("url.js");
 
 echo "
 	<Admin:Sidebar />
