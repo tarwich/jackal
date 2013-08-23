@@ -21,7 +21,7 @@
     // sidebarClick
     // --------------------------------------------------
     ns.sidebarClick = function(e) {
-	$content.load(url("Admin/section"), {
+	$content.load(url("Admin/section .Admin-section"), {
 	    section: $(e.target).attr("section")
 	});
     };

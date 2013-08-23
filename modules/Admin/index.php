@@ -16,5 +16,13 @@ js("admin.js");
 js("url.js");
 
 echo "
-	<Admin:Sidebar />
-	<Admin:Content />";
+	<table>
+		<tr>
+			<td>
+				<Admin:Sidebar />
+			</td>
+			<td>
+				<Admin:Content />
+			</td>
+		</tr>
+	</table>";

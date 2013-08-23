@@ -21,16 +21,19 @@ foreach((array) Jackal::setting("admin/modules") as $module) {
 }
 
 //print_r(compact("sections", "targetSection"));
+echo "<span class='Admin-section'>";
 
 // Go through the subsections of the target section
 foreach((array) @$sections[$targetSection] as $subsectionName=>$subsection) {
-    echo "<b>$subsectionName</b>";
+    echo "<h2>$subsectionName</h2>";
     echo "<p>";
     
-	// Go through all the things that are supposed to show up in this subsection
-    foreach((array) $subsection as $thingy) {
+	// Go through all the editors that are supposed to show up in this subsection
+    foreach((array) $subsection as $editor) {
+        Jackal::call($editor["callback"]);
     }
     
     echo "</p>";
 }
 
+echo "</span>";
