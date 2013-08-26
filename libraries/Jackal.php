@@ -1689,6 +1689,29 @@ END;
 	public static function query($variable) {
 		return print_r(self::$$variable, 1);
 	}
+	
+	/**
+	 * Performs a Jackal::call, but uses output buffering to return the result as text 
+	 * 
+	 * @param mixed $args... See Jackal::call
+	 * 
+	 * @return string
+	 *
+	 */
+	public static function returnCall() {
+		// Find out what arguments we were called with
+		$arguments = func_get_args();
+		// Start output buffering so that nothing goes to the browser
+		ob_start();
+		// Execute the call we're supposed to
+		call_user_func_array("Jackal::call", $arguments);
+		// Get the output buffer
+		$buffer = ob_get_contents();
+		// Erase the output buffer
+		ob_end_clean();
+		// Return the output buffer as a string
+		return $buffer;		
+	}
 
 	/**
 	 * Returns the current calling scope of Jackal

@@ -42,20 +42,7 @@ function attr($elements=array()) {
  * example, an email.
  *
  */
-function returnCall() {
-	// Find out what arguments we were called with
-	$arguments = func_get_args();
-	// Start output buffering so that nothing goes to the browser
-	ob_start();
-	// Execute the call we're supposed to
-	call_user_func_array("Jackal::call", $arguments);
-	// Get the output buffer
-	$buffer = ob_get_contents();
-	// Erase the output buffer
-	ob_end_clean();
-	// Return the output buffer as a string
-	return $buffer;
-}
+function returnCall() { return call_user_func_array("Jackal::returnCall", func_get_args()); }
 
 /**
  * This will go through URI and pull out all the items in availableParameters, 
