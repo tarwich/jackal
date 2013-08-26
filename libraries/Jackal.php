@@ -1185,7 +1185,7 @@ END;
         // TODO: Remove this if we're not using error-based-routing
 		header("HTTP/1.0 200 OK");
 		// Import settings
-		Jackal::$_settings = @$GLOBALS["jackal-settings"];
+		Jackal::$_settings = (array) @$GLOBALS["jackal-settings"];
 		// Load the base config
 		Jackal::_loadConfigs();
         // Set the timezone
@@ -1623,9 +1623,7 @@ END;
 			// Array of settings
 			//
 			case array(1, "array"):
-				self::$_settings = self::merge_arrays(self::$_settings, $args[0]);
-				return;
-				break;
+				return self::$_settings = array_merge_recursive(self::$_settings, $args[0]);
 		}
 		
 		// Merge new settings into existing settings
@@ -2021,11 +2019,11 @@ END;
 			if(!$logFile) {
 				// If we're here, then $logPath wasn't found, so look for its parent (grab the first item)
 				$parentFolder = @reset(Jackal::files(dirname($logPath)));
-
+                
 				// If we were successful in finding the parent folder
 				if($parentFolder) {
 					// Try to make the error folder inside the parent folder
-					@mkdir("$parentFolder/" . basename($logPath));
+                    @mkdir("$parentFolder/" . basename($logPath));
 					// Resolve the path of the log folder (again)
 					@list($logFile) = Jackal::files($logPath);
 				}
