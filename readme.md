@@ -45,4 +45,8 @@ Jackal does this:
 $results = glob("/foo/class*.php");
 ````
 
+TODO:
+--------------------------------------------------
+Add information about how to add Jackal as a submodule to other git repositories.
+
 <!-- vim: set ft=Markdown : -->
