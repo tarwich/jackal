@@ -19,10 +19,10 @@ echo "
 	<table>
 		<tr>
 			<td>
-				<Admin:Sidebar />
+				".Jackal::returnCall("Admin/sidebar")."
 			</td>
-			<td>
-				<Admin:Content />
+			<td class='Admin-content'>
+				".Jackal::returnCall("Admin/section")."
 			</td>
 		</tr>
 	</table>";

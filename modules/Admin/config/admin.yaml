@@ -1,10 +1,9 @@
 admin:
-  modules:
-    system:
-      - 
-        # Currently I'm providing all values to serve as a source of documentation for possible values
-        name      : System / Localization
-        callback  : Admin/systemAdmin/localization
-        self-test : Admin/noop
-        visibility: admin
+    modules:
+            system:
+                - 
+                    name      : System / Localization
+                    callback  : Admin/systemAdmin/localization
+                    self-test : Admin/noop
+                    visibility: admin
         
