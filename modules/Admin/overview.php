@@ -23,9 +23,13 @@ echo "
 
 // Output each section
 foreach($sections as $sectionName=>$modules) {
+    // Trim whitespace from sectionName
+    $sectionName = trim($sectionName);
+    // Store the URL in a variable to make the output cleaner
+    $url = Jackal::siteURL("Admin/section/$sectionName");
 	// Actually output the section item
 	echo "
-		<span class='Admin-overview-item'>$sectionName<i></i></span>";
+		<span class='Admin-overview-item'><a href='$url/ .Admin-section' \$='.Admin-content'>$sectionName</a><i></i></span>";
 }
 
 echo "
