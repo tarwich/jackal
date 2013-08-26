@@ -11,8 +11,6 @@
     ns.initialize = function() {
 	// Find the DOM node that wraps the	 NS
 		$ns = $("body");
-		// Listen to clicks in the sidebar
-		$sidebar = $ns.find(".Admin-sidebar").click(ns.sidebarClick);
 		// Find the content section
 		$content = $ns.find(".Admin-content");
 		// Add a trap for when the page is loaded
@@ -31,7 +29,7 @@
 	// --------------------------------------------------
 	ns.navigate = function(e) {
 		// Get the hyperlink
-		var $target = $(e.target).closest("[\\$]");
+		var $target = $(e.target);
 		
 		// Find the selector destination
 		$( $target.attr("$") )
@@ -43,19 +41,6 @@
 		// Don't allow the browser to handle this event
 		return !$.Event(e).preventDefault();
 	};
-    
-    // --------------------------------------------------
-    // sidebarClick
-    // --------------------------------------------------
-    ns.sidebarClick = function(e) {
-		// Get the section to which this click belongs
-		var $section = $(e.target).closest("[section]");
-		
-		// Load the section into the content area
-		$content.load(url("Admin/section .Admin-section"), {
-	    	section: $section.attr("section")
-		});
-    };
-    
+        
     $(ns.initialize);
 })("Admin", jQuery);
