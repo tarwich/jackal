@@ -21,6 +21,7 @@
 	// ajaxComplete
 	// --------------------------------------------------
 	ns.ajaxComplete = function() {
+		// Hijack clicking on links
 		$("a[\\$]").unbind("click", ns.navigate).bind("click", ns.navigate);
 	};
 	
