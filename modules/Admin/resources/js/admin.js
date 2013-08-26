@@ -14,13 +14,14 @@
 		// Find the content section
 		$content = $ns.find(".Admin-content");
 		// Add a trap for when the page is loaded
-		$("body").ajaxComplete(ns.ajaxComplete).trigger("ajaxComplete");
+		$(document).ajaxComplete(ns.ajaxComplete).trigger("ajaxComplete");
     };
 
 	// --------------------------------------------------
 	// ajaxComplete
 	// --------------------------------------------------
 	ns.ajaxComplete = function() {
+		console.log("A");
 		// Hijack clicking on links
 		$("a[\\$]").unbind("click", ns.navigate).bind("click", ns.navigate);
 	};
