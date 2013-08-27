@@ -14,4 +14,4 @@ if($selfTest) {
         </p>";
 }
 else
-    echo "<p>Error: No test provided</p>";
+    echo "<p>Error:s No test provided</p>";
