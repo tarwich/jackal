@@ -1,5 +1,10 @@
 <?php
 
-echo "<p>This is a test</p>";
-echo "<p>This is another test</p>";
-echo "<p>Test has completed successfully</p>";
+return array(
+	"WARNING" => array(
+		"This is a test",
+		"This is another test",
+	),
+	"ERROR"   => array("This is another test"),
+	"OK"      => array("Test has completed successfully"),
+);
