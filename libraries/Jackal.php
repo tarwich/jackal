@@ -1643,10 +1643,6 @@ END;
 		while($array = next($arguments)) {
 			// Go through all the items in this array
 			while(@list($name, $value) = each($array)) {
-				if($name === "modules") {
-					echo "[$name]";
-					echo "<pre>".print_r($value,1)."</pre>";
-				}
 				// if(is_int($name)) {
 				if(is_numeric($name)) {
 					// Numeric indices are appended with new indexes  
