@@ -14,7 +14,7 @@ foreach($sections as $sectionName=>$ignore) {
 	$url = Jackal::siteURL("Admin/section/$sectionName");
 	// Output the section item
 	echo "
-		<li><a href='$url/ .Admin-section' \$='.Admin-content'>$sectionName</a></li>";
+		<li admin-section='$sectionName'><a href='$url/ .Admin-section' \$='.Admin-content'>$sectionName<i class='test-result'></i></a></li>";
 }
 
 echo "
