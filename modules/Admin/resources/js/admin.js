@@ -54,34 +54,14 @@
 	// --------------------------------------------------
     ns.runTest = function(ignore, e) {
         // Start running self-tests if any are on the page
-        $("p.test:not([testing])").each(function(i, e) {
-            // Cache the test name
-            $testName = $(e).text();
-            $(e)
-                // Modify the content to show that we're running the test
-                .text($(e).text() + "[IN PROGRESS]")
-                // Add a testing attribute so we don't re-test later
-                .attr("testing", true);
-            // Run the test
-            $("span.test-messages").load( $(e).attr("testURL") , function() {
-                // Replace "IN PROGRESS" with "DONE"
-                $text = $(e).text($testName + " [DONE]");
-                // Find or create a "Completed Tests" section in the sidebar
-                if( !$("ul.completed-tests").length ) {
-                    // Find the admin-sidebar <ul> element
-                    $("ul.Admin-sidebar")
-                        // Append a new item for completed tests
-                        .append("<li>Test Results</li>")
-                        // Add a new <ul> to hold the the list of tests
-                        .append("<ul class='test-results'></ul>");
-                }
-
-                $("ul.test-results")
-                    // Append a new <li> with the name of the test
-                    .append("<li><p>" + $testName + "</p><i> [DONE]</i></li>")
-                ;
-
-            });
+        $("[admin-test]:not(.ran)").addClass("ran").each(function() {
+			// Cache wrapped element for speed
+			var $this = $(this);
+			
+			// Run the test
+			$this.text("...").load(url("Admin/tester"), {
+				test: $this.attr("admin-test")
+			});
         });
     }
 
