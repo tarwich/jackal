@@ -29,8 +29,29 @@ foreach($sections as $sectionName=>$modules) {
     $url = Jackal::siteURL("Admin/section/$sectionName");
 	// Actually output the section item
 	echo "
-		<span class='Admin-overview-item'><a href='$url/ .Admin-section' \$='.Admin-content'>$sectionName</a><i></i></span>";
+		<span class='Admin-overview-item'><a href='$url/ .Admin-section' \$='.Admin-content'>$sectionName</a><i></i>
+		    <span class='test-list'>
+		        <b>Tests</b>";
+
+    // Loop through the modules to find all of the self-tests
+    foreach($modules as $module) {
+        // Get the name of the test
+        $testName = $module['self-test'];
+        // Replace all '/'s with '.'s
+        $testName = str_replace("/", ".", $testName);
+        // Create a URL to the test
+        $url = Jackal::siteURL("Admin/tester/$testName");
+        // Re-set the testName so it will display in the html correctly
+        $testName = $module['self-test'];
+        echo "
+                <p class='test' testURL='$url'>$testName</p>";
+    }
+
+    echo "
+            </span>
+            <span class='test-messages'></span>
+        </span>";
 }
 
 echo "
-	</span>";
+    </span>";

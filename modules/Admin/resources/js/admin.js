@@ -38,8 +38,8 @@
 		$( $target.attr("$") )
 			// Set the content to show we're loading something
 			.text("...")
-            // Load the something, on success we need to run self-tests
-			.load( $target.attr("url") || $target.attr("href") , ns.runTest)
+            // Load the something
+			.load( $target.attr("url") || $target.attr("href"))
 		;
 
         // Now that the page has loaded, we need to run any outstanding tests
@@ -59,7 +59,7 @@
                 // Add a testing attribute so we don't re-test later
                 .attr("testing", true);
             // Run the test
-            $("span.self-test-errors").load( $(e).attr("testURL") , function() {
+            $("span.test-messages").load( $(e).attr("testURL") , function() {
                 // Get the text of the test
                 $text = $(e).text();
                 // Replace "IN PROGRESS" with "DONE"
@@ -109,4 +109,7 @@
 	};
         
     $(ns.initialize);
+
+    // Start processing the self-tests listed on the page
+    $(ns.runTest);
 })("Admin", jQuery);

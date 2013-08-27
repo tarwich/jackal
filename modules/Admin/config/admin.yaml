@@ -4,5 +4,5 @@ admin:
                 - 
                     name      : System / Localization
                     callback  : Admin/systemAdmin/localization
-                    self-test : Admin/noop
+                    self-test : Admin/test
                     visibility: admin

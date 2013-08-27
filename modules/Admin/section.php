@@ -32,28 +32,7 @@ else {
 	
     echo "
 			<button type='submit'>Save</button>
-		</form>
-        <span class='self-test'>
-            <h3>SELF-TEST</h3>";
-
-    // Go through the subsections of the target section
-    foreach((array) @$sections[$targetSection] as $subsectionName=>$subsection) {
-        // List the self-test
-        foreach((array) $subsection as $editor) {
-            // cache the name of the self-test
-            $testName = $editor['self-test'];
-            // Replace the '/' chars with '.'s so that jackal will treat this as one parameter
-            $selfTest = str_replace("/", ".", $testName);
-            // Create a url to the test that will need run
-            $url = Jackal::siteURL("Admin/test/$selfTest");
-            echo "
-                <p class='test' testURL='$url'>$testName</p>";
-        }
-    }
-
-    echo "
-        </span>
-        <span class='self-test-errors'></span>";
+		</form>";
 }
 
 echo "
