@@ -25,7 +25,7 @@
 		$("a[\\$]").unbind("click", ns.navigate).bind("click", ns.navigate);
 		// Hijack submitting forms
 		$("form[\\$]").unbind("submit", ns.submitForm).bind("submit", ns.submitForm);
-	};
+    };
 	
 	// --------------------------------------------------
 	// navigate
@@ -38,13 +38,37 @@
 		$( $target.attr("$") )
 			// Set the content to show we're loading something
 			.text("...")
-			// Load the something
-			.load( $target.attr("url") || $target.attr("href") )
+            // Load the something, on success we need to run self-tests
+			.load( $target.attr("url") || $target.attr("href") , ns.runTest)
 		;
+
+        // Now that the page has loaded, we need to run any outstanding tests
 		// Don't allow the browser to handle this event
 		return !$.Event(e).preventDefault();
 	};
-	
+
+	// --------------------------------------------------
+	// runTest
+	// --------------------------------------------------
+    ns.runTest = function(ignore, e) {
+        // Start running self-tests if any are on the page
+        $("p.test:not([testing])").each(function(i, e) {
+            var url = $(e).attr("testURL");
+            console.log(url);
+            $(e)
+                // Modify the content to show that we're running the test
+                .text( $(e).text() + " [IN PROGRESS]" )
+                // Add a testing attribute so we don't re-test later
+                .attr("testing", true)
+                // Run the test
+                .load( $(e).attr("testURL") , function(a, b, c) {
+                    console.log(a);
+                    console.log(b);
+                    console.log(c);
+                });
+        });
+    }
+
 	// --------------------------------------------------
 	// submitForm
 	// --------------------------------------------------
