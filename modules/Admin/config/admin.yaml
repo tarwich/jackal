@@ -6,4 +6,3 @@ admin:
                     callback  : Admin/systemAdmin/localization
                     self-test : Admin/noop
                     visibility: admin
-        

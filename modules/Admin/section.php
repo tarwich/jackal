@@ -11,24 +11,13 @@ if(!$targetSection) Jackal::call("Admin/overview");
 
 else {
 	// Initialize a sections array to hold all the sections that we find
-	$sections = array();
+	$sections = $this->_getSections();
 	// Setup the url to save the for to
 	$action = Jackal::siteURL("Admin/save/$targetSection");
-	
+
     echo "
-		<form \$='.Admin-section' method='post' action='$action'>";
-
-	// Go through all the modules and map them to sections
-	foreach((array) Jackal::setting("admin/modules") as $module) {
-	    // Go through all the sections related to this module
-	    foreach($module as $section) {
-	        // Break apart the name into section and subsection
-	        list($a, $b) = explode("/", (string) @$section["name"]);
-	    }
-
-		// Add this section to the sections map
-	    $sections[trim($a)][trim($b)][] = $section;
-	}
+		<form \$='.Admin-section' method='post' action='$action'>
+		<h1>$targetSection</h1>";
 
 	// Go through the subsections of the target section
 	foreach((array) @$sections[$targetSection] as $subsectionName=>$subsection) {

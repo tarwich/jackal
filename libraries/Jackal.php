@@ -1637,13 +1637,12 @@ END;
 		// Copy the arguments into a new array so that we can easier operate on them
 		$arguments = func_get_args();
 		// Prepare the result array in order to prevent any errors
-		$result = $arguments[0];
+		$result = reset($arguments);
 		
 		// Go through all the arguments
 		while($array = next($arguments)) {
 			// Go through all the items in this array
-			while(@list($name, $value) = each($array)) {
-				// if(is_int($name)) {
+			for(reset($array); list($name, $value) = each($array);) {
 				if(is_numeric($name)) {
 					// Numeric indices are appended with new indexes  
 					$result[] = $value;
