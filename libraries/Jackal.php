@@ -1189,7 +1189,7 @@ END;
 		// Load the base config
 		Jackal::_loadConfigs();
         // Set the timezone
-        date_default_timezone_set(self::$_settings["jackal"]["timezone"]);
+        @date_default_timezone_set(self::$_settings["jackal"]["timezone"]);
         
 		// Remove magic quotes
 		if (get_magic_quotes_gpc()) {
