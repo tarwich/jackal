@@ -6,4 +6,9 @@ admin:
                     callback  : Admin/systemAdmin/localization
                     self-test : Admin/noop
                     visibility: admin
+                - 
+                    name      : Foo / Bar
+                    callback  : Admin/systemAdmin/localization
+                    self-test : Admin/noop
+                    visibility: admin
         

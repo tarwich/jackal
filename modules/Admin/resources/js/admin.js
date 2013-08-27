@@ -23,6 +23,8 @@
 	ns.ajaxComplete = function() {
 		// Hijack clicking on links
 		$("a[\\$]").unbind("click", ns.navigate).bind("click", ns.navigate);
+		// Hijack submitting forms
+		$("form[\\$]").unbind("submit", ns.submitForm).bind("submit", ns.submitForm);
 	};
 	
 	// --------------------------------------------------
@@ -40,6 +42,29 @@
 			.load( $target.attr("url") || $target.attr("href") )
 		;
 		// Don't allow the browser to handle this event
+		return !$.Event(e).preventDefault();
+	};
+	
+	// --------------------------------------------------
+	// submitForm
+	// --------------------------------------------------
+	ns.submitForm = function(e) {
+		// Get the form
+		var $form = $(e.target);
+		
+		var post = {};
+		
+		$form.find(":input").each(function(i, node) {
+			// Cache wrapped object
+			var $node = $(node);
+			// Add this element to the post object
+			post[$(node).attr("name")] = $node.is(":checkbox") 
+				? ($node.is(":checked") ? $node.val() : false)
+				: $node.val();
+		});
+		
+		$( $form.attr("$") ).text("...").load($form.attr("action"), post);
+		
 		return !$.Event(e).preventDefault();
 	};
         

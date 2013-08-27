@@ -6,6 +6,8 @@
 
 # Jackal tries to write errors to this file
 error.log
+# Settings saved by the admin system
+admin_.yaml
 
 # --------------------------------------------------
 #

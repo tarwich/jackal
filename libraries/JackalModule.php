@@ -268,5 +268,3 @@ class JackalModule {
 		echo "404";
 	}
 }
-
-?>

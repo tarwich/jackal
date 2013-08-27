@@ -1623,7 +1623,7 @@ END;
 			// Array of settings
 			//
 			case array(1, "array"):
-				return self::$_settings = array_merge_recursive(self::$_settings, $args[0]);
+				return self::$_settings = self::merge_arrays(self::$_settings, $args[0]);
 		}
 		
 		// Merge new settings into existing settings
@@ -1643,8 +1643,12 @@ END;
 		while($array = next($arguments)) {
 			// Go through all the items in this array
 			while(@list($name, $value) = each($array)) {
-//				if(is_int($name)) {
-				if( strspn($name, "0123456789", -1)==strlen($name) ) {
+				if($name === "modules") {
+					echo "[$name]";
+					echo "<pre>".print_r($value,1)."</pre>";
+				}
+				// if(is_int($name)) {
+				if(is_numeric($name)) {
 					// Numeric indices are appended with new indexes  
 					$result[] = $value;
 				} elseif(is_array($value)) {

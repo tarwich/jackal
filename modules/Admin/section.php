@@ -12,6 +12,11 @@ if(!$targetSection) Jackal::call("Admin/overview");
 else {
 	// Initialize a sections array to hold all the sections that we find
 	$sections = array();
+	// Setup the url to save the for to
+	$action = Jackal::siteURL("Admin/save/$targetSection");
+	
+    echo "
+		<form \$='.Admin-section' method='post' action='$action'>";
 
 	// Go through all the modules and map them to sections
 	foreach((array) Jackal::setting("admin/modules") as $module) {
@@ -28,18 +33,17 @@ else {
 	// Go through the subsections of the target section
 	foreach((array) @$sections[$targetSection] as $subsectionName=>$subsection) {
 	    echo "
-		<h2>$subsectionName</h2>";
-	    echo "
-		<p>";
-
+			<h2>$subsectionName</h2>";
+		
 		// Go through all the editors that are supposed to show up in this subsection
 	    foreach((array) $subsection as $editor) {
 	        Jackal::call($editor["callback"]);
 	    }
-
-	    echo "
-		</p>";
 	}	
+	
+    echo "
+			<button type='submit'>Save</button>
+		</form>";
 }
 
 echo "
