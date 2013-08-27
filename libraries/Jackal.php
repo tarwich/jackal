@@ -621,6 +621,37 @@ END;
 			Jackal::error(404, get_class($object) . " does not know how to $methodName", "The page you requested could not be found.", true);
 		}
 	}
+	
+	/**
+	 * Expand a path, replacing &lt;FOO&gt; items with their values
+	 * 
+	 * This method looks for things like &lt;JACKAL&gt; and replaces them with their actual values.
+	 * 
+	 * @example Options:
+	 * <code language='yaml'>
+	 * ROOT  : The path to the site root
+	 * JACKAL: The path to the /jackal/ folder
+	 * LOCAL : The path to the /private/ folder
+	 * </code>
+	 * 
+	 * @param string $path The path to expand
+	 * 
+	 * @return string
+	 */
+	public static function expandPath($searchPath, $additionalReplaceables=array()) {
+		// Setup replaceables
+		$replaceables = $additionalReplaceables + array(
+			"JACKAL" => Jackal::setting("jackal-dir", self::$DEFAULT_JACKAL_DIR),
+			"LOCAL"  => Jackal::setting("local-dir", self::$DEFAULT_LOCAL_DIR),
+			"ROOT"	 => Jackal::info("BASE_DIR"),
+			"MY" 	 => Jackal::setting("custom-prefix", self::$DEFAULT_CUSTOM_PREFIX),
+		0);
+
+		// Prevent the folder/ error
+		$searchPath = rtrim($searchPath, "/\\");
+		// Build the glob
+		return @preg_replace('/<([\w\-]+)>/e', '$replaceables["$1"]', $searchPath);		
+	}
 
 	/**
 	 * Find the files in the path specified
@@ -664,19 +695,8 @@ END;
 	 * @return array Array of files found
 	 */
 	public static function files($searchPath, $additionalReplaceables=array(), $d=false) {
-		// Setup replaceables
-		$replaceables = $additionalReplaceables + array(
-			"JACKAL" => Jackal::setting("jackal-dir", self::$DEFAULT_JACKAL_DIR),
-			"LOCAL"  => Jackal::setting("local-dir", self::$DEFAULT_LOCAL_DIR),
-			"ROOT"	 => Jackal::info("BASE_DIR"),
-			"MY" 	 => Jackal::setting("custom-prefix", self::$DEFAULT_CUSTOM_PREFIX),
-		0);
-
-		// Prevent the folder/ error
-		$searchPath = rtrim($searchPath, "/\\");
-		// Build the glob
-		$glob = @preg_replace('/<([\w\-]+)>/e', '$replaceables["$1"]', $searchPath);
-
+		// Expand the path items like <ROOT> and <JACKAL>
+		$glob = self::expandPath($searchPath, $additionalReplaceables);
 		// Debugging
 		($d) && (print($glob));
 
