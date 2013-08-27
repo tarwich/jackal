@@ -54,7 +54,7 @@
 	// --------------------------------------------------
 	ns.runTest = function(ignore, e) {
 		// Start running self-tests if any are on the page
-		$("[admin-section]:not(.ran)").addClass("ran").each(function() {
+		$(".admin-test:not(.ran)").addClass("ran").each(function() {
 			// Cache wrapped element for speed
 			var $this = $(this);
 			
