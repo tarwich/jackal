@@ -60,26 +60,7 @@
 			// Run the test
 			$this.text("...").load(url("Admin/tester"), {
 				test: $this.attr("admin-test")
-			}, function() {
-                // Cache the test results object for speed
-                $result = $(".result");
-                // Get the name of the section the test was for
-                $section = $result.parent().attr("admin-test");
-                // Update the sidebar with the count
-                $(".admin-sidebar a").each(function(i, node) {
-                    // Cache node for speed
-                    $node = $(node);
-                    // See if this is the section that needs to be updated
-                    if($node.text().indexOf($section) >= 0) {
-                        // Get the child span that will hold the test results
-                        $sidebarResult = $node.find("span.sidebar-result");
-                        // If we found a span, then update it
-                        if($sidebarResult.length) $sidebarResult.text($result.text());
-                        // Otherwise, create the span and insert the results
-                        else $node.append("<span class='sidebar-result'> " + $result.text() + "</span>");
-                    }
-                });
-            });
+			}, ns.updateSidebarResult);
         });
     }
 
@@ -105,6 +86,30 @@
 		
 		return !$.Event(e).preventDefault();
 	};
+
+    // --------------------------------------------------
+    // submitForm
+    // --------------------------------------------------
+    ns.updateSidebarResult = function() {
+        // Cache the test results object for speed
+        $result = $(".result");
+        // Get the name of the section the test was for
+        $section = $result.parent().attr("admin-test");
+        // Update the sidebar with the count
+        $(".admin-sidebar a").each(function(i, node) {
+            // Cache node for speed
+            $node = $(node);
+            // See if this is the section that needs to be updated
+            if($node.text().indexOf($section) >= 0) {
+                // Get the child span that will hold the test results
+                $sidebarResult = $node.find("span.sidebar-result");
+                // If we found a span, then update it
+                if($sidebarResult.length) $sidebarResult.text(" " + $result.text());
+                // Otherwise, create the span and insert the results
+                else $node.append("<span class='sidebar-result'> " + $result.text() + "</span>");
+            }
+        });
+    }
 
     $(ns.initialize);
 })("Admin", jQuery);
