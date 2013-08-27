@@ -1,3 +1,4 @@
 <?php
 
-echo "<p>DUMMY. NOOP means no operation. No tests for this module</p>";
+echo "<p>Dummy. Noop isn't a test</p>";
+echo "<p>You better get some actual self-tests written asap</p>";

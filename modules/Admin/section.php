@@ -41,16 +41,19 @@ else {
         // List the self-test
         foreach((array) $subsection as $editor) {
             // cache the name of the self-test
-            $selfTest = $editor['self-test'];
+            $testName = $editor['self-test'];
+            // Replace the '/' chars with '.'s so that jackal will treat this as one parameter
+            $selfTest = str_replace("/", ".", $testName);
             // Create a url to the test that will need run
-            $url = Jackal::siteURL($selfTest);
+            $url = Jackal::siteURL("Admin/test/$selfTest");
             echo "
-                <p class='test' testURL='$url'>$selfTest</p>";
+                <p class='test' testURL='$url'>$testName</p>";
         }
     }
 
     echo "
-        </span>";
+        </span>
+        <span class='self-test-errors'></span>";
 }
 
 echo "

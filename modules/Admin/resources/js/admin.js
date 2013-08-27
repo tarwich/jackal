@@ -53,19 +53,21 @@
     ns.runTest = function(ignore, e) {
         // Start running self-tests if any are on the page
         $("p.test:not([testing])").each(function(i, e) {
-            var url = $(e).attr("testURL");
-            console.log(url);
             $(e)
                 // Modify the content to show that we're running the test
                 .text( $(e).text() + " [IN PROGRESS]" )
                 // Add a testing attribute so we don't re-test later
-                .attr("testing", true)
-                // Run the test
-                .load( $(e).attr("testURL") , function(a, b, c) {
-                    console.log(a);
-                    console.log(b);
-                    console.log(c);
-                });
+                .attr("testing", true);
+            // Run the test
+            $("span.self-test-errors").load( $(e).attr("testURL") , function() {
+                // Get the text of the test
+                $text = $(e).text();
+                // Replace "IN PROGRESS" with "DONE"
+                $text = $text.replace("IN PROGRESS","DONE");
+                // Update the html
+                $(e).text($text);
+
+            });
         });
     }
 
