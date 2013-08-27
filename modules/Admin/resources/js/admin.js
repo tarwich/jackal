@@ -66,6 +66,20 @@
                 $text = $text.replace("IN PROGRESS","DONE");
                 // Update the html
                 $(e).text($text);
+                // Find or create a "Completed Tests" section in the sidebar
+                if( !$("ul.completed-tests").length ) {
+                    // Find the admin-sidebar <ul> element
+                    $("ul.Admin-sidebar")
+                        // Append a new item for completed tests
+                        .append("<li>Test Results</li>")
+                        // Add a new <ul> to hold the the list of tests
+                        .append("<ul class='test-results'></ul>");
+                }
+
+                $("ul.test-results")
+                    // Append a new <li> with the name of the test
+                    .append("<li>" + $(e).text() + "</li>")
+                ;
 
             });
         });
