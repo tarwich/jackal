@@ -25,8 +25,8 @@
 		$("a[\\$]").unbind("click", ns.navigate).bind("click", ns.navigate);
 		// Hijack submitting forms
 		$("form[\\$]").unbind("submit", ns.submitForm).bind("submit", ns.submitForm);
-        // Make sure we don't duplicate any tests
-        $(ns.updateTests)
+        // Run any tests available on the page
+        $(ns.runTest)
     };
 	
 	// --------------------------------------------------
@@ -57,11 +57,29 @@
         $("[admin-test]:not(.ran)").addClass("ran").each(function() {
 			// Cache wrapped element for speed
 			var $this = $(this);
-			
 			// Run the test
 			$this.text("...").load(url("Admin/tester"), {
 				test: $this.attr("admin-test")
-			});
+			}, function() {
+                // Cache the test results object for speed
+                $result = $(".result");
+                // Get the name of the section the test was for
+                $section = $result.parent().attr("admin-test");
+                // Update the sidebar with the count
+                $(".admin-sidebar a").each(function(i, node) {
+                    // Cache node for speed
+                    $node = $(node);
+                    // See if this is the section that needs to be updated
+                    if($node.text().indexOf($section) >= 0) {
+                        // Get the child span that will hold the test results
+                        $sidebarResult = $node.find("span.sidebar-result");
+                        // If we found a span, then update it
+                        if($sidebarResult.length) $sidebarResult.text($result.text());
+                        // Otherwise, create the span and insert the results
+                        else $node.append("<span class='sidebar-result'> " + $result.text() + "</span>");
+                    }
+                });
+            });
         });
     }
 
@@ -87,30 +105,6 @@
 		
 		return !$.Event(e).preventDefault();
 	};
-        
-	// --------------------------------------------------
-	// updateTests
-	// --------------------------------------------------
-	ns.updateTests = function() {
-        // Get all of the tests that show up in the sidebar
-        $("ul.test-results li p").each(function(i, e) {
-            // Cache the text
-            $completedTest = $(e).text();
-            // Find the tests that have already been run and mark them as such
-            $("span.test-list p:not([testing])").each(function(i, f) {
-                // If the test already exists in the sidebar, then
-                if ($(f).text().indexOf($completedTest) >= 0) {
-                    // Update the text to show that it has already been run
-                    $(f).text($(f).text() + " [DONE]")
-                    // Add the class to the p tag indicating that its' been run
-                    $(f).attr("testing", true);
-                }
-            });
-        })
-	};
 
     $(ns.initialize);
-
-    // Start processing the self-tests listed on the page
-    $(ns.runTest);
 })("Admin", jQuery);
