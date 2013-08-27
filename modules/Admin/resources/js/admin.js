@@ -25,6 +25,8 @@
 		$("a[\\$]").unbind("click", ns.navigate).bind("click", ns.navigate);
 		// Hijack submitting forms
 		$("form[\\$]").unbind("submit", ns.submitForm).bind("submit", ns.submitForm);
+        // Make sure we don't duplicate any tests
+        $(ns.updateTests)
     };
 	
 	// --------------------------------------------------
@@ -53,19 +55,17 @@
     ns.runTest = function(ignore, e) {
         // Start running self-tests if any are on the page
         $("p.test:not([testing])").each(function(i, e) {
+            // Cache the test name
+            $testName = $(e).text();
             $(e)
                 // Modify the content to show that we're running the test
-                .text( $(e).text() + " [IN PROGRESS]" )
+                .text($(e).text() + "[IN PROGRESS]")
                 // Add a testing attribute so we don't re-test later
                 .attr("testing", true);
             // Run the test
             $("span.test-messages").load( $(e).attr("testURL") , function() {
-                // Get the text of the test
-                $text = $(e).text();
                 // Replace "IN PROGRESS" with "DONE"
-                $text = $text.replace("IN PROGRESS","DONE");
-                // Update the html
-                $(e).text($text);
+                $text = $(e).text($testName + " [DONE]");
                 // Find or create a "Completed Tests" section in the sidebar
                 if( !$("ul.completed-tests").length ) {
                     // Find the admin-sidebar <ul> element
@@ -78,7 +78,7 @@
 
                 $("ul.test-results")
                     // Append a new <li> with the name of the test
-                    .append("<li>" + $(e).text() + "</li>")
+                    .append("<li><p>" + $testName + "</p><i> [DONE]</i></li>")
                 ;
 
             });
@@ -108,6 +108,27 @@
 		return !$.Event(e).preventDefault();
 	};
         
+	// --------------------------------------------------
+	// updateTests
+	// --------------------------------------------------
+	ns.updateTests = function() {
+        // Get all of the tests that show up in the sidebar
+        $("ul.test-results li p").each(function(i, e) {
+            // Cache the text
+            $completedTest = $(e).text();
+            // Find the tests that have already been run and mark them as such
+            $("span.test-list p:not([testing])").each(function(i, f) {
+                // If the test already exists in the sidebar, then
+                if ($(f).text().indexOf($completedTest) >= 0) {
+                    // Update the text to show that it has already been run
+                    $(f).text($(f).text() + " [DONE]")
+                    // Add the class to the p tag indicating that its' been run
+                    $(f).attr("testing", true);
+                }
+            });
+        })
+	};
+
     $(ns.initialize);
 
     // Start processing the self-tests listed on the page
