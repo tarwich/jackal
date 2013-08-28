@@ -1,19 +1,6 @@
 <?php
 
 //  ________________________________________________
-// / Timezone                                       \
-
-// Get the timezone setting
-$timezone = Jackal::setting("jackal/timezone");
-// Try to set the timezone
-if(@date_default_timezone_set($timezone)) $timezoneStatus = array("class" => "ok", "status" => "OK", "message" => "");
-// Invalid timezone
-else $timezoneStatus = array("class" => "error", "status" => "ERROR", "message" => "Timezone \"$timezone\" is invalid");
-
-// \________________________________________________/
-
-
-//  ________________________________________________
 // / Error Log                                      \
 
 // Get the error log setting from Jackal
@@ -49,10 +36,43 @@ $errorStatus = array(
 
 // \________________________________________________/
 
+
 // Test Errors/Messages
 $messages = Jackal::returnCall("Admin/tester/", array("test" => "System", "destination" => "section"));
+
+//  ________________________________________________
+// / Timezone                                       \
+
+// Get the timezone setting
+$timezone = Jackal::setting("jackal/timezone");
+// Try to set the timezone
+if(@date_default_timezone_set($timezone)) $timezoneStatus = array("class" => "ok", "status" => "OK", "message" => "");
+// Invalid timezone
+else $timezoneStatus = array("class" => "error", "status" => "ERROR", "message" => "Timezone \"$timezone\" is invalid");
+
+// \________________________________________________/
+
+//  ________________________________________________
+// / System User                                    \
+
+$systemUser = Jackal::setting("jackal/system/user");
+$systemPassword = Jackal::setting("jackal/system/password");
+$systemStars = str_repeat("*", strlen($systemPassword));
+
+// \________________________________________________/
+
 // Show the form
 echo "
+	<fieldset>
+		<label>
+			<h3>System User</h3>
+			<input type='text' name='jackal/system/user' value='$systemUser' />
+		</label>
+		<label>
+			<h3>System Password</h3>
+			<input type='password' name='jackal/system/password' value='$systemStars' />
+		</label>
+	</fieldset>
 	<fieldset>
 		<label>
 			<h3>Timezone</h3>

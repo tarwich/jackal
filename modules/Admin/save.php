@@ -34,10 +34,25 @@ foreach($URI as $name=>$value) {
 	if(Jackal::setting($name) == $value) continue;
 	// Deep set this value
 	eval('$settings["' . implode('"]["', explode("/", $name)) . '"] = $value;');
+	// Update Jackal with the setting
+	Jackal::putSettings($name, $value);
 }
 
 // Convert settings to YAML
 $settings = $spyc->YAMLDump($settings);
+
+// See if the admin.yaml is writeable
+if(!is_writeable($configFile)) {
+	$system = Jackal::setting("jackal/system");
+	$process = proc_open("su $system[user]", array(
+		array("pipe", "r"),
+		array("pipe", "w"),
+	), $pipes);
+	fwrite($pipes[0], "$system[password]\n");
+	$response = fgets($pipes[1]);
+	echo "<pre>".htmlentities(print_r($response, 1))."</pre>";
+	proc_close($process);
+}
 
 // Write the settings to the config file
 if(@file_put_contents($configFile, $settings)) {
