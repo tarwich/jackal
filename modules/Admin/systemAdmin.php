@@ -49,6 +49,8 @@ $errorStatus = array(
 
 // \________________________________________________/
 
+// Test Errors/Messages
+$messages = Jackal::returnCall("Admin/tester/", array("test" => "System", "destination" => "section"));
 // Show the form
 echo "
 	<fieldset>
@@ -64,5 +66,11 @@ echo "
 			<input type='text' name='jackal/error-log' value='$errorSetting' />
 			<p class='status $errorStatus[class]'><b>$errorStatus[status]</b> $errorStatus[message] $errorStatus[fixButton]</p>
 		</label>
+	</fieldset>
+	<fieldset>
+        <h3>Message Center</h3>
+        <ul class='messages'>
+        $messages
+        </ul>
 	</fieldset>";
 

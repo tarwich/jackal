@@ -57,12 +57,13 @@
 		$(".admin-test:not(.ran)").addClass("ran").each(function() {
 			// Cache wrapped element for speed
 			var $this = $(this);
-			
+
 			// Run the test
 			$("[admin-section="+$this.attr("admin-section")+"] .test-result")
 				.text("...")
 				.load(url("Admin/tester") + " .result", {
-					test: $this.attr("admin-section")
+					test: $this.attr("admin-section"),
+                    destination: "overview"
 				})
 			;
 		});
