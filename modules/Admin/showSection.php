@@ -31,7 +31,7 @@ else {
         // Go through all of the messages
         foreach($results as $level => $messages){
             // Go through all of the messages in the respective error levels
-            foreach($messages as $ignore=>$message){
+            foreach($messages as $message){
                 // Lowercase the level so that we can use it as the class of the li
                 $class = strtolower($level);
                 // Display each message as a list item
