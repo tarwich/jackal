@@ -34,8 +34,7 @@
 	// --------------------------------------------------
 	ns.navigate = function(e) {
 		// Get the hyperlink
-		var $target = $(e.target);
-		
+		var $target = $(e.target).closest("a[\\$]");
 		// Find the selector destination
 		$( $target.attr("$") )
 			// Set the content to show we're loading something
@@ -61,7 +60,7 @@
 			// Run the test
 			$("[admin-section="+$this.attr("admin-section")+"] .test-result")
 				.text("...")
-				.load(url("Admin/getOverviewAlerts"), {
+				.load(url("Admin/showOverviewAlerts"), {
 					test: $this.attr("admin-section"),
                     destination: "overview"
 				})
