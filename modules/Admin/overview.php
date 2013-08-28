@@ -29,7 +29,7 @@ foreach($sections as $sectionName=>$modules) {
     $url = Jackal::siteURL("Admin/showSection/$sectionName");
 	// Actually output the section item
 	echo "
-		<span class='Admin-overview-item admin-test' admin-section='$sectionName'><a href='$url/ .Admin-section' \$='.Admin-content'>$sectionName</a><i class='test-result'></i></span>";
+		<span class='Admin-overview-item admin-test' admin-section='$sectionName'><a href='$url/ .Admin-section' \$='.Admin-content'>$sectionName<i class='test-result'></i></a></span>";
 }
 
 echo "
