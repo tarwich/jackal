@@ -36,10 +36,6 @@ $errorStatus = array(
 
 // \________________________________________________/
 
-
-// Test Errors/Messages
-$messages = Jackal::returnCall("Admin/tester/", array("test" => "System", "destination" => "section"));
-
 //  ________________________________________________
 // / Timezone                                       \
 
@@ -61,8 +57,16 @@ $systemStars = str_repeat("*", strlen($systemPassword));
 
 // \________________________________________________/
 
+// Run the test for this section and get the test's errors / warnings
+$messages = Jackal::returnCall("Admin/tester/", array("test" => "System", "destination" => "section"));
+
 // Show the form
 echo "
+    <span class='message-area'>
+        <ul class='messages'>
+        $messages
+        </ul>
+	</span>
 	<fieldset>
 		<label>
 			<h3>System User</h3>
@@ -86,11 +90,5 @@ echo "
 			<input type='text' name='jackal/error-log' value='$errorSetting' />
 			<p class='status $errorStatus[class]'><b>$errorStatus[status]</b> $errorStatus[message] $errorStatus[fixButton]</p>
 		</label>
-	</fieldset>
-	<fieldset>
-        <h3>Message Center</h3>
-        <ul class='messages'>
-        $messages
-        </ul>
 	</fieldset>";
 

@@ -27,11 +27,15 @@ if($destination === "section") {
     // Get only the warnings and errors
     $results = array_intersect_key($results, array("WARNING" => array(), "ERROR" => array()));
     // Go through all of the warnings and errors
-    foreach($results as $level => $messages)
-        // Go through all of the messages the respective error levels
-        foreach($messages as $ignore=>$message)
+    foreach($results as $level => $messages){
+        // Go through all of the messages in the respective error levels
+        foreach($messages as $ignore=>$message){
+            // Lowercase the level so that we can use it as the class of the li
+            $class = strtolower($level);
             // Display each message as a list item
-            echo "<li>$level: $message</li>";
+            echo "<li class='$class'>$level: $message</li>";
+        }
+    }
 }
 
 // Otherwise, just send back the count of warnings and errors
