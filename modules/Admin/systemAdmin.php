@@ -13,16 +13,9 @@ $systemStars = str_repeat("*", strlen($systemPassword));
 $timezone = Jackal::setting("jackal/timezone");
 // Get the current path to the error log to display
 $errorSetting = Jackal::setting("jackal/error-log");
-// Run the test for this section and get the test's errors / warnings
-$messages = Jackal::returnCall("Admin/tester/", array("test" => "System", "destination" => "section"));
 
 // Show the form
 echo "
-    <span class='message-area'>
-        <ul class='messages'>
-        $messages
-        </ul>
-	</span>
 	<fieldset>
 		<label>
 			<h3>System User</h3>

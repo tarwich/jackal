@@ -22,7 +22,7 @@ echo "
 				".Jackal::returnCall("Admin/sidebar")."
 			</td>
 			<td class='Admin-content'>
-				".Jackal::returnCall("Admin/section")."
+				".Jackal::returnCall("Admin/showSection")."
 			</td>
 		</tr>
 	</table>";

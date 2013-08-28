@@ -61,7 +61,7 @@
 			// Run the test
 			$("[admin-section="+$this.attr("admin-section")+"] .test-result")
 				.text("...")
-				.load(url("Admin/tester") + " .result", {
+				.load(url("Admin/getOverviewAlerts"), {
 					test: $this.attr("admin-section"),
                     destination: "overview"
 				})
