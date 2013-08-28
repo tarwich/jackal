@@ -1634,7 +1634,7 @@ END;
 				} else {
 					// Set deep setting
 					$chain = '["'  . implode('"]["', $components) . '"]';
-					eval("self::$_settings$chain = \$value;");
+					eval("self::\$_settings$chain = \$value;");
 				}
 				
 				break;
