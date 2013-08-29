@@ -11,6 +11,8 @@
  * To set the self-test behavior, you will need to modify the module's config and set the "self-test" to
  * the name of the file that you desire.
  *
+ * Returns an array containing all of the errors, warnings, and any other messages that the test generates
+ *
  * <code type='yaml'>
  * 	admin:
  * 		modules:
@@ -27,7 +29,8 @@
  * @param string $section    The name of the section whose tests need to be run.
  * @param string $subsection The name of the subsection within the $section whose test to run.
  *
- * @return void
+ *
+ * @return array
  */
 
 // Get the section that needs to be run from the URI
