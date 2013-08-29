@@ -8,6 +8,8 @@
  *
  * Segments: target
  * @param string $target The name of the section whose self-test data we want to retrieve.
+ *
+ * @return void
  */
 
 // Get the self-test that needs to be run from the URI
