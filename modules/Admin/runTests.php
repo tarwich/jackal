@@ -1,5 +1,35 @@
 <?php
 
+/**
+ * Runs one or more self-tests for an admin section, as defined in the module's config.
+ *
+ * If only a section name is provided, this method will call the self-test file for each one of its
+ * sub-sections.
+ * If both a section and subsection name are provided, this method will run just the self-test for the
+ * specified subsection
+ *
+ * To set the self-test behavior, you will need to modify the module's config and set the "self-test" to
+ * the name of the file that you desire.
+ *
+ * <code type='yaml'>
+ * 	admin:
+ * 		modules:
+ * 			your-module:
+ * 				-
+ * 					name     : Your Section / Your Subsection
+ * 					self-test: your-module/yourSelfTest
+ * 				-   # You can insert subsections into other admin pages like this
+ * 					name     : Other Section / Your Subsection
+ * 					self-test: your-module/aDifferentSelfTest
+ * </code>
+ *
+ * Segments: section / subsection
+ * @param string $URI[section] The name of the section whose tests need to be run.
+ * @param string $URI[subsection] The name of the subsection within the $section whose test to run.
+ *
+ * @return void
+ */
+
 // Get the section that needs to be run from the URI
 ($section = @$URI["test"]) || ($section = @$URI[0]);
 // Get the sub-section, if provided
