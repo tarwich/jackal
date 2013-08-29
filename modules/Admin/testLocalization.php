@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * Run the tests to verify localization settings
+ * 
+ * Returns a test result array
+ * 
+ * @example Test results:
+ * <code type='php'>
+ * 	return array(
+ * 		"ERROR"   => array("This is an error message"),
+ * 		"WARNING" => array("This is a warning message"),
+ * 		"OK"      => array("This is an informational message"),
+ * 	);
+ * </code>
+ * 
+ * @return array
+ */
+
 // Create an array that we will populate with messages generated from the test(s)
 $messages = array(
     "WARNING" => array(),
