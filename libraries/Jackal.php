@@ -1263,32 +1263,28 @@ END;
 	 * @return void
 	 */
 	private static function _loadConfigs() {
+		// Gather all the config files
 		$files = Jackal::files("<ROOT>/{<JACKAL>/,<LOCAL>/}{,modules/*/,libraries/*/}config/{jackal,*}.{yaml,yml,php}", array());
+		
 		// Order the array with jackal first, then everything, followed by 'MY_*' files
-		foreach(array("jackal", "MY_", "_", "") as $iteration) {
-			// Load each config  
-			foreach($files as $i=>$file) {
-				// Order the array with jackal first, then everything, followed by 'MY_*' files
-				switch($iteration) {
-                    case "jackal": if(substr($file, 0, 6) == "jackal") continue; else break;
-                    case "MY_"   : if(substr($file, 0, 3) != "MY_")    continue; else break;
-                    case "_"     : if(!preg_match('/_\./', $file))     continue; else break;
-                    case ""      : break;
-				}
-				
-				// Load php files one way and yaml files another
-				switch(strtolower(pathinfo($file, PATHINFO_EXTENSION))) {
-					case "php" : Jackal::_include($file)                       ; break;
-					case "yml" :
-					case "yaml": Jackal::putSettings(file_get_contents($file)) ; break;
-				}
-				
-				// Remove this item from the list of things to process
-				unset($files[$i]);
+		$files = array_merge(
+			preg_grep('~jackal[^/]+~', $files),
+			preg_grep('~(MY_|_\.)~', $files, PREG_GREP_INVERT),
+			preg_grep('~MY_~', $files),
+			preg_grep('~_\.~', $files)
+		);
+		
+		// Load each config  
+		foreach($files as $i=>$file) {
+			// Load php files one way and yaml files another
+			switch(strtolower(pathinfo($file, PATHINFO_EXTENSION))) {
+				case "php" : Jackal::_include($file)                       ; break;
+				case "yml" :
+				case "yaml": Jackal::putSettings(file_get_contents($file)) ; break;
 			}
 		}
 		
-		// Flaggers is bugging me
+		// Flaggers duplicates are bugging me
 		self::$_settings["jackal"]["flaggers"] = array_unique((array) self::$_settings["jackal"]["flaggers"]);
 	}
 
