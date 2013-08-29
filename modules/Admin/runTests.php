@@ -24,8 +24,8 @@
  * </code>
  *
  * Segments: section / subsection
- * @param string $URI[section] The name of the section whose tests need to be run.
- * @param string $URI[subsection] The name of the subsection within the $section whose test to run.
+ * @param string $section    The name of the section whose tests need to be run.
+ * @param string $subsection The name of the subsection within the $section whose test to run.
  *
  * @return void
  */
