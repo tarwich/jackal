@@ -6,3 +6,9 @@ admin:
                     callback  : Admin/systemAdmin/localization
                     self-test : Admin/testLocalization
                     visibility: admin
+            database:
+                -
+                    name      : Database / Connectivity
+                    callback  : Admin/databaseAdmin/connectivity
+                    self-test : Admin/testConnectivity
+                    visibility: admin
