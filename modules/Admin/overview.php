@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * The admin "overview" view
+ * 
+ * This is basically the dashboard to show the status of all the admin sections
+ * 
+ * @return void
+ */
+
 // Get the sections for which we're going to show overview nodes
 $modules = Jackal::setting("admin/modules");
 // Prepare the sections array to hold the sections that we find

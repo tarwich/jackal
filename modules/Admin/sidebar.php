@@ -1,5 +1,28 @@
 <?php
 
+/**
+ * Shows the "sidebar" view
+ * 
+ * The sidebar is a list of links to the various admin sections. When clicked a link will take you to the section on 
+ * which you clicked.
+ * 
+ * To get a page into the sidebar, put in the module's config the following
+ * 
+ * <code type='yaml'>
+ * 	admin:
+ * 		modules:
+ * 			your-module:
+ * 				- 
+ * 					name    : Your Section / Your Subsection
+ * 					callback: your-module/adminPageMethod
+ * 				-   # You can insert subsections into other admin pages like this
+ * 					name    : Other Section / Your Subsection
+ * 					callback: your-module/adminPageMethod
+ * </code>
+ * 
+ * @return void
+ */
+
 // Get the sections through which we will iterate
 $sections = $this->_getSections();
 
