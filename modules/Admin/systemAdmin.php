@@ -1,7 +1,12 @@
 <?php
 
 /**
- * Need comment for this method
+ * Shows the settings specific to the System section.
+ *
+ * This method will populate the form that was started in showSection with the value of current settings.
+ * It provides the needed form controls to allow an admin to change the settings.
+ *
+ * @return void
  */
 
 // Process URI

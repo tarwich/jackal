@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Shows the selected section.
+ *
+ * Displays a form that will act as an interface to the settings in the section's subsections. This form will also
+ * provide a save button that will save any changes made to the settings.
+ *
+ * @param string $targetSection The name of the requested section.
+ *
+ * @return void
+ */
+
 // The section we're supposed to look up
 ($targetSection = @$URI[0]) || ($targetSection = @$URI["section"]);
 // Wrapper for the admin section
