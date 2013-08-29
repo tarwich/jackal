@@ -8,7 +8,7 @@ admin:
                     visibility: admin
             database:
                 -
-                    name      : Database / Connectivity
-                    callback  : Admin/databaseAdmin/connectivity
-                    self-test : Admin/testConnectivity
+                    name      : System / Database
+                    callback  : Admin/systemAdmin/database
+                    self-test : Admin/testDatabase
                     visibility: admin

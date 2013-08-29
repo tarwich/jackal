@@ -1,7 +1,0 @@
-database:
-        host    : 192.168.0.123
-        username: office
-        password:
-        database: macpractice
-        port    : 3306
-        socket  :
