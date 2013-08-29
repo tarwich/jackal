@@ -13,8 +13,6 @@ else {
 	$sections = $this->_getSections();
 	// Setup the url to save the for to
 	$action = Jackal::siteURL("Admin/save/$targetSection");
-    // Run the test for this section and get the test's errors / warnings
-    $results = $this->runTests(array($targetSection));
     // Create an interface for all the settings and messages
     echo "
 		<form \$='.Admin-section' method='post' action='$action'>
@@ -27,6 +25,9 @@ else {
 			<h2>$subsectionName</h2>
             <span class='message-area'>
                 <ul class='messages'>";
+
+        // Run the test for this section and get the test's errors / warnings
+        $results = $this->runTests(array($targetSection, $subsectionName));
 
         // Go through all of the messages
         foreach($results as $level => $messages){
