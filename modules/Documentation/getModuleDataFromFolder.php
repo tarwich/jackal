@@ -95,8 +95,6 @@ $docComment = "/** $docComment */";
 $methodData = implode("\n", $methods);
 $classStructure = "$docComment \nclass Nothing_$name extends $base { $methodData } ";
 
-echo $classStructure;
-
 eval($classStructure);
 
 $result = new ReflectionClass("Nothing_$name");
