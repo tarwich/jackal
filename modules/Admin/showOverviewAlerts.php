@@ -8,5 +8,5 @@ $results = $this->runTests(array($target));
 $results = array_intersect_key($results, array("WARNING" => array(), "ERROR" => array()));
 // Count the number of children
 $count = count($results, COUNT_RECURSIVE) - count($results);
-// Display the output
-echo "<span class='result'>($count)</span>";
+// Display the output if the count is greater than zero
+if($count > 0) echo "<span class='result'>($count)</span>";
