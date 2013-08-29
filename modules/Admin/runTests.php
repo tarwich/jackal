@@ -52,14 +52,14 @@ if(!empty($subsection)) {
     // Run the test(s) in this subsection
     foreach($subsection as $target)
         // Run this test
-        $results = array_merge_recursive($results, Jackal::call($target["self-test"]));
+        $results = array_merge_recursive($results, (array) Jackal::call($target["self-test"]));
 }
 // If no subsection was provided, then run the tests for all subsections
 else {
     // Run all the tests in this section
     foreach($sections as $name=>$subSections) foreach($subSections as $section)
         // Run this test
-        $results = array_merge_recursive($results, Jackal::call($section["self-test"]));
+        $results = array_merge_recursive($results, (array) Jackal::call($section["self-test"]));
 }
 
 return $results;

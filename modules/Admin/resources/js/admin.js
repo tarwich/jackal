@@ -58,7 +58,7 @@
 			var $this = $(this);
 
 			// Run the test
-			$("[admin-section="+$this.attr("admin-section")+"] .test-result")
+			$('[admin-section="'+$this.attr("admin-section")+'"] .test-result')
 				.text("...")
 				.load(url("Admin/showOverviewAlerts"), {
 					test: $this.attr("admin-section"),

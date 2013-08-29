@@ -12,7 +12,7 @@ else {
 	// Initialize a sections array to hold all the sections that we find
 	$sections = $this->_getSections();
 	// Setup the url to save the for to
-	$action = Jackal::siteURL("Admin/save/$targetSection");
+	$action = Jackal::siteURL("Admin/save/" . urlencode($targetSection));
     // Create an interface for all the settings and messages
     echo "
 		<form \$='.Admin-section' method='post' action='$action'>
@@ -30,9 +30,9 @@ else {
         $results = $this->runTests(array($targetSection, $subsectionName));
 
         // Go through all of the messages
-        foreach($results as $level => $messages){
+        foreach($results as $level => $messages) {
             // Go through all of the messages in the respective error levels
-            foreach($messages as $message){
+            foreach((array) $messages as $message) {
                 // Lowercase the level so that we can use it as the class of the li
                 $class = strtolower($level);
                 // Display each message as a list item
