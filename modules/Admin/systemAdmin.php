@@ -1,14 +1,5 @@
 <?php
 
-//  ________________________________________________
-// / System User                                    \
-
-$systemUser = Jackal::setting("jackal/system/user");
-$systemPassword = Jackal::setting("jackal/system/password");
-$systemStars = str_repeat("*", strlen($systemPassword));
-
-// \________________________________________________/
-
 // Get the timezone setting
 $timezone = Jackal::setting("jackal/timezone");
 // Get the current path to the error log to display
@@ -16,16 +7,6 @@ $errorSetting = Jackal::setting("jackal/error-log");
 
 // Show the form
 echo "
-	<fieldset>
-		<label>
-			<h3>System User</h3>
-			<input type='text' name='jackal/system/user' value='$systemUser' />
-		</label>
-		<label>
-			<h3>System Password</h3>
-			<input type='password' name='jackal/system/password' value='$systemStars' />
-		</label>
-	</fieldset>
 	<fieldset>
 		<label>
 			<h3>Timezone</h3>

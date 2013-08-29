@@ -41,29 +41,24 @@ foreach($URI as $name=>$value) {
 // Convert settings to YAML
 $settings = $spyc->YAMLDump($settings);
 
-// See if the admin.yaml is writeable
-if(!is_writeable($configFile)) {
-	$system = Jackal::setting("jackal/system");
-	$process = proc_open("su $system[user]", array(
-		array("pipe", "r"),
-		array("pipe", "w"),
-	), $pipes);
-	fwrite($pipes[0], "$system[password]\n");
-	$response = fgets($pipes[1]);
-	echo "<pre>".htmlentities(print_r($response, 1))."</pre>";
-	proc_close($process);
-}
-
 // Write the settings to the config file
 if(@file_put_contents($configFile, $settings)) {
 	Jackal::call("Admin/section/$section");
 }
 
 else {
+	// Store the settings in the session so the user can download it
+	Jackal::call("Session/store/admin/file", $settings);
+	// Get the url to the file image
+	$iconURL = Jackal::siteURL("Admin/resources/page.png");
+	// Get the url to download the settings file
+	$fileURL = Jackal::siteURL("Admin/download/admin_.yaml");
+	
 	echo "
 		<span class='error'>
 			I was unable to save the file. You need to copy the text below and save it to
 			<blockquote>$configFile</blockquote>
+			(Or <a href='$fileURL'><i><img src='$iconURL' /></i>click here</a> to download it)
 		</span>
 		<textarea>$settings</textarea>";
 }
