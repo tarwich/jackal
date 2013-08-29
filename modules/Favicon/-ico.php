@@ -11,12 +11,22 @@
  * @return void
  */
 
+// Create a glob to search for our favicon
 $glob = "<ROOT>/{,../}favicon.ico";
-list($file) = Jackal::files($glob);
+// Try to find the path to the file
+$results = Jackal::files($glob);
 
-Jackal::call("Template/disable-compression");
-Jackal::call("Template/disable");
-header("Content-type: image/vnd.microsoft.icon");
+// If we found the favicon
+if(!empty($results)) {
+    // Extract the filename from the returned array
+    list($file) = $results;
 
-readfile($file);
+    Jackal::call("Template/disable-compression");
+    Jackal::call("Template/disable");
+    header("Content-type: image/vnd.microsoft.icon");
+
+    // Load the file
+    readfile($file);
+}
+
 exit();
