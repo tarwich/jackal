@@ -27,18 +27,23 @@ $messages = array(
 // Get the database settings
 $database = Jackal::setting("database");
 
-// Run the connection test
-$mysql = @new mysqli(
-	$host    = $database["host"],
-	$username= $database["username"],
-	$passwd  = $database["password"], 
-	$dbname  = $database["database"],
-	$port    = $database["port"], 
-	$socket  = $database["socket"]
-);
+// If no host, then database disabled
+if(!$database["host"]) $messages["OK"][] = "Database disabled";
 
-// Document any connection errors
-if($mysql->connect_error) $messages["ERROR"][] = "Database: $mysql->connect_error";
-else $messages["OK"][] = "Connected to $dbname@$host successfully";
+else {
+	// Run the connection test
+	$mysql = @new mysqli(
+		$host    = $database["host"],
+		$username= $database["username"],
+		$passwd  = $database["password"], 
+		$dbname  = $database["database"],
+		$port    = $database["port"], 
+		$socket  = $database["socket"]
+	);
+
+	// Document any connection errors
+	if($mysql->connect_error) $messages["ERROR"][] = "Database: $mysql->connect_error";
+	else $messages["OK"][] = "Connected to $dbname@$host successfully";
+}
 
 return $messages;
