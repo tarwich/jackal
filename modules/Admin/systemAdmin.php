@@ -88,7 +88,6 @@ elseif($section == "database") {
 }
 
 elseif($section == "htaccess") {
-	echo "<pre>".htmlentities(print_r($_SERVER, 1))."</pre>";
 	// If mod_rewrite is available
 	if(preg_grep('/mod_rewrite/', apache_get_modules())) {
 		// Get the leading url

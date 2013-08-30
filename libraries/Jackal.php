@@ -1285,6 +1285,9 @@ END;
 		}
 		
 		// Supercede index_url if mod_rewrite configured
+		if(trim(@self::$_settings["jackal"]["index-url"]) == "?")
+			// If mod_rewrite working
+			if(@$_SERVER["REDIRECT_STATUS"]) self::$_settings["jackal"]["index-url"] = "";
 		
 		// Flaggers duplicates are bugging me
 		self::$_settings["jackal"]["flaggers"] = array_unique((array) self::$_settings["jackal"]["flaggers"]);
