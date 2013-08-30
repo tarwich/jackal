@@ -21,4 +21,4 @@ $results = array_intersect_key($results, array("WARNING" => array(), "ERROR" => 
 // Count the number of children
 $count = count($results, COUNT_RECURSIVE) - count($results);
 // Display the output if the count is greater than zero
-if($count > 0) echo "<span class='result'>($count)</span>";
+if($count > 0) echo "<span class='result'>$count</span>";

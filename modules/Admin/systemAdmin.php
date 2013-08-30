@@ -97,7 +97,6 @@ elseif($section == "htaccess") {
 		$htaccess = <<<END
 Options +FollowSymlinks
 RewriteEngine On
-#RewriteBase /~sammyd/practice-reports
 RewriteBase $url
 RewriteRule (.*) index.php [L]
 END;
