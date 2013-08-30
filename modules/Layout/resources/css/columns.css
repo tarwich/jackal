@@ -1,0 +1,38 @@
+/**
+ *
+ * Layout columns
+ *
+ */
+ <?php
+
+// Use this so that there can be a dividing line between columns
+$settings["column"]["spacing"] = layout_numbersOnly($settings["column"]["spacing"]);
+$spacing = round($settings["column"]["spacing"]/2, 2);
+
+echo "
+	table.layout-columns {
+	}
+	table.layout-columns td.layout-column {
+		background: {$settings['column']['background']};
+	}
+	table.layout-columns td.layout-column-middle {
+		padding: 0px {$spacing}px 0px {$spacing}px;
+		border-right-width: {$settings['column']['line-width']};
+		border-right-style: {$settings['column']['line-style']};
+		border-right-color: {$settings['column']['line-color']};
+	}
+	table.layout-columns td.layout-column-first {
+		padding: 0px {$spacing}px 0px 0px;
+		border-right-width: {$settings['column']['line-width']};
+		border-right-style: {$settings['column']['line-style']};
+		border-right-color: {$settings['column']['line-color']};
+	}
+	table.layout-columns td.layout-column-last {
+		padding: 0px 0px 0px {$spacing}px;
+	}
+	table.layout-columns td.layout-column div.layout-column-ratio {
+		padding: 0px;
+		margin: 0px;
+	}
+";
+?>

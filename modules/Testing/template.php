@@ -1,5 +1,7 @@
 <?php 
 
+// For Javascript url()
+Jackal::loadHelper("url");
 // Load resources
 js("jquery.js", true);
 js("javascript.js");
@@ -54,6 +56,7 @@ the numbers changed
 	// /---------- Initialize namespace ----------\
 	(window[NS]) || (window[NS] = {});
 	var $ns, ns = window[NS], currentTime = 0, $seconds;
+	var $results;
 	// \__________________________________________/
 
 	//  _[ Initialize ]___________________________________
@@ -67,6 +70,7 @@ the numbers changed
 		$ns = $("#"+NS);
 		ns.$timer = $("#header .timer");
 		ns.$title = $("#header .title"); // Title
+		$results = $ns.find(".test-results");
 
 		// \__________________________________________________/
 
@@ -81,7 +85,7 @@ the numbers changed
 		// Initialize finished to true for timer
 		$ns.data("finished", true);
 		// Listen to ajaxComplete messages
-		$ns.bind("ajaxComplete", ns, jackal.interpretMessage);
+		$(document).bind("ajaxComplete", ns, jackal.interpretMessage);
 	};
 
 	//  _[ Run All ]______________________________________
@@ -120,7 +124,7 @@ the numbers changed
 			"JACKAL TESTING FRAM3WORK"
 			][Math.floor(Math.random()*6)]
 		);
-
+		
 		// If we're not already running tests
 		if(!$ns.data("running")) {
 			var $test = $(".status-waiting:first");
@@ -179,7 +183,7 @@ the numbers changed
 	// |__________________________________________________|
 	ns["Testing/runTest.complete"] = function(a, response, c) {
 		var $test = $(".status-running");
-
+		
 		$test.removeClass("status-running");
 
 		// Prepare to run the next test

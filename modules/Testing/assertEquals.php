@@ -30,8 +30,8 @@ else {
 					</thead>
 					<tbody>
 						<tr>
-							<td>".htmlentities($left)."</td>
-							<td>".htmlentities($right)."</td>
+							<td><pre>".htmlentities($left)."</pre></td>
+							<td><pre>".htmlentities($right)."</pre></td>
 						</tr>
 					</tbody>
 				</table>";

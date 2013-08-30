@@ -1,0 +1,56 @@
+/**
+ *
+ * Grid styles
+ *
+ */
+<?php
+
+// Use this so that there can be a dividing line between columns
+$settings["grid"]["spacing"] = layout_numbersOnly($settings["grid"]["spacing"]);
+$spacing = round($settings["grid"]["spacing"]/2, 2);
+
+echo "
+	table.layout-grid {
+		border: {$settings['grid']['border']};
+	}
+	td.layout-grid-cell {
+		background: {$settings['row']['background']};
+	}
+	td.layout-grid-row-first {
+		padding-top: 0px;
+		padding-bottom: {$spacing}px;
+		border-bottom-width: {$settings['grid']['line-width']};
+		border-bottom-style: {$settings['grid']['line-style']};
+		border-bottom-color: {$settings['grid']['line-color']};
+	}
+	td.layout-grid-row-middle {
+		padding-bottom: {$spacing}px;
+		padding-top: {$spacing}px;
+		border-bottom-width: {$settings['grid']['line-width']};
+		border-bottom-style: {$settings['grid']['line-style']};
+		border-bottom-color: {$settings['grid']['line-color']};
+	}
+	td.layout-grid-row-last {
+		padding-top: {$spacing}px;
+		padding-bottom: 0px;
+	}
+	td.layout-grid-cell-first {
+		padding-right: {$spacing}px;
+		padding-left: 0px;
+		border-right-width: {$settings['grid']['line-width']};
+		border-right-style: {$settings['grid']['line-style']};
+		border-right-color: {$settings['grid']['line-color']};
+	}
+	td.layout-grid-cell-middle {
+		padding-right: {$spacing}px;
+		padding-left: {$spacing}px;
+		border-right-width: {$settings['grid']['line-width']};
+		border-right-style: {$settings['grid']['line-style']};
+		border-right-color: {$settings['grid']['line-color']};
+	}
+	td.layout-grid-cell-last {
+		padding-right: 0px;
+		padding-left: {$spacing}px;
+	}
+";
+?>

@@ -103,7 +103,7 @@ class Testing__TestList {
 				// Find the namespace element
 				$ns = $("." + NS);
 				// Listen to ajaxComplete messages
-				$ns.bind("ajaxComplete", ns, jackal.interpretMessage);
+				$(document).bind("ajaxComplete", ns, jackal.interpretMessage);
 				// Connect event listeners
 				ns.rebind();
 			};

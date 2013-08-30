@@ -45,7 +45,7 @@ js("jackal.js");
 		// Mark the $ns as having been initialized
 		$ns.data("initialized");
 		// Listen to test results
-		$ns.bind("ajaxSend ajaxComplete", ns, jackal.interpretMessage);
+		$(document).bind("ajaxSend ajaxComplete", ns, jackal.interpretMessage);
 	};
 
 	//  _[ Rebind ]_______________________________________
