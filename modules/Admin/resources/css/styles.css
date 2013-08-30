@@ -1,0 +1,168 @@
+/*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+CSS for Practice Reports "Settings"
+Author: Josiah Platt, VoidRay, LLC
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*/
+
+/* global Rules */
+a{
+	color: rgba(0,180,255,1);
+	text-decoration: none;
+}
+	a:hover{
+		color: rgba(37,46,49,1);
+	}
+ul{
+	list-style: none;
+}
+button{
+	padding: 10px 40px;
+	background: rgba(0,180,255,1);
+	border: none;
+	border-radius: 5px;
+	font-family: 'Open Sans', sans-serif;
+	color: #fff;
+	font-weight: 600;
+	font-size: 14px;
+}
+	button:hover{
+		background: rgba(37,46,49,1);
+	}
+	button:active{
+		background: rgba(37,46,49,.7);
+	}
+body{
+	background: rgba(246,246,246,1);
+	margin: 0;
+	font-family: 'Open Sans', sans-serif;
+	z-index: 0;
+	color: rgba(37,46,49,1);
+}
+
+/* TEMP - DELETE ME */
+#nineSixtyGuide{
+	width: 960px;
+	height: 1800px;
+	left: 50%;
+	margin-left: -480px;
+	position: absolute;
+	z-index: 999999;
+	background: rgba(255,0,0,.1);
+	display: none;
+}
+/* TEMP - DELETE ME */
+
+	header{
+		background: rgba(37,46,49,1);
+		width: 100%;
+		margin: 0;
+		height: 50px;
+	}
+		h1.littleHeaderTitle{
+			position: absolute;
+			font-size: 13px;
+			color: #fff;
+			left: 50%;
+			margin: 15px 0 0 -480px;
+			font-weight: 400;
+		}
+		a.userLink{
+			width: 40px; height: 40px;
+			display: block;
+			text-indent: -99999px;
+			position: absolute;
+			background: url('user.svg') center center no-repeat;
+			background-size: 40px;
+			left: 50%;
+			margin: 4px 0 0 447px;
+		}
+	h1.pageTitle{
+		width: 960px;
+		margin: 0 auto 30px auto;
+		color: rgba(37,46,49,1);
+		font-weight: 600;
+		font-size: 20pt;
+		padding: 30px 0 25px 0;
+		border-bottom: 1px solid rgba(222,222,222,1);
+	}
+	
+	ul.Admin-sidebar{
+		width: 180px;
+		position: absolute;
+		padding: 0;
+		left: 50%;
+		margin: 0 0 0 -480px;
+	}
+		ul.Admin-sidebar li{
+			padding: 0 0 10px 0;
+		}
+			ul.Admin-sidebar li a{
+				font-size: 14px;
+				font-weight: 600;
+			}
+			span.result{
+				width: 10px;
+				height: 10px;
+				padding: 5px;
+				line-height: 1;
+				text-align: center;
+				letter-spacing: 1px;
+				border-radius: 10px;
+				background: rgba(0,0,0,.1);
+				font-size: 10px;
+				font-weight: 700;
+				color: #252e31;
+				display: inline-block;
+			}
+	
+	div.Admin-content{
+		position: absolute;
+		padding: 25px 50px 50px 50px;
+		background: rgba(255,255,255,1);
+		border-radius: 5px;
+		border: 1px solid rgba(225,225,225,1);
+		width: 678px;
+		left: 50%;
+		margin-left: -300px;
+	}
+		div.Admin-content h1{
+			font-size: 24px;
+			font-weight: 700;
+		}
+		div.Admin-content h2{
+			font-size: 16px;
+			font-weight: 700;
+		}
+		ul.messages{
+			padding: 0;
+			margin: 0 0 20px 0;
+		}
+			li.error{
+				padding: 20px;
+				border-radius: 5px;
+				background: rgba(255,66,66,1);
+				color: #fff;
+				font-size: 14px;
+				font-weight: 700;
+			}
+		div.Admin-content form{
+			
+		}
+			div.Admin-content form fieldset{
+				border: none;
+				margin: 0 0 10px 0;
+				padding: 0px;
+			}
+			div.Admin-content form label{
+				height: auto;
+			}
+				div.Admin-content form label h3{
+					line-height: 1;
+					padding: 0;
+					margin: 0 0 5px 0;
+				}
+			div.Admin-content form input{
+				border: 1px solid rgba(225,225,225,1);
+				border-radius: 5px;
+				padding: 10px;
+				margin: 0 0 20px 0;
+			}

@@ -27,7 +27,7 @@ foreach($modules as $moduleName=>$group) foreach($group as $module) {
 // Show the modules list
 echo "
 	<span class='Admin-overview'>
-		<h1>Admin Overview</h1>";
+		<h1>System Status</h1>";
 
 // Output each section
 foreach($sections as $sectionName=>$modules) {
