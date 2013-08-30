@@ -35,6 +35,7 @@
 	ns.navigate = function(e) {
 		// Get the hyperlink
 		var $target = $(e.target).closest("a[\\$]");
+
 		// Find the selector destination
 		$( $target.attr("$") )
 			// Set the content to show we're loading something
@@ -58,13 +59,14 @@
 			var $this = $(this);
 
 			// Run the test
-			$('[admin-section="'+$this.attr("admin-section")+'"] .test-result')
-				.text("...")
-				.load(url("Admin/showOverviewAlerts"), {
-					test: $this.attr("admin-section"),
-                    destination: "overview"
-				})
-			;
+			$('[admin-section="'+$this.attr("admin-section")+'"] .test-result').each(function(i, node) {
+                // Update the node's test to show that we're loading
+				$(node)
+                    .text("...")
+                    .load(url("Admin/showOverviewAlerts"), {
+                        test: $this.attr("admin-section")
+                    })
+            });
 		});
 	};
 	
