@@ -1,0 +1,11 @@
+/**
+ *
+ * layout-center
+ *
+ */
+ 	div.layout-center {
+ 		text-align: center;
+ 	}
+ 	span.layout-center-block {
+ 		display: inline-block;
+ 	}

@@ -20,6 +20,10 @@ else {
 			$left = print_r($left, 1);
 			echo "<div class='single'>".htmlentities("$left != true")."</div>";
 			break;
+		case "boolean":
+			$left = $left ? "true" : "false";
+			echo "<div class='single'>".htmlentities("$left != true")."</div>";
+			break;
 		default: 
 			$left = print_r($left, 1);
 			echo "<div class='single'>".htmlentities("$left != true")."</div>";

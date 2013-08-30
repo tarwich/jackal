@@ -1,0 +1,34 @@
+/**
+ *
+ * Layout rows
+ *
+ */
+ <?php
+// Use this so that there can be a dividing line between rows
+$settings["row"]["spacing"] = layout_numbersOnly($settings["row"]["spacing"]);
+$spacing = round($settings["row"]["spacing"]/2, 2);
+
+echo "
+	div.layout-rows {
+		height: 100%;
+	}
+	div.layout-row {
+		background: {$settings['row']['background']};
+	}
+	div.layout-row-middle {
+		padding: {$spacing}px 0px {$spacing}px 0px;
+		border-bottom-width: {$settings['row']['line-width']};
+		border-bottom-style: {$settings['row']['line-style']};
+		border-bottom-color: {$settings['row']['line-color']};
+	}
+	div.layout-row-first {
+		padding: 0px 0px {$spacing}px 0px;
+		border-bottom-width: {$settings['row']['line-width']};
+		border-bottom-style: {$settings['row']['line-style']};
+		border-bottom-color: {$settings['row']['line-color']};
+	}
+	div.layout-row-last {
+		padding: {$spacing}px 0px 0px 0px;
+	}
+";
+?>
