@@ -86,3 +86,28 @@ elseif($section == "database") {
 			</label>
 		</fieldset>";
 }
+
+elseif($section == "htaccess") {
+	echo "<pre>".htmlentities(print_r($_SERVER, 1))."</pre>";
+	// If mod_rewrite is available
+	if(preg_grep('/mod_rewrite/', apache_get_modules())) {
+		// Get the leading url
+		$url = dirname($_SERVER["SCRIPT_NAME"]);
+		// Remove jackal from end of url
+		$url = preg_replace('~/jackal$~', '', $url);
+		$htaccess = <<<END
+Options +FollowSymlinks
+RewriteEngine On
+#RewriteBase /~sammyd/practice-reports
+RewriteBase $url
+RewriteRule (.*) index.php [L]
+END;
+		echo "
+			<p>By default, Jackal will use site.com/?/Foo/bar to direct users to different sections (The Foo.bar section) of your
+			site. If you want it too look like this: site.com/Foo/bar, then you must use .htaccess ModRewrite.</p>
+			<p>Insert this code into your .htaccess file to get ModRewrite working:</p>
+			<textarea>$htaccess</textarea>";
+	} else {
+		echo "<p>mod_rewrite is not available on your server</p>";
+	}
+}

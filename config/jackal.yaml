@@ -8,6 +8,7 @@ jackal:
     # |__________________________________________________|
     aliases:
         '/^resources/': JackalModule/resources
+        '/^jackal/'   : Admin
 
     #  _[ Autoload Helpers ]_____________________________
     # |                                                  |

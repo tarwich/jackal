@@ -1284,6 +1284,8 @@ END;
 			}
 		}
 		
+		// Supercede index_url if mod_rewrite configured
+		
 		// Flaggers duplicates are bugging me
 		self::$_settings["jackal"]["flaggers"] = array_unique((array) self::$_settings["jackal"]["flaggers"]);
 	}

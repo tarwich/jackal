@@ -6,9 +6,13 @@ admin:
                     callback  : Admin/systemAdmin/localization
                     self-test : Admin/testLocalization
                     visibility: admin
-            database:
                 -
                     name      : System / Database
                     callback  : Admin/systemAdmin/database
                     self-test : Admin/testDatabase
+                    visibility: admin
+                -
+                    name      : System / .htaccess
+                    callback  : Admin/systemAdmin/htaccess
+                    self-test : 
                     visibility: admin
