@@ -29,7 +29,7 @@ $sections = $this->_getSections();
 echo "
 	<ul class='Admin-sidebar'>";
 echo "
-		<li><a href='".Jackal::siteURL("Admin/showSection")."/ .Admin-section' \$='.Admin-content'>Overview</a></li>";
+		<li><a href='".Jackal::siteURL("Admin/showSection")."/ .Admin-section' \$='.Admin-content'>System Status</a></li>";
 
 // Show each major item as a link
 foreach($sections as $sectionName=>$ignore) {
