@@ -64,7 +64,7 @@ else {
     // Run all the tests in this section
     foreach($sections as $name=>$subSections) foreach($subSections as $section)
 		// Only run tests if there are tests
-		if(@$target["self-test"]) 
+		if(@$section["self-test"])
 	        // Run this test
 	        $results = array_merge_recursive($results, (array) Jackal::call($section["self-test"]));
 }
