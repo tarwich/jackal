@@ -223,3 +223,14 @@
 		  		background: #990000;
 		  		color: #ffffff;
 		  	}
+
+/* Unmatched items in tree comparison [SJD] */
+div.subtest-fail li.no-match:empty {
+	font-weight: bold;
+	color: #990000;
+}
+
+div.subtest-fail li.match {
+	font-weight: normal;
+	color: #009900;
+}

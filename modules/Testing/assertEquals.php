@@ -73,14 +73,20 @@ function diffTrees($leftArray, $rightArray) {
 	for($i=0; $i<2; ++$i) {
 		// Compare the left-hand to the right-hand
 		foreach	($leftArray as $key=>$leftValue) {
-			$rightValue = @$rightArray[$key];
+			// If it's flat (int, string, etc)
+			if(is_scalar($leftValue)) $rightValue = @$rightArray[$key];
 			// Recurse if non-scalar (object, array)
-			if(!is_scalar($leftValue)) list($leftValue, $rightValue) = diffTrees($leftValue, $rightValue);
-			$leftTree .= "<li>$key = $leftValue</li>";
-			$rightTree .= "<li>$key = $rightValue</li>";
+			else list($leftValue, $rightValue) = diffTrees($leftValue, @$rightArray[$key]);
+			$matchClass = ($leftValue == $rightValue) ? "match" : "no-match";
+			// Make a flag for unset right hand symbols
+			$unset = array_key_exists($key, $rightArray) ? "" : "<i>(unset)</i>";
+			// Set the item in the left and right trees
+			$leftTree .= "<li class='$matchClass'>$key = $leftValue</li>";
+			$rightTree .= "<li class='$matchClass'>$key = $unset$rightValue</li>";
 			// Unset these so we don't re-iterate
 			unset($leftArray[$key], $rightArray[$key]);
 		}
+		// Switch the right hand symbols and left hand symbols
 		list($leftArray, $rightArray, $leftTree, $rightTree) = array($rightArray, $leftArray, $rightTree, $leftTree);
 	}
 	
