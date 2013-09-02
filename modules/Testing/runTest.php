@@ -18,11 +18,10 @@ $classPath = Jackal::setting("class-path");
 if($file) {
 	// Get the name of the test 
 	preg_match('_(?:/tests/([^/]+)/([^/]+)\.php|/([^/]+)/tests/([^/]+)\.php)_', $file, $matches);
-	@list($discard, $moduleA, $nameA, $moduleB, $nameB) = $matches;
+	@list(, $moduleA, $nameA, $moduleB, $nameB) = $matches;
 	$this->testModule = $moduleA.$moduleB;
 	$this->testName = $nameA.$nameB;
 	
 	include($file);
 	$this->endSubTest();
 }
-
