@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * Return whatever is passed into $URI[0]
