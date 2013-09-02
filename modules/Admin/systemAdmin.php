@@ -94,10 +94,11 @@ elseif($section == "htaccess") {
 		$url = dirname($_SERVER["SCRIPT_NAME"]);
 		// Remove jackal from end of url
 		$url = preg_replace('~/jackal$~', '', $url);
+		if(trim($url)) $RewriteBase = "RewriteBase $url";
 		$htaccess = <<<END
 Options +FollowSymlinks
 RewriteEngine On
-RewriteBase $url
+$RewriteBase
 RewriteRule (.*) index.php [L]
 END;
 		echo "
