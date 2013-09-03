@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This test calls overview and looks to see if our test modules are present
+ * This test calls overview and looks to see if our two test modules are present
  *
  * This test works by first inserting 2 test modules into the admin settings. It then calls sidebar,
  * which returns a list of all of the Modules. It strips the html tags, breaks up the resulting string into an
@@ -40,7 +40,9 @@ foreach($results as $ignore=>$result)
     if(($result === "Foo") || ($result === "Bin"))
         // Add to our modules array
         array_push($modules, $result);
-// Create our expected result
+// Create our expected result. We inserted 2 modules named "Foo" and "Bin" into the admin settings, so we expect
+// that our $modules array will contain 2 elements: "Foo" and "Bin". We don't care about the other elements in the
+// $results array, because those could change.
 $expected = array(
     "Foo",
     "Bin"
