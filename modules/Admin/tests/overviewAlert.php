@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This method tests if showOverviewAlerts is working correctly
+ * This test checks to see if showOverviewAlerts is working correctly
  *
- * This method checks response of showOverViewAlerts by creating a test
+ * This test checks the response of showOverViewAlerts by creating a test
  * module with a self-test of "getSampleMessages," which returns an array with one message of
  * each priority level. Since showOverviewAlerts only considers "errors" and "warnings," it expects
  * to receive an html element with text equaling 2.
