@@ -28,7 +28,7 @@ admin:
 // / Test single   sub-section                        \
 
 // Set the title for this test
-$this->startSubTest(array("Run sample test on a specific sub-module"));
+$this->startSubTest(array("Run a sample test on a specific sub-module"));
 // Run just the Bar submodule
 $results = Jackal::call("Admin/runTests/Foo/Bar");
 // Create our array of expected messages
@@ -46,7 +46,7 @@ $this->assertEquals(array($expected, $results));
 // / Test multiple sub-sections                       \
 
 // Set the title for the sub-test
-$this->startSubTest(array("Run sample test all of a module's sub-modules"));
+$this->startSubTest(array("Run sample tests on all of a module's sub-modules"));
 // Run all tests in the foo section
 $results = Jackal::call("Admin/runTests/Foo");
 // Create our array of expected messages. Both sub-modules call getSampleMessages, so we need 2 of each error message
