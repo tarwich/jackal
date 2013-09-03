@@ -15,11 +15,10 @@
 Jackal::putSettings("
 admin:
 	modules:
-		subsection1:
+		testModule:
 			-
 				name     : Foo / Bar
 				self-test: Admin/getSampleMessages
-		subsection2:
 			-
 				name     : Foo / Bin
 				self-test: Admin/getSampleMessages
