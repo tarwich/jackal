@@ -87,6 +87,56 @@ if(substr($className, 0, 8) == "Nothing_") $className = substr($className, 8);
 	)
 );
 
+// Parse the properties into a structure for the HTML output
+foreach($properties as $name=>$property) {
+	// Parse the doc comment for this property
+	$doc = $this->parseDocComment($property->getDocComment());
+	// Parse out the flags for this property
+	$flags = array_keys(array_filter($this->getModifiers($property)));
+	// Get the class that declared this property
+	$declaringClass = $property->getDeclaringClass();
+	// See if this is a local or inherited property
+	$local = $declaringClass == $class;
+	// Put the parsed property back in the array
+	$properties[$name] = array(
+		"definedBy" => $declaringClass->name,
+		"doc"       => $doc,
+		"flags"     => $flags,
+		"isLocal"   => $local,
+		"local"     => $local ? "local" : "inherited",
+		"name"      => $property->name,
+		"page"      => $local ? "" : Jackal::siteURL("Documentation/rightPane/$declaringClass->name"),
+	);
+	// Add the doc comment information to the property
+	$properties[$name] += $properties[$name]["doc"];
+}
+
+// Parse the documentation into a structure for the HTML output
+foreach($methods as $i=>$method) {
+	// Search upward for docComments
+	for($parent = $class, $docComment=""; ($parent) && (!$docComment); $parent = $parent->getParentClass()) 
+		$docComment = $parent->getMethod($method->name)->getDocComment();
+	// Put the documentation into the parsed method
+	$doc = $this->parseDocComment(array($docComment, $documentationPath));
+	// Get the class in which this method was declared
+	$declaringClass = $method->getDeclaringClass();
+	// See if this is a local method
+	$local = $declaringClass == $class;
+	// Put this item back into the array
+	$methods[$i] = array(
+		"class"     => $declaringClass,
+		"definedBy" => $declaringClass->name,
+		"doc"       => $doc,
+		"flags"     => array_keys(array_filter($this->getModifiers(array($method)))),
+		"isLocal"   => $local,
+		"local"     => $local ? "local" : "inherited",
+		"name"      => $method->name,
+		"page"      => $local ? "" : Jackal::siteURL("Documentation/rightPane/$declaringClass->name"),
+	);
+	// Add the doc comment information to the method
+	$methods[$i] += $methods[$i]["doc"];
+}
+
 // Start output buffering so we can format code blocks later
 ob_start();
 
@@ -96,13 +146,14 @@ echo "
 if(count($narrative)) {
 	echo "
 		<div class='class-information'>
-			<div class='class-description'>
-				".$this->addLinks(
-					"<p>" . implode("</p><p>", $narrative) . "</p>"
-				)."
+			<div class='class-description'>";
+	foreach($narrative as $paragraph) echo "
+			<p>$paragraph</p>";
+	echo"
 			</div>
 		</div>";
 }
+
 echo "
 		<div class='class-properties'>
 			<a name='this-class-properties'></a>
@@ -117,41 +168,28 @@ echo "
 					<th class='right'> Defined By </th>
 				</tr>";
 $i=0;
+
 // Properties
 foreach($properties as $property) {
-	/* @var $property ReflectionProperty */
-	$doc = $this->parseDocComment($property->getDocComment());
-	// Get the names of all the flags that are set
-	$flags = array_keys(array_filter($this->getModifiers($property)));
-	// See if this is an inherited property
-	if($property->getDeclaringClass() == $class) {
-		$local = "local";
-		$definedBy = $className;
-		$page = "";
-	} else {
-		$local = "inherited";
-		$definedBy = $property->getDeclaringClass()->name;
-		$page = Jackal::siteURL("Documentation/rightPane/$definedBy");
-	}
+	// Row alternator
 	$oddEven = ($i++%2) ? "even" : "odd" ;
+	
 	echo "
-				<tr local='$local' class='$oddEven'>
+				<tr local='$property[local]' class='$oddEven'>
 					<td>
-						<a href='$page#$property->name-property'>\$$property->name</a> : <a class='return'>$doc[type]</a>
+						<a href='$property[page]#$property[name]-property'>\$$property[name]</a> : <a class='return'>$property[type]</a>
 						<div>";
-						
-foreach($flags as $flag) {
-	echo "<div class='flag $flag-flag' title='$flag'><q>$flag</q></div>";
-} 
-						
-echo "
-							{$this->addLinks($doc["summary"])}
+	foreach($property["flags"] as $flag) 
+		echo "
+							<div class='flag $flag-flag' title='$flag'><q>$flag</q></div>";
+	echo $this->addLinks("
+							$property[summary]
 						</div>
 					</td>
 					<td>
-						".($page?"<a href='$page'>$definedBy</a>":"$definedBy")."
+						$property[definedBy]
 					</td>
-				</tr>";
+				</tr>");
 }
 
 echo "
@@ -172,39 +210,24 @@ echo "
 
 // Methods
 foreach($methods as $method) {
-	/* @var $method ReflectionMethod */
-	$doc = $this->parseDocComment($method->getDocComment());
-	// Get the names of all the flags that are set
-	$flags = array_keys(array_filter($this->getModifiers($method)));
-	
-	// See if this is an inherited property
-	if($method->getDeclaringClass() == $class) {
-		$local = "local";
-		$definedBy = $className;
-		$page = "";
-	} else {
-		$local = "inherited";
-		$definedBy = $method->getDeclaringClass()->name;
-		$page = Jackal::siteURL("Documentation/rightPane/$definedBy");
-	}
+	// Row alternator
 	$oddEven = ($i++%2) ? "even" : "odd" ;
 	echo "
 				<tr local='$local' class='$oddEven'>
 					<td>
-						<a href='$page#$method->name-method'>$method->name()</a> : <a class='return'>$doc[returnType]</a>
+						<a href='$method[page]#$method[name]-method'>$method[name]()</a> : <a class='return'>$method[returnType]</a>
 						<div>";
-foreach($flags as $flag) {
-	echo "<div class='flag $flag-flag' title='$flag'><q>$flag</q></div>";
-} 
-						
-echo "
-							{$this->addLinks($doc["summary"])}
+	foreach($method["flags"] as $flag) 
+		echo "
+							<div class='flag $flag-flag' title='$flag'><q>$flag</q></div>";
+	echo $this->addLinks("
+							$method[summary]
 						</div>
 					</td>
 					<td>
-						".($page?"<a href='$page'>$definedBy</a>":"$definedBy")."
+						$method[definedBy]
 					</td>
-				</tr>";
+				</tr>");
 }
 
 echo "
@@ -212,45 +235,37 @@ echo "
 		</div>
 		<div class='property-details'>
 			<h1>Property Details</h1>";
-
 foreach($properties as $property) {
-	$doc = $this->parseDocComment($property->getDocComment());
 	// Only show local properties / methods
-	if($property->getDeclaringClass() != $class) continue;
+	if(!$property["isLocal"]) continue;
 	
 	echo "
-			<a name='$property->name-property'></a>
-			<h2>\$$property->name</h2>
-			\$$property->name : $doc[type]
+			<a name='$property[name]-property'></a>
+			<h2>\$$property[name] : $property[type]</h2>
 			<div class='description'>
-				".$this->addLinks(
-					$doc["summary"]
-					. "<p>" . implode("</p><p>", $doc["description"]) . "</p>"
-				)."
-			</div>"; 
+				<p>{$this->addLinks($property["summary"])}</p>";
+	foreach($property["description"] as $paragraph) 
+		echo "
+				<p>{$this->addLinks($paragraph)}</p>";
+	echo "
+			</div>";
 }
 
 echo "
 		</div>
 		<div class='method-details'>
 			<h1>Method Details</h1>";
-
 foreach($methods as $method) {
-	$doc = $this->parseDocComment(array($method->getDocComment(), $documentationPath));
-	// Only show local properties / methods
-	if($method->getDeclaringClass() != $class) continue;
-	
 	echo "
 			<div class='method'>
-				<a name='$method->name-method'></a>
-				<h2>$method->name() : $doc[returnType]</h2>
+				<a name='$method[name]-method'></a>
+				<h2>$method[name]() : $method[returnType]</h2>
 				<div class='description'>
-					".$this->addLinks(
-						$doc["summary"]
-						."<p>".implode("</p><p>", $doc["description"])
-					)."</p>";
+					{$this->addLinks($method["summary"])}";
+	foreach($method["description"] as $paragraph) echo "
+					<p>{$this->addLinks($paragraph)}</p>";
 	
-	if(count($doc["segments"])) {
+	if(count($method["segments"])) {
 		$headerRow = array();
 		$bodyRow = array();
 		foreach ($doc["segments"] as $key=>$segment) {
@@ -272,7 +287,7 @@ foreach($methods as $method) {
 					</div>";
 	}
 					
-	if (count($doc["parameters"])) {
+	if (count($method["parameters"])) {
 		echo "
 					<div class='method-parameter-details'>
 						<table>
@@ -283,29 +298,22 @@ foreach($methods as $method) {
 									<th width='100%'>Details</th>
 								</tr>
 							</thead>";
-
-		foreach($doc["parameters"] as $parameter) {
-			echo "
+		foreach($method["parameters"] as $parameter) echo "
 							<tr>
 								<th nowrap>$parameter[name]</th>
-								<td nowrap>",$this->addLinks($parameter["type"]),"</td>
-								<td width='100%'>",$this->addLinks($parameter["description"]),"</td>
+								<td nowrap>{$this->addLinks($parameter["type"])}</td>
+								<td width='100%'>{$this->addLinks($parameter["description"])}</td>
 							</tr>";
-		}
-	
 		echo "
 						</table>
 					</div>";
 	}
 	
-	foreach($doc["examples"] as $example) {
-		echo "
+	foreach($method["examples"] as $example) echo "
 				<p class='example'>
 					<h4>$example[title]</h4>
 					$example[body]
 				</p>";
-	}
-	
 	echo "
 				</div>
 			</div>"; 
@@ -318,6 +326,8 @@ echo "
 
 $buffer = ob_get_contents();
 ob_end_clean();
+
+// FIXME: Addlinks
 
 echo preg_replace(
 	'~<code (.*?)(?:type|language)\s*=\s*[\'"](.*?)[\'"](.*?)>(.*?)</code>~se', 
