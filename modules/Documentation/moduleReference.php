@@ -115,7 +115,8 @@ foreach($properties as $name=>$property) {
 foreach($methods as $i=>$method) {
 	// Search upward for docComments
 	for($parent = $class, $docComment=""; ($parent) && (!$docComment); $parent = $parent->getParentClass()) 
-		$docComment = $parent->getMethod($method->name)->getDocComment();
+		if($parent->hasMethod($method->name))
+			$docComment = $parent->getMethod($method->name)->getDocComment();
 	// Put the documentation into the parsed method
 	$doc = $this->parseDocComment(array($docComment, $documentationPath));
 	// Get the class in which this method was declared
