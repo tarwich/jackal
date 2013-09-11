@@ -112,6 +112,7 @@ body{
 				font-weight: 700;
 				color: #252e31;
 				display: inline-block;
+				font-style: normal;
 			}
 	
 	div.Admin-content{
@@ -155,6 +156,19 @@ body{
 			div.Admin-content form label{
 				height: auto;
 			}
+				div.Admin-content form label.fourCol{
+					width: 100px;
+					margin-left: 10px;
+				}
+				div.Admin-content form label.threeCol{
+					
+				}
+				div.Admin-content form label.twoCol{
+					
+				}
+				div.Admin-content form label.oneCol{
+					
+				}
 				div.Admin-content form label h3{
 					line-height: 1;
 					padding: 0;
@@ -166,3 +180,16 @@ body{
 				padding: 10px;
 				margin: 0 0 20px 0;
 			}
+				div.Admin-content form input.fourCol{
+					width: 100px;
+					margin-left: 10px;
+				}
+				div.Admin-content form input.threeCol{
+					
+				}
+				div.Admin-content form input.twoCol{
+					
+				}
+				div.Admin-content form input.oneCol{
+					
+				}
