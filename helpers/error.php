@@ -44,14 +44,12 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
             $line = rtrim(@":$sequence[line]", " :");
             // Strip the ':' from line
             $line = str_replace(":", "", $line);
-
             // Add the elements of the sequence that we will print later to our printBacktrace array
             $printBacktrace[] = array(
                 "call"     => "$call",
                 "basename" => "$basename",
                 "line"     => "$line"
             );
-
             // Update max width for the call
             if(($tempCallLength = strlen($call)) > $maxCallLength) $maxCallLength = $tempCallLength;
             // Update max width for the basename
