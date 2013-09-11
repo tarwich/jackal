@@ -237,7 +237,6 @@ $settings = Jackal::setting("console");
 			url("Console/commands/" + command, ["console", "partial"]),
 			{line:line},
 			function() {
-				window.foo = $box;
 				$box.prop({scrollTop: $box.prop("scrollHeight")});
 			}
 		);
