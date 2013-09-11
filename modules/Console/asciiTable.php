@@ -30,4 +30,4 @@ foreach($data as $row) {
 	$result[] = implode(" | ", $line);
 }
 
-return implode("\n\n", (array) @$result);
+return implode("\n", (array) @$result);

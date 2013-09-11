@@ -14,7 +14,7 @@
 
 if($path) {
 	$setting = Jackal::setting($path);
-	echo "<p>Setting $path: ".htmlentities(print_r($setting, 1))."</p>";
+	echo "<p>Setting: $path<pre>".$this->asciiTree($setting)."</pre></p>";
 } else {
 	echo "<p>All settings:".htmlentities(Jackal::query("_settings"))."</p>";
 }
