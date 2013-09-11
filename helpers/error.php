@@ -19,7 +19,55 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
         // Load the ANSI library
         $ANSI = Jackal::loadLibrary("ANSI");
         // Write the error message, formatted for terminal
-        echo "\n{$ANSI->RED}ERROR: {$ANSI->RESET}$errstr {$ANSI->RED}@ {$ANSI->CYAN}$errfile:$errline\n";
+        echo "\n{$ANSI->RED}ERROR: {$ANSI->RESET}$errstr {$ANSI->RED}@ {$ANSI->WHITE}$errfile{$ANSI->RESET}:{$ANSI->WHITE}$errline\n";
+        // Variable to hold the length of the longest call in the backtrace
+        $maxCallLength = 0;
+        // Variable to hold the length of the longest basename in the backtrace
+        $maxBasenameLength = 0;
+        // Variable to hold the length of the longest line number in the backtrace
+        $maxLineLength = 0;
+        // Array to hold the backtrace data
+        $printBacktrace = array();
+
+        // Get the elements from the backtrace that we need to print and get the max lengths for each "field"
+        foreach($backtrace as $sequence) {
+            if(false) {
+                if(in_array(@$sequence["function"], array("trigger_error", "user_error"))) {
+                    $sequence["file"] = $errfile;
+                    $sequence["line"] = $errline;
+                }
+            }
+
+            $sequence["file"] = str_replace($omitPath, "", @$sequence["file"]);
+            $basename = basename($sequence["file"]);
+            $call = ltrim(@"$sequence[class].$sequence[function]", ".");
+            $line = rtrim(@":$sequence[line]", " :");
+            // Strip the ':' from line
+            $line = str_replace(":", "", $line);
+
+            // Add the elements of the sequence that we will print later to our printBacktrace array
+            $printBacktrace[] = array(
+                "call"     => "$call",
+                "basename" => "$basename",
+                "line"     => "$line"
+            );
+
+            // Update max width for the call
+            if(($tempCallLength = strlen($call)) > $maxCallLength) $maxCallLength = $tempCallLength;
+            // Update max width for the basename
+            if(($tempBasenameLength =strlen($basename)) > $maxBasenameLength) $maxBasenameLength = $tempBasenameLength;
+            // Update max width for the line
+            if(($tempLineLength = strlen($call)) > $maxLineLength) $maxLineLength = $tempLineLength;
+        }
+
+        // Print our backtrace
+        foreach($printBacktrace as $backtraceItem) {
+            printf("  -->{$ANSI->RESET}%s{$ANSI->WHITE}%s{$ANSI->RESET}:{$ANSI->WHITE}%s\n",
+                str_pad($backtraceItem['call'    ], $maxCallLength     + 1, " "),
+                str_pad($backtraceItem['basename'], $maxBasenameLength    , " "),
+                str_pad($backtraceItem['line'    ], $maxLineLength        , " ")
+            );
+        }
 
         return true;
     }
