@@ -49,11 +49,11 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
                 "line"     => "$line"
             );
             // Update max width for the call
-            if(($tempCallLength = strlen($call)) > $maxCallLength) $maxCallLength = $tempCallLength;
+            $maxCallLength = max(strlen($call), $maxCallLength);
             // Update max width for the basename
-            if(($tempBasenameLength =strlen($basename)) > $maxBasenameLength) $maxBasenameLength = $tempBasenameLength;
+            $maxBasenameLength = max(strlen($basename), $maxBasenameLength);
             // Update max width for the line
-            if(($tempLineLength = strlen($call)) > $maxLineLength) $maxLineLength = $tempLineLength;
+            $maxLineLength = max(strlen($line), $maxLineLength);
         }
 
         // Print our backtrace
