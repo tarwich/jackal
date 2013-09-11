@@ -419,7 +419,7 @@ class Jackal {
 			} else {
 				$access = "public";
 				$arguments = "\$URI=array()";
-				$code = "";
+				$code = "if(func_num_args() > 1) \$URI = func_get_args();";
 			}
 				
 			// By default, methods are not static
