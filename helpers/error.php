@@ -19,7 +19,7 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
         // Load the ANSI library
         $ANSI = Jackal::loadLibrary("ANSI");
         // Write the error message, formatted for terminal
-        echo "\n{$ANSI->RED}ERROR: {$ANSI->RESET}$errstr {$ANSI->RED}@ {$ANSI->WHITE}$errfile{$ANSI->RESET}:{$ANSI->WHITE}$errline\n";
+        echo "\n{$ANSI->RED}ERROR: $errstr {$ANSI->RESET}@ {$ANSI->WHITE}$errfile{$ANSI->RESET}:{$ANSI->WHITE}$errline\n";
         // Variable to hold the length of the longest call in the backtrace
         $maxCallLength = 0;
         // Variable to hold the length of the longest basename in the backtrace
@@ -41,9 +41,7 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
             $sequence["file"] = str_replace($omitPath, "", @$sequence["file"]);
             $basename = basename($sequence["file"]);
             $call = ltrim(@"$sequence[class].$sequence[function]", ".");
-            $line = rtrim(@":$sequence[line]", " :");
-            // Strip the ':' from line
-            $line = str_replace(":", "", $line);
+            $line = rtrim(@"$sequence[line]", " :");
             // Add the elements of the sequence that we will print later to our printBacktrace array
             $printBacktrace[] = array(
                 "call"     => "$call",
@@ -60,11 +58,13 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 
         // Print our backtrace
         foreach($printBacktrace as $backtraceItem) {
-            printf("  -->{$ANSI->RESET}%s{$ANSI->WHITE}%s{$ANSI->RESET}:{$ANSI->WHITE}%s\n",
-                str_pad($backtraceItem['call'    ], $maxCallLength     + 1, " "),
-                str_pad($backtraceItem['basename'], $maxBasenameLength    , " "),
-                str_pad($backtraceItem['line'    ], $maxLineLength        , " ")
-            );
+            // Only print this item if both basename and line have values
+            if(($backtraceItem['basename']) && ($backtraceItem['line']))
+                printf("  --> {$ANSI->RESET}%s{$ANSI->WHITE}%s{$ANSI->RESET}:{$ANSI->WHITE}%s\n",
+                    str_pad($backtraceItem['call'    ], $maxCallLength     + 1, " "),
+                    str_pad($backtraceItem['basename'], $maxBasenameLength    , " "),
+                    str_pad($backtraceItem['line'    ], $maxLineLength        , " ")
+                );
         }
 
         return true;
