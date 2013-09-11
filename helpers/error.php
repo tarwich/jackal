@@ -11,11 +11,26 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 	
 	$backtrace = debug_backtrace();
 	$omitPath = dirname(dirname(dirname(__FILE__)));
-	
-	if(!@$GLOBALS["jackal-data"]["error-styles-printed"]) {
-		$GLOBALS["jackal-data"]["error-styles-printed"] = true;
+    // Get the terminal settings
+    $terminal = Jackal::setting("jackal/terminal");
 
-		?>
+    // If the program was run from terminal
+    if(@$terminal['is_terminal']) {
+        // Load the ANSI library
+        $ANSI = Jackal::loadLibrary("ANSI");
+        // Write the error message, formatted for terminal
+        echo "\n{$ANSI->RED}ERROR: {$ANSI->RESET}$errstr {$ANSI->RED}@ {$ANSI->CYAN}$errfile:$errline\n";
+
+        return true;
+    }
+
+    // Otherwise, we need to format the error for a browser
+    else {
+        // Update the status of printing the error styles
+        if(!@$GLOBALS["jackal-data"]["error-styles-printed"]) {
+            $GLOBALS["jackal-data"]["error-styles-printed"] = true;
+
+            ?>
 <style type='text/css'>
 
 div, a, h2, h3, span {
@@ -93,7 +108,7 @@ div.jackal-error h2 {
 	color: #cc0000;
 	text-decoration: none;
 	background: transparent !important;
-	
+
 	/* make text unselectable */
 	-moz-user-select: -moz-none;
 	-khtml-user-select: none;
@@ -108,7 +123,7 @@ div.jackal-error h3 {
 	color: #333333;
 	text-decoration: none;
 	background: transparent !important;
-	
+
 	/* make text unselectable */
 	-moz-user-select: -moz-none;
 	-khtml-user-select: none;
@@ -160,59 +175,58 @@ div.jackal-error div.error-backtrace table tr td i {
 }
 
 </style>
-		<?php
-	}
-	
-	echo "
-		<div class='jackal-error'>
-			<a class='error-target' href='http://inabilitytosupportfocusattributesucksballs.com' onclick='this.focus(); return false;' onmousedown='this.focus(); return false;'>
-				<div class='error-container'>
-					<span class='error-icon'>!</span>
-					<div class='error-title'>
-						<h2>$errstr</h2>
-						<h3>".(basename($errfile))."<i>:$errline</i></h3>
-						<div class='error-backtrace'>
-							<div>
-								<table> ";
+            <?php
+        }
 
-	// Remove ME
-	//array_shift($backtrace);
-	// Start the iterator
-	$i = 0;
-	
-	foreach($backtrace as $sequence) {
-		if(false)
-		if(in_array(@$sequence["function"], array("trigger_error", "user_error"))) {
-			$sequence["file"] = $errfile;
-			$sequence["line"] = $errline;
-		}
-		
-		$sequence["file"] = str_replace($omitPath, "", @$sequence["file"]);
-		$i++;
-		$l = ($i+1)%2;
-		$basename = basename($sequence["file"]);
-		$call = ltrim(@"$sequence[class].$sequence[function]", ".");
-		$line = rtrim(@":$sequence[line]", " :");
-		
-		echo @"
-									<tr class='r$l i$i'>
-										<td>$basename<i>$line</i></td>
-										<td>$call</td>
-									</tr>";
-	}
+        echo "
+            <div class='jackal-error'>
+                <a class='error-target' href='http://inabilitytosupportfocusattributesucksballs.com' onclick='this.focus(); return false;' onmousedown='this.focus(); return false;'>
+                    <div class='error-container'>
+                        <span class='error-icon'>!</span>
+                        <div class='error-title'>
+                            <h2>$errstr</h2>
+                            <h3>".(basename($errfile))."<i>:$errline</i></h3>
+                            <div class='error-backtrace'>
+                                <div>
+                                    <table> ";
 
-	echo "
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-			</a>
-		</div> ";
-	
-	return true;
+        // Remove ME
+        //array_shift($backtrace);
+        // Start the iterator
+        $i = 0;
+
+        foreach($backtrace as $sequence) {
+            if(false)
+            if(in_array(@$sequence["function"], array("trigger_error", "user_error"))) {
+                $sequence["file"] = $errfile;
+                $sequence["line"] = $errline;
+            }
+
+            $sequence["file"] = str_replace($omitPath, "", @$sequence["file"]);
+            $i++;
+            $l = ($i+1)%2;
+            $basename = basename($sequence["file"]);
+            $call = ltrim(@"$sequence[class].$sequence[function]", ".");
+            $line = rtrim(@":$sequence[line]", " :");
+
+            echo @"
+                                        <tr class='r$l i$i'>
+                                            <td>$basename<i>$line</i></td>
+                                            <td>$call</td>
+                                        </tr>";
+        }
+
+        echo "
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div> ";
+
+        return true;
+    }
 }
 
 set_error_handler("jackal__handleError");
-
-
