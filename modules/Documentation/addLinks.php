@@ -24,7 +24,8 @@
 if(is_string($URI)) $text = $URI;
 else $text = $URI[0];
 
-@($classes = $this->_classes) || ($classes = $this->_classes = array_keys($this->_getModuleList()));
+@($classes = $this->_classes) 
+	|| ($classes = $this->_classes = array_diff(array_keys($this->_getModuleList()), array($this->documentationClass->name)));
 @($link = $this->_moduleReferenceLink) 
 || ($link = $this->_moduleReferenceLink = explode("___", Jackal::siteURL("Documentation/rightPane/___")));
 @($localMethods = $this->localMethods);
@@ -52,17 +53,19 @@ if(!$localProperties) {
 	}
 }
 
-// Find class methods
-$text = preg_replace("\x07\\b(".implode("|", $classes).")::(\\w+)([()]*)\x07", "{METHOD:$1,$2}", $text);
-// Find classes
-$text = preg_replace("\x07(?<!{METHOD:)\\b(".implode("|", $classes).")\\b\x07", "{CLASS:$1}", $text);
-// Link to class methods
-$text = preg_replace("\x07{METHOD:(.*?),(.*?)}\x07", "<a href='$link[0]$1$link[1]#$2-method'>$1::$2()</a>", $text);
-// Link to classes
-$text = preg_replace("\x07{CLASS:(.*?)}\x07", "<a href='$link[0]$1$link[1]'>$1</a>", $text);
-// Link to local methods
-$text = preg_replace('/\b('.implode("|", $localMethods).')\(\)/', "<a href='#$1-method'>$1()</a>", $text);
-// Link to local properties
-$text = preg_replace('/\\$('.implode("|", $localProperties).')/', "<a href='#$1-property'>$$1</a>", $text);
+$expressions = array(
+	// Find class methods
+	"\x07\\b(".implode("|", $classes).")::(\\w+)([()]*)\x07" => "{METHOD:$1,$2}",
+	// Find classes
+	"\x07(?<!{METHOD:)\\b(".implode("|", $classes).")\\b\x07" => "{CLASS:$1}",
+	// Link to class methods
+	"\x07{METHOD:(.*?),(.*?)}\x07" => "<a href='$link[0]$1$link[1]#$2-method'>$1::$2()</a>",
+	// Link to classes
+	"\x07{CLASS:(.*?)}\x07" => "<a href='$link[0]$1$link[1]'>$1</a>", 
+	// Link to local methods
+	'/\b('.implode("|", $localMethods).')\(\)/' => "<a href='#$1-method'>$1()</a>", 
+	// Link to local properties
+	'/\\$('.implode("|", $localProperties).')/' => "<a href='#$1-property'>$$1</a>", 
+);
 
-return $text;
+return preg_replace(array_keys($expressions), array_values($expressions), $text);

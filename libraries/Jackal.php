@@ -133,7 +133,7 @@ class Jackal {
 	public static $VERSION = "1.3.0";
 	
 	/**
-	 * Internal array of scope heirarchy
+	 * Internal array of scope hierarchy
 	 *
 	 * Every time call() is executed, the call is added to the scope tree, so
 	 * that other modules can tell who they were called from, or what the entry
@@ -224,7 +224,7 @@ class Jackal {
 	 * Jackal::call("Foo/bar");
 	 * </code>
 	 * 
-	 * This example is equivelant to writing:
+	 * This example is equivalent to writing:
 	 * <code type="php">
 	 * include("Foo.php")
 	 * $foo = new Foo();
@@ -237,7 +237,7 @@ class Jackal {
 	 * Jackal::call("Foo/bar/baz/bin");
 	 * </code>
 	 * 
-	 * This example is equivelant to writing:
+	 * This example is equivalent to writing:
 	 * <code type="php">
 	 * include("Foo.php");
 	 * $foo = new Foo();
@@ -598,7 +598,7 @@ END;
 	 * to utilize this functionality if needed. However, it is recommended to
 	 * use Jackal::call() if at all possible.
 	 * 
-	 * @example A sample useage of this method 
+	 * @example A sample usage of this method 
 	 * 
 	 * <code type="php">
 	 * Jackal::executeMethod($objectInstance, "method", array("one", "two"));
@@ -901,13 +901,13 @@ END;
 	/**
 	 * Returns the current Jackal error level
 	 * 
-	 * Jackal::error() sets the current error code. This method retreives that 
+	 * Jackal::error() sets the current error code. This method retrieves that 
 	 * error code. The purpose of this method is to allow other modules to 
 	 * determine if an error has occurred between the beginning of the request 
 	 * and the time of calling this method.
 	 * 
 	 * In the future, there will be a method to get a list of the errors that
-	 * have occured in order to display them in a list.
+	 * have occurred in order to display them in a list.
 	 * 
 	 * @example Displays the current error level
 	 * <code type="php">
@@ -947,12 +947,12 @@ END;
 	 * which does nothing, but returns the input. This is useful for safely 
 	 * implementing helpers that perform actions on the input. 
 	 * 
-	 * @example Example of non-existant function
+	 * @example Example of non-existent function
 	 * <code type='php'>
 	 * // Suppose there is an optional (but not present) helper called translate
 	 * 
 	 * $t = Jackal::getFunction("translate", "international");
-	 * echo $t("Some example text"); // Ouptuts "Some example text"
+	 * echo $t("Some example text"); // Outputs "Some example text"
 	 * </code> 
 	 * 
 	 * @param string $function Name of the function to point to
@@ -1335,7 +1335,7 @@ END;
 	 * This method passes the call to getClass(), and therefore, will follow 
 	 * that same logic.
 	 * 
-	 * It is possible -- but not recommented --  to load a folder based module
+	 * It is possible -- but not re-commented --  to load a folder based module
 	 * and execute a method directly on the destination object, because this 
 	 * method simply returns an instance of the class.
 	 * 
@@ -1344,7 +1344,7 @@ END;
 	 * // Load the library
 	 * Jackal::loadLibrary("Template");
 	 * 
-	 * // This is also posible, but not recommended
+	 * // This is also possible, but not recommended
 	 * $template = Jackal::loadLibrary("Template");
 	 * $template->doSomething();
 	 * // Instead use this, which will load the library and execute the method
@@ -1734,10 +1734,10 @@ END;
 	/**
 	 * Returns the current calling scope of Jackal
 	 * 
-	 * All call() statements keep track of the heirarchy tree in order for other
+	 * All call() statements keep track of the hierarchy tree in order for other
 	 * modules to be able to track the call chain. This is useful if a module
 	 * needs to know who called it, or what the first call in the chain was.
-	 * There is little practical use for accessing antecendents between those 
+	 * There is little practical use for accessing antecedents between those 
 	 * two values, but it is possible.
 	 * 
 	 * This method will return the call at position $position. If $position is
@@ -1829,7 +1829,7 @@ END;
 	 * $bar = Jackal::setting("Foo/bar", "baz");
 	 * </code>
 	 * 
-	 * @param string $name The name of the setting to retreive
+	 * @param string $name The name of the setting to retrieve
 	 * @param mixed $default The default value to return if the setting is not 
 	 * 		found
 	 * 
@@ -2112,13 +2112,13 @@ END;
 	}
 
 	/**
-	 * Conver from url string to URI array
+	 * Convert from url string to URI array
 	 * 
 	 * Convert from string to uri, then if only one item exists, and default is
 	 * set, then it will be assigned to default
 	 * 
 	 * @param string $url The array to parse. If this is an array, then it will 
-	 * 		be returned as if it had sucessfully parse a string
+	 * 		be returned as if it had successfully parse a string
 	 * @param mixed $default The value to put into the default key of the 
 	 * 		resulting URI array
 	 * 

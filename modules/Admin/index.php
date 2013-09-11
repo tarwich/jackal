@@ -19,25 +19,41 @@ css("http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800");
 //Load Default Stylesheet
 css("styles.css");
 
-?>
-
-<!-- TEMP -->	
-<div id="nineSixtyGuide"></div>
-
-<!-- This is the Header, Obviously -->
-<header>
-	<h1 class="littleHeaderTitle">Practice Reports</h1>
-	
-	<a href="#" class="userLink">User</a>
-	
-</header>
-
-<h1 class="pageTitle">Settings</h1>
-
-<!-- This is the Sidebar -->
-<?php echo Jackal::returnCall("Admin/sidebar"); ?>
-
-<!-- This is the Content -->
-<div class="Admin-content">
-	<?php echo Jackal::returnCall("Admin/showSection"); ?>
-</div>
+?><? 
+	// This is the Header, Obviously 
+	?>
+	<style type='text/css' class='FIXME'>
+		table.content {
+			border-collapse: collapse;
+			border-spacing: 0;
+		}
+		
+		td.sidebar {
+			width       : 180px;
+			border      : 1px solid #000;
+			padding-left: 65px;
+			padding-top : 0px;
+		}
+	</style>
+	<header>
+		<h1 class="littleHeaderTitle">Practice Reports</h1>
+		<a href="#" class="userLink">User</a>
+	</header>
+	<h1 class="pageTitle">Settings</h1>
+	<table class='content'>
+		<tr>
+			<td>
+				<?php
+				// This is the Sidebar 
+				Jackal::call("Admin/sidebar"); ?>
+			</td>
+			<td>
+<?
+				// This is the Content
+				?>
+				<div class="Admin-content">
+					<?php echo Jackal::returnCall("Admin/showSection"); ?>
+				</div>
+			</td>
+		</tr>
+	</table>

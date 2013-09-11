@@ -1,12 +1,12 @@
 <?php
 
 /**
- * This method tests if showOverviewAlerts is working correctly
+ * This test checks to see if showOverviewAlerts is working correctly
  *
- * This method checks response of showOverViewAlerts by creating a test
- * module with a self-test of "getSampleMessages," which returns an array with one message of
- * each priority level. Since showOverviewAlerts only considers "errors" and "warnings," it expects
- * to receive an html element with text equaling 2.
+ * This test checks the response of showOverViewAlerts by creating a test module with 2 sub-modules that have
+ * self-tests of "getSampleMessages," which returns an array with 3 messages, 1 of each priority level.
+ * Since showOverviewAlerts only considers "errors" and "warnings," it expects to receive an html element with text
+ * equaling 4.
  *
  * @return void
  */
@@ -16,20 +16,23 @@ $this->startSubTest(array("Verify correct response from Admin/runTests/getSample
 // Set the timezone to something invalid, and create a test module that will run the getSampleMessages test
 Jackal::putSettings("
 admin:
-    modules:
-            testModule:
-                -
-                    name     : Foo / Bar
-                    self-test: Admin/getSampleMessages
+	modules:
+		testModule:
+			-
+				name     : Foo / Bar
+				self-test: Admin/getSampleMessages
+			-
+				name     : Foo / Bin
+				self-test: Admin/getSampleMessages
 jackal:
     timezone: Foo/Bar
 ");
-// Get the overview alerts for the Foo module. It should return an html element with text
-// containing the number of errors/warnings.
+// Run the self-test for all sub-modules in the Foo module
 $results = Jackal::returnCall("Admin/showOverviewAlerts/Foo");
 // Strip the html tags to isolate the number of results
 $results = strip_tags($results);
-// Our expected result is 2, since we are only considering errors and warnings.
-$expected = 2;
+// Our expected result is 4, since we only want Errors and Warnings,
+// and because both sub-sections call getSampleMessages
+$expected = 4;
 // Compare what we got vs what we expected
 $this->assertEquals(array($expected, $results));
