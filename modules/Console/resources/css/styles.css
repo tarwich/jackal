@@ -1,0 +1,103 @@
+@CHARSET "UTF-8";
+/**
+ *
+ * Console styles
+ *
+ */
+	#Console div.terminal-wrapper {
+		position: fixed;
+		top: 0;
+		width: 100%;
+		z-index: 99999;
+	}
+	#Console table {
+		width: 100%;
+	}
+	#Console .terminal .output-box,
+	#Console .terminal {
+		background: #000000;
+		background: rgba(0,0,0,.80);
+		color: #3E3;
+		font-family: Monaco, "Courier New", Courier, monospace;
+		font-weight: normal;
+		font-size: 8pt;
+		overflow-y: scroll;
+		border-bottom: 1px solid #666666;
+	}
+	#Console input {
+		font-family: Monaco, "Courier New", Courier, monospace;
+		position: absolute;
+		width: 100%;
+		bottom: -26px;
+		background: #000000;
+		background: rgba(0,0,0,.8) !important;
+		color: #cccccc;
+		border-top: 1px solid #333333;
+		padding: 0px 5px;
+		height: 26px;
+		line-height: 26px;
+		
+		-moz-box-shadow: 0px 5px 5px rgba(0,0,0,.35);
+		-webkit-box-shadow: 0px 5px 5px rgba(0,0,0,.35);
+	}
+	#Console input:focus {
+		color: #ffffff;
+	}
+	#Console div.output-box {
+		padding: 10px;
+	}
+	#Console div.output-box p {
+		white-space: pre;
+		margin: 0px;
+	}
+	
+	/* console button */
+	button.toggle-console {
+		position: fixed;
+		display: block;
+		line-height: 20px;
+		height: 20px;
+		width: 20px;
+		top: 5px;
+		right: 20px;
+		z-index: 9999;
+		
+		font-family: "Lucida Sans Unicode", "Arial";
+		text-transform: uppercase;
+		font-size: 10px;
+		font-weight: bold;
+		background: #000000;
+		color: #00ff00;
+		text-align: center;
+		cursor: pointer;
+		margin: 0 auto;
+		padding: 0px;
+		
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
+		-moz-box-shadow: 2px 2px 5px rgba(0,0,0,.35);
+		-webkit-box-shadow: 2px 2px 5px rgba(0,0,0,.35);
+		border: none !important;
+	}
+	#Console button.on {
+		background: #00cc00 !important;
+		color: #ffffff !important;
+		border: none !important;
+	}
+	
+/**
+ *
+ * Fullscreen mode
+ *
+ */
+	#Console.fullscreen {
+		height: 100%;
+	}
+	#Console.fullscreen div {
+		height: 100%;
+	}
+	#Console.fullscreen input {
+		position: fixed;
+		bottom: 0px !important;
+		left: 0px;
+	}

@@ -1,0 +1,23 @@
+<?php
+
+//
+// This file will load all UI element styles into one stylesheet, faster on the browser
+//
+
+Jackal::loadHelper("url");
+
+// Path to include other styles
+$path = dirname(__FILE__)."/css";
+
+// List of files to include
+$css = array(
+	"styles"
+);
+
+// Now include all the CSS
+foreach ($css as $file) {
+	include("$path/$file.css");
+	echo "\n\n";
+}
+
+?>
