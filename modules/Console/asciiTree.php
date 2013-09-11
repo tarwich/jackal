@@ -6,12 +6,12 @@
 // - indent
 ($indent = @$URI[1]) || ($indent = "");
 
-// Buffer output to make it easier to return the content
-ob_start();
 // Initialize key calculations to zero
 $shortest = 32767;
 $longest = 0;
 $hasChildren = false;
+// Buffer for returning the result
+$result = "";
 
 // Calculate key variance
 foreach($subject as $name=>$value) {
@@ -28,20 +28,28 @@ foreach($subject as $name=>$value) {
 // Don't pad the keys if there are children
 $keyPadding = $hasChildren ? 0 : $longest;
 
-// Print each item
-foreach($subject as $name=>$value) {
+$backlog = array(array("", (array) $subject));
+$i = 0;
+
+while($backlog) {
+	list($indent, $subject) = array_pop($backlog);
+	list($name, $value) = each($subject);
+	unset($subject[$name]);
+	if(++$i > 20) break;
 	// Indent and print the name
-	printf("$indent%-{$keyPadding}s: ", $name);
+	$result .= sprintf("$indent%-{$keyPadding}s: ", $name);
+	if($subject) $backlog[] = array($indent, $subject);
 	
 	// If scalar, then print the value
-	if(is_scalar($value)) echo htmlentities($value) . "\n";
+	if(is_scalar($value)) $result .= $value . "\n";
 	
 	else {
 		// End this line
-		echo "\n";
-		echo $this->asciiTree((array) $value, "\t$indent");
+		$result .= "\n";
+		if($value) $backlog[] = array("\t$indent", (array)$value);
+		// $result .= $this->asciiTree((array) $value, "\t$indent");
 	}
 }
 
-// End output buffering, get the contents, and return them
-return ob_get_clean();
+$result .= "DONE";
+return htmlentities($result);
