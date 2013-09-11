@@ -4,7 +4,7 @@
 // - subject (The thing to print)
 ($subject = @$URI[0]) || ($subject = $URI);
 // - indent
-($indent = @$URI[1]) || ($indent = "\t");
+($indent = @$URI[1]) || ($indent = "");
 
 // Buffer output to make it easier to return the content
 ob_start();

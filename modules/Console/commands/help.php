@@ -13,6 +13,7 @@
 if(!$command) {
 	echo "<p>Commands: </p>";
 	$files = glob(dirname(__FILE__)."/*.php");
+	$commands = array();
 	
 	foreach($files as $file) {
 		$info = pathinfo($file);
@@ -22,10 +23,14 @@ if(!$command) {
 		preg_match('~/\*\*(.*?)(?:(?:[\s\*]*[\n]){2}|\*/)~s', $contents, $matches);
 		@list($nothing, $matches["summary"]) = $matches;
 		$summary = trim(preg_replace('~[\r\n]+\s*\*~', '', @$matches["summary"]));
-		echo "<p>$name \t- $summary</p>";
+		// Store this command in the hash
+		$commands[$name] = $summary;
 	}
 	
-	echo "<p>Fore more information on a command, type: help &lt;command&gt;</p>";
+	// Print the command table
+	echo "<pre>{$this->asciiTree($commands)}</pre>";
+	
+	echo "<p>For more information on a command, type: help &lt;command&gt;</p>";
 } else {
 	$file = dirname(__FILE__) . "/$command.php";
 	
