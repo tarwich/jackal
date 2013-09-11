@@ -11,6 +11,7 @@ ob_start();
 // Initialize key calculations to zero
 $shortest = 32767;
 $longest = 0;
+$hasChildren = false;
 
 // Calculate key variance
 foreach($subject as $name=>$value) {
