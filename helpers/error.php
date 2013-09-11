@@ -16,10 +16,15 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 
     // If the program was run from terminal
     if(@$terminal['is_terminal']) {
-        echo "$errstr $errfile:$errline";
-exit();
+        // Load the ANSI library
+        $ANSI = Jackal::loadLibrary("ANSI");
+        // Write the error message, formatted for terminal
+        echo "\n{$ANSI->RED}ERROR: {$ANSI->RESET}$errstr {$ANSI->RED}@ {$ANSI->CYAN}$errfile:$errline\n";
+
         return true;
     }
+
+    // Otherwise, we need to format the error for a browser
     else {
         // Update the status of printing the error styles
         if(!@$GLOBALS["jackal-data"]["error-styles-printed"]) {
@@ -223,6 +228,5 @@ div.jackal-error div.error-backtrace table tr td i {
         return true;
     }
 }
+
 set_error_handler("jackal__handleError");
-
-
