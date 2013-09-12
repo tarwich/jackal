@@ -11,11 +11,9 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 	
 	$backtrace = debug_backtrace();
 	$omitPath = dirname(dirname(dirname(__FILE__)));
-    // Get the terminal settings
-    $terminal = Jackal::setting("jackal/terminal");
 
-    // If the program was run from terminal
-    if(@$terminal['is_terminal']) {
+    // If the program was run from the CLI
+    if(Jackal::flag("CLI")) {
         // Load the ANSI library
         $ANSI = Jackal::loadLibrary("ANSI");
         // Write the error message, formatted for terminal
