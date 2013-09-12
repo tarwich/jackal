@@ -31,9 +31,7 @@ foreach($parameters as $i=>$value) {
 	}
 }
 
-Jackal::loadLibrary("QueryBuilder")->debug(true);
 $results = Jackal::model($command, $parameters);
-Jackal::loadLibrary("QueryBuilder")->debug(false);
 
 $table = $this->asciiTable(array($results));
 
