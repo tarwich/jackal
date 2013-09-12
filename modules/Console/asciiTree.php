@@ -6,44 +6,42 @@
 
 // How wide is an indent?
 $tab = "    ";
-// Buffer for returning the result
-$result = "";
 // The current indent level
 $indent = "";
 // Get the width of the longest key
 $keyPadding = max(array_map('strlen', array_keys($subject)));
-// If any of the children have children, then keyPadding should be 0
-if(max(array_map('is_array', $subject))) $keyPadding = 0;
 // Backlog of things to print
 $backlog = array(array($indent, (array) $subject, $keyPadding));
 
-while($backlog) {
+// Loop while there are items in the backlog (condom: 2500)
+for($i=0; $backlog && ($i<2500); ++$i) {
 	list($indent, $subject, $keyPadding) = array_pop($backlog);
+	// Find out how far out the next array is
+	$nextArray = array_search(1, array_values(array_map('is_array', $subject)));
+	// Remove key padding if this key is an array
+	$currentKeyPadding = $nextArray === false ? $keyPadding : $nextArray > 0 ? $keyPadding : 0;
+	// If we're not padding this key, then recalculate the padding for the next group
+	if(!$currentKeyPadding) $keyPadding = @max(array_map('strlen', array_keys($subject)));
+	// Grab the next key/value pair
 	list($name, $value) = each($subject);
+	// Since we're sub-iterating through subject, remove the current item from $subject
 	unset($subject[$name]);
-	if(++$i > 20) break;
+	// If there are still items in $subject, then put it back in the backlog
 	if($subject) $backlog[] = array($indent, $subject, $keyPadding);
+	// Indent and print the name
+	printf("$indent%-{$currentKeyPadding}s: ", htmlentities($name));
 	
 	// If scalar, then print the value
-	if(is_scalar($value)) {
-		// Indent and print the name
-		$result .= sprintf("$indent%-{$keyPadding}s: ", $name);
-		$result .= $value . "\n";
-	}
+	if(is_scalar($value)) echo htmlentities("$value\n");
 	
 	else {
-		// Indent and print the name
-		$result .= sprintf("$indent%-{$keyPadding}s: ", $name);
+		// If this is an empty array, then use braces to illustrate that
+		if(!count($value)) echo "[ ]";
 		// End this line
-		if(!count($value)) $result .= "[ ]";
-		$result .= "\n";
+		echo "\n";
 		// Get the width of the longest key
-		$keyPadding = max(array_map('strlen', array_keys($value)));
-		// If any of the children have children, then keyPadding should be 0
-		if(max(array_map('is_array', $value))) $keyPadding = 0;
+		$keyPadding = @max(array_map('strlen', array_keys($value)));
+		// 
 		if($value) $backlog[] = array("$indent$tab", (array)$value, $keyPadding);
 	}
 }
-
-$result .= "DONE";
-return htmlentities($result);

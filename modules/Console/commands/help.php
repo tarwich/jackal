@@ -28,8 +28,8 @@ if(!$command) {
 	}
 	
 	// Print the command table
-	echo "<pre>{$this->asciiTree($commands)}</pre>";
-	
+	echo "<pre>".Jackal::returnCall("Console/asciiTree", $commands)."</pre>";
+	// Print the table footer
 	echo "<p>For more information on a command, type: help &lt;command&gt;</p>";
 } else {
 	$file = dirname(__FILE__) . "/$command.php";
