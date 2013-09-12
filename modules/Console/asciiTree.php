@@ -3,51 +3,45 @@
 // Parse URI
 // - subject (The thing to print)
 ($subject = @$URI[0]) || ($subject = $URI);
-// - indent
-($indent = @$URI[1]) || ($indent = "");
 
-// Initialize key calculations to zero
-$shortest = 32767;
-$longest = 0;
-$hasChildren = false;
+// How wide is an indent?
+$tab = "    ";
 // Buffer for returning the result
 $result = "";
-
-// Calculate key variance
-foreach($subject as $name=>$value) {
-	// See if this array has children
-	$hasChildren |= !is_scalar($value);
-	// Get the length of this key
-	$length = strlen($name);
-	// Calculate the shortest key
-	$shortest = min($shortest, $length);
-	// Calculate the longest key
-	$longest = max($longest, $length);
-}
-
-// Don't pad the keys if there are children
-$keyPadding = $hasChildren ? 0 : $longest;
-
-$backlog = array(array("", (array) $subject));
-$i = 0;
+// The current indent level
+$indent = "";
+// Get the width of the longest key
+$keyPadding = max(array_map('strlen', array_keys($subject)));
+// If any of the children have children, then keyPadding should be 0
+if(max(array_map('is_array', $subject))) $keyPadding = 0;
+// Backlog of things to print
+$backlog = array(array($indent, (array) $subject, $keyPadding));
 
 while($backlog) {
-	list($indent, $subject) = array_pop($backlog);
+	list($indent, $subject, $keyPadding) = array_pop($backlog);
 	list($name, $value) = each($subject);
 	unset($subject[$name]);
 	if(++$i > 20) break;
-	// Indent and print the name
-	$result .= sprintf("$indent%-{$keyPadding}s: ", $name);
-	if($subject) $backlog[] = array($indent, $subject);
+	if($subject) $backlog[] = array($indent, $subject, $keyPadding);
 	
 	// If scalar, then print the value
-	if(is_scalar($value)) $result .= $value . "\n";
+	if(is_scalar($value)) {
+		// Indent and print the name
+		$result .= sprintf("$indent%-{$keyPadding}s: ", $name);
+		$result .= $value . "\n";
+	}
 	
 	else {
+		// Indent and print the name
+		$result .= sprintf("$indent%-{$keyPadding}s: ", $name);
 		// End this line
+		if(!count($value)) $result .= "[ ]";
 		$result .= "\n";
-		if($value) $backlog[] = array("\t$indent", (array)$value);
-		// $result .= $this->asciiTree((array) $value, "\t$indent");
+		// Get the width of the longest key
+		$keyPadding = max(array_map('strlen', array_keys($value)));
+		// If any of the children have children, then keyPadding should be 0
+		if(max(array_map('is_array', $value))) $keyPadding = 0;
+		if($value) $backlog[] = array("$indent$tab", (array)$value, $keyPadding);
 	}
 }
 
