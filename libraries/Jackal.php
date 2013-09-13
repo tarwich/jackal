@@ -755,15 +755,17 @@ END;
 		$flaggers[] = Jackal::setting("debug-path");
 		// Get the flaggers and querystring parts of the URL
 		preg_match(',((?:'.implode("|", $flaggers).'|/)*)(.*$),', $_SERVER["QUERY_STRING"], $components);
-
-		$components["flags"] = $components[1];
-		$components["url"]   = $components[2];
-		
+		// Get the flags and url from components
+		@list(,$flags, $url) = $components;
 		// Push the URL back to the environment
-		$_SERVER["QUERY_STRING"] = $components["url"];
+		$_SERVER["QUERY_STRING"] = $url;
 		// Store the flags
-		self::$_caseFlags = array_filter(explode("/", $components["flags"]));
+		self::$_caseFlags = array_filter(explode("/", $flags));
 		self::$_caseFlags = (array) @array_combine((array) @self::$_caseFlags, (array) @self::$_caseFlags);
+		// Add CLI flag
+		if(php_sapi_name() == "cli") self::$_caseFlags[] = "CLI";
+		// Add CLI DEBUG flag
+		if(@$_ENV["DEBUG"]) self::$_caseFlags[] = "DEBUG";
 		// Remove empty flags
 		self::$_caseFlags = array_filter(self::$_caseFlags);
 		self::$_flags = array_map('strtoupper', self::$_caseFlags);
@@ -825,15 +827,15 @@ END;
 					if(error_reporting()) Jackal::error(501, "$className does not exist", "Jackal was unable to find class $className");
 					self::$_classes[$className] = false;
 				}
-
+				
 				return self::$_classes[$className];
 			}
-
+			
 			// Is the actual class file
 			elseif(is_file($files[0])) {
 				include($files[0]);
 			}
-
+			
 			// Is the directory for the class file
 			else {
 				// And has the class definition file in it
@@ -846,22 +848,26 @@ END;
 				}
 			}
 		}
-
+		
 		// Debug - make sure the class exists
 		assert('class_exists("'.$className.'")');
-
+		
+		// Get information about the class
+		$reflection = new ReflectionClass($className);
+		// Don't instantiate abstract classes
+		if($reflection->isAbstract()) $object = true;
 		// Class found... Instantiate, store, and return
-		$object = new $className();
+		else $object = new $className();
 		// Cache the result
 		self::$_classes[$className] = $object;
-
+		
 		// Call the autorun function if available
 		if(method_exists(self::$_classes[$className], "autorun"))
 		call_user_func(array(self::$_classes[$className], "autorun"));
-
+		
 		return self::$_classes[$className];
 	}
-
+	
 	/**
 	 * This method is deprecated 
 	 *  
@@ -1226,8 +1232,6 @@ END;
 
 		// Pull flags out of URI
 		Jackal::flagCheck();
-		// Detect CLI mode
-		if(php_sapi_name() == "cli") Jackal::flag("CLI", true);
 		// Turn debugging on
 		self::_debuggingCheck();
 
