@@ -1226,7 +1226,8 @@ END;
 
 		// Pull flags out of URI
 		Jackal::flagCheck();
-
+		// Detect CLI mode
+		if(php_sapi_name() == "cli") Jackal::flag("CLI", true);
 		// Turn debugging on
 		self::_debuggingCheck();
 
