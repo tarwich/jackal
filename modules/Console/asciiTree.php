@@ -36,7 +36,7 @@ for($i=0; $backlog && ($i<2500); ++$i) {
 	
 	else {
 		// If this is an empty array, then use braces to illustrate that
-		if(!count($value)) echo "[ ]";
+		if(is_array($value)) if(!count($value)) echo "[ ]";
 		// End this line
 		echo "\n";
 		// Get the width of the longest key
