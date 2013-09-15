@@ -2,7 +2,7 @@
 
 // Parse URI
 // - subject (The thing to print)
-($subject = @$URI[0]) || ($subject = $URI);
+($subject = (array)@$URI[0]) || ($subject = (array)$URI);
 
 // How wide is an indent?
 $tab = "    ";
