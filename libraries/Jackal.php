@@ -31,7 +31,7 @@ class Jackal {
 	 * @var string
 	 */
 	private static $currentURL = "";
-
+	
 	/**
 	 * The glob used to find classes
 	 *
@@ -45,7 +45,7 @@ class Jackal {
 	 * @var string
 	 */
 	private static $DEFAULT_CLASS_PATH = "<ROOT>/{<LOCAL>,<JACKAL>}/{<OTHER>modules,libraries}/{<MODULE>,<MODULE>.php}";
-		
+	
 	/**
 	 * The default <MY_> prefix
 	 *
