@@ -4,10 +4,10 @@ $data = $URI[0];
 
 $columnSizes = array();
 
-foreach((array) @reset($data) as $j=>$column) {
-	$columnSizes[$j] = strlen($j);
-}
+// Get the header column widths
+foreach((array) @reset($data) as $j=>$column) $columnSizes[$j] = strlen($j);
 
+// Get the widest columns
 foreach($data as $i=>$row) {
 	foreach((array) $row as $j=>$column) {
 		$columnSizes[$j] = max(strlen($column), @$columnSizes[$j]);
@@ -19,6 +19,7 @@ foreach((array) @reset($data) as $j=>$column) {
 }
 
 $result[] = implode(" | ", $line);
+$result[] = str_repeat("-", strlen($result[0]));
 
 foreach($data as $row) {
 	$line = array();

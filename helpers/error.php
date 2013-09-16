@@ -11,15 +11,13 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 	
 	$backtrace = debug_backtrace();
 	$omitPath = dirname(dirname(dirname(__FILE__)));
-    // Get the terminal settings
-    $terminal = Jackal::setting("jackal/terminal");
 
-    // If the program was run from terminal
-    if(@$terminal['is_terminal']) {
+    // If the program was run from the CLI
+    if(Jackal::flag("CLI")) {
         // Load the ANSI library
         $ANSI = Jackal::loadLibrary("ANSI");
         // Write the error message, formatted for terminal
-        echo "\n{$ANSI->RED}ERROR: $errstr {$ANSI->RESET}@ {$ANSI->WHITE}$errfile{$ANSI->RESET}:{$ANSI->WHITE}$errline\n";
+        echo "\n{$ANSI->RED}ERROR: $errstr {$ANSI->RESET}@ {$ANSI->WHITE}$errfile{$ANSI->RESET}:{$ANSI->WHITE}$errline{$ANSI->RESET}\n";
         // Variable to hold the length of the longest call in the backtrace
         $maxCallLength = 0;
         // Variable to hold the length of the longest basename in the backtrace
@@ -60,7 +58,7 @@ function jackal__handleError($errno, $errstr, $errfile, $errline, $errcontext) {
         foreach($printBacktrace as $backtraceItem) {
             // Only print this item if both basename and line have values
             if(($backtraceItem['basename']) && ($backtraceItem['line']))
-                printf("  --> {$ANSI->RESET}%s{$ANSI->WHITE}%s{$ANSI->RESET}:{$ANSI->WHITE}%s\n",
+                printf("  --> %s%s:%s\n",
                     str_pad($backtraceItem['call'    ], $maxCallLength     + 1, " "),
                     str_pad($backtraceItem['basename'], $maxBasenameLength    , " "),
                     str_pad($backtraceItem['line'    ], $maxLineLength        , " ")
