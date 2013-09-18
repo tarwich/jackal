@@ -1223,8 +1223,14 @@ END;
 			array_walk_recursive($gpc, create_function('&$value, $key', '$value = stripslashes($value);'));
 		}
 
+		// Decode the REQUEST_URI
+		$_SERVER["REQUEST_URI"] = urldecode($_SERVER["REQUEST_URI"]);
+		// If a script name wasn't provided, we have to make it
+		if(!isset($_SERVER["SCRIPT_NAME"]))
+			// Piece the SCRIPT_NAME together with the REQUEST_URI and the SCRIPT_FILENAME
+			$_SERVER["SCRIPT_NAME"] = urldecode($_SERVER["REQUEST_URI"]) . $_SERVER["SCRIPT_FILENAME"];
 		// Parse the QUERY_STRING
-		$_SERVER["QUERY_STRING"] = substr($_SERVER["REQUEST_URI"], strlen(dirname($_SERVER["SCRIPT_NAME"])));
+		$_SERVER["QUERY_STRING"] = substr(urldecode($_SERVER["REQUEST_URI"]), strlen(dirname($_SERVER["SCRIPT_NAME"])));
 		// Rip INDEX out of the query string
 		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("index-url"), "", $_SERVER["QUERY_STRING"]);
 		// Rip SUFFIX out of the query string
@@ -2013,6 +2019,10 @@ END;
 	 * @return void
 	 */
 	private static function _start($argv) {
+		// echo "<pre>";
+		// print_r(compact("argv"));
+		// print_r($_SERVER);
+		// exit();
         // Load Jackal
         self::load($argv);
 		// Handle the request
