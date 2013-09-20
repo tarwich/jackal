@@ -1223,18 +1223,45 @@ END;
 			array_walk_recursive($gpc, create_function('&$value, $key', '$value = stripslashes($value);'));
 		}
 
+		//  _________________________________________________________
+		// / Sanitize Server variables                               \
+
 		// Decode the REQUEST_URI
 		$_SERVER["REQUEST_URI"] = urldecode($_SERVER["REQUEST_URI"]);
-		// If a script name wasn't provided, we have to make it
-		if(!isset($_SERVER["SCRIPT_NAME"]))
-			// Piece the SCRIPT_NAME together with the REQUEST_URI and the SCRIPT_FILENAME
-			$_SERVER["SCRIPT_NAME"] = urldecode($_SERVER["REQUEST_URI"]) . $_SERVER["SCRIPT_FILENAME"];
+		// If SCRIPT_NAME wasn't provided (path to project entry point), then use the BASE_DIR and the name of the file to create the path
+		@$_SERVER["SCRIPT_NAME"] ?: ($_SERVER["SCRIPT_NAME"] = Jackal::info("BASE_DIR") . "/" . @$_SERVER["SCRIPT_FILENAME"]);
+		// If the REQUEST_URI doesn't match the start of the path in SCRIPT_NAME
+		$validURI = (strpos(@$_SERVER["SCRIPT_NAME"], @$_SERVER["REQUEST_URI"]) === 0) 
+			// The querystring is everything following the dirname of the project's entry point
+			? substr(urldecode($_SERVER["REQUEST_URI"]), strlen(dirname($_SERVER["SCRIPT_NAME"]))) 
+			// Find the URI in the SCRIPT_NAME and the REQUEST_URI is everything following the occurence of REQUEST_URI
+			: substr(@$_SERVER["SCRIPT_NAME"], strpos(@$_SERVER["REQUEST_URI"], dirname(@$_SERVER["SCRIPT_NAME"])) + strlen(@$_SERVER["REQUEST_URI"]));
+
+		$validURI = strpos(dirname(@$_SERVER["SCRIPT_NAME"]), @$_SERVER["REQUEST_URI"]);// + strlen(@$_SERVER["REQUEST_URI"]);
+// /~ericfont/address-book/
+// /Users/ericfont/Sites/address-book/index.php
+		echo "<pre>";
+		$myStuff = array(
+			"REQUEST_URI" => @$_SERVER["REQUEST_URI"],
+			"SCRIPT_FILENAME" => @$_SERVER["SCRIPT_FILENAME"],
+			"SCRIPT_NAME" => @$_SERVER["SCRIPT_NAME"],
+			"QUERY_STRING" => @$_SERVER["QUERY_STRING"],
+		);
+		print_r($myStuff);
+
+		print_r(compact("validURI"));
+
+		exit();
+
 		// Parse the QUERY_STRING
 		$_SERVER["QUERY_STRING"] = substr(urldecode($_SERVER["REQUEST_URI"]), strlen(dirname($_SERVER["SCRIPT_NAME"])));
 		// Rip INDEX out of the query string
 		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("index-url"), "", $_SERVER["QUERY_STRING"]);
 		// Rip SUFFIX out of the query string
 		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("suffix"), "", $_SERVER["QUERY_STRING"]);
+
+
+		// \_________________________________________________________/
 
 		// Pull flags out of URI
 		Jackal::flagCheck();
