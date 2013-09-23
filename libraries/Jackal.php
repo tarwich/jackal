@@ -264,6 +264,13 @@ class Jackal {
 	 */
 	public static function call($method, $data=array()) {
 		@list($module, $action, $segments) = explode("/", $method, 3);
+		
+		// $module doesn't exist, try using the default module
+		if(!@self::getClass($module)) {
+			$segments = $action . '/' . $segments;
+			$action = $module;
+			$module = self::$_settings['jackal']['default-module'];
+		}
 
 		// Improvise with default action
 		($module) || ($module = @self::$_settings["jackal"]["default-module"]);
@@ -1104,26 +1111,8 @@ END;
 		// Matching for urlencoded parameters
 		.'(.*)'
 		.'#', $queryString, $matches);
-		
-		$matches["module"] 		= @$matches[1];
-		$matches["action"] 		= @$matches[2];
-		$matches["segments"] 	= @$matches[3];
-		$matches["parameters"] 	= @$matches[4];
-
-		// Pull out all the named matches (module, action, segments, parameters)
-		$module 	= @$matches["module"];
-		$action 	= @$matches["action"];
-		$segments 	= @$matches["segments"];
-		$parameters = @$matches["parameters"];
-
-		// If the module didn't take
-		($module) || ($module = Jackal::setting("default-module"))
-		|| (Jackal::error(501, "No default module set"));
-
-		// If the action didn't take
-		($action) || ($action = Jackal::setting("default-action"))
-		|| (Jackal::error(501, "No default action set"));
-
+		// Assign the matches to local variables
+		@list(,$module, $action, $segments, $parameters) = $matches;
 		// Urldecode the parameters
 		parse_str($parameters, $parameters);
 		// Add any POST vars to parameters
