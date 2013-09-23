@@ -1222,22 +1222,64 @@ END;
 			$gpc = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
 			array_walk_recursive($gpc, create_function('&$value, $key', '$value = stripslashes($value);'));
 		}
-
+		
+		// TODO: This is required to get GAE working. We can probably remove later
+		// Walk through the stack trace frame-by-frame, searching for the document root
+		if(isset($_SERVER['APPENGINE_RUNTIME']))
+		foreach(debug_backtrace() as $frame) {
+			if(@$frame["class"] != "Jackal") {
+				// Initialize path to the file for this item
+				$path = $frame['file'];
+				
+				// Go through the path by directory from left to right
+				while($path = strstr(substr($path, 1), '/')) {
+					// Find the longest common prefix
+					for($i=0, $iMax=strlen($path); $i<$iMax; ++$i) 
+						if(@$_SERVER["REQUEST_URI"][$i] != $path[$i]) break;
+					// Found a common prefix
+					if($i != 1) {
+						$_SERVER["PHP_SELF"] = $path;
+						$_SERVER["DOCUMENT_ROOT"] = dirname($path);
+						break 2;
+					}
+				}
+			}
+		}
+		
+		// Find the longest common prefix
+		for($i=0, $iMax=strlen($_SERVER["PHP_SELF"]); $i<$iMax; ++$i) 
+			if(@$_SERVER["REQUEST_URI"][$i] != $_SERVER["PHP_SELF"][$i]) break;
 		// Parse the QUERY_STRING
-		$_SERVER["QUERY_STRING"] = substr($_SERVER["REQUEST_URI"], strlen(dirname($_SERVER["SCRIPT_NAME"])));
+		$_SERVER["QUERY_STRING"] = substr($_SERVER["REQUEST_URI"], $i);
 		// Rip INDEX out of the query string
 		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("index-url"), "", $_SERVER["QUERY_STRING"]);
 		// Rip SUFFIX out of the query string
 		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("suffix"), "", $_SERVER["QUERY_STRING"]);
-
+		// echo "<pre>".print_r($_SERVER, 1)."</pre>";
+		
 		// Pull flags out of URI
 		Jackal::flagCheck();
 		// Turn debugging on
 		self::_debuggingCheck();
-
 		// Turn on error logging
 		Jackal::_startLogging();
 		
+		//  _________________________________________________
+		// / Calculate the base url                          \
+		
+		// Add the protocol (http / https)
+		$parts[] = strtolower(strtok($_SERVER["SERVER_PROTOCOL"], "/")).":/";
+		// Add the hostname
+		$parts[] = $_SERVER["HTTP_HOST"];
+		// Add the dirname() path
+		($directory = trim($_SERVER["PHP_SELF"], "/")) && ($parts[] = $directory);
+		// Add the index url
+		($index = Jackal::setting("index-url")) && ($parts[] = Jackal::setting("index-url"));
+		// Cache the URL so far
+		self::$_urlPrefix = implode("/", $parts);
+		
+		// \__________________________________________________/
+			
 		// Load default helpers
 		$helpers = (array) Jackal::setting("autoload-helpers");
 		foreach($helpers as $helper) if($helper) Jackal::loadHelper($helper);
@@ -1289,10 +1331,10 @@ END;
 			}
 		}
 		
-		// Supercede index_url if mod_rewrite configured
-		if(trim(@self::$_settings["jackal"]["index-url"]) == "?")
-			// If mod_rewrite working
-			if(@$_SERVER["REDIRECT_STATUS"]) self::$_settings["jackal"]["index-url"] = "";
+		// // Supercede index_url if mod_rewrite configured
+		// if(trim(@self::$_settings["jackal"]["index-url"]) == "?")
+		// 	// If mod_rewrite working
+		// 	if(@$_SERVER["REDIRECT_STATUS"]) self::$_settings["jackal"]["index-url"] = "";
 		
 		// Flaggers duplicates are bugging me
 		self::$_settings["jackal"]["flaggers"] = array_unique((array) self::$_settings["jackal"]["flaggers"]);
@@ -1939,25 +1981,6 @@ END;
 		
 		// If the path DOESN'T have host information (http://)
 		if(!preg_match(',\w+://,', $path)) {
-			if(!self::$_urlPrefix) {
-				// Add the protocol (http / https)
-				$parts[] = strtolower(strtok($_SERVER["SERVER_PROTOCOL"], "/")).":/";
-
-				// Add the hostname
-				$parts[] = $_SERVER["HTTP_HOST"];
-
-				// Add the dirname() path
-				($directory = trim(dirname($_SERVER["SCRIPT_NAME"]), "/"))
-				&& ($parts[] = $directory);
-
-				// Add the index url
-				($index = Jackal::setting("index-url"))
-				&& ($parts[] = Jackal::setting("index-url"));
-				
-				// Cache the URL so far
-				self::$_urlPrefix = implode("/", $parts);
-			}
-
 			$parts = array(self::$_urlPrefix);
 			
 			if($flags !== false) {
