@@ -14,8 +14,8 @@ class AbstractSyntaxTree {
 		return $this->push(new AbstractSyntaxTree($map));
 	}
 	
-	public function &children() {
-		return $this->children;
+	public function children() {
+		return new ArrayIterator($this->children);
 	}
 	
 	public function &push(&$child) {

@@ -1238,7 +1238,7 @@ END;
 						if(@$_SERVER["REQUEST_URI"][$i] != $path[$i]) break;
 					// Found a common prefix
 					if($i != 1) {
-						$_SERVER["PHP_SELF"] = $path;
+						$_SERVER["SCRIPT_NAME"] = $path;
 						$_SERVER["DOCUMENT_ROOT"] = dirname($path);
 						break 2;
 					}
@@ -1247,15 +1247,14 @@ END;
 		}
 		
 		// Find the longest common prefix
-		for($i=0, $iMax=strlen($_SERVER["PHP_SELF"]); $i<$iMax; ++$i) 
-			if(@$_SERVER["REQUEST_URI"][$i] != $_SERVER["PHP_SELF"][$i]) break;
+		for($i=0, $iMax=strlen($_SERVER["SCRIPT_NAME"]); $i<$iMax; ++$i) 
+			if(@$_SERVER["REQUEST_URI"][$i] != $_SERVER["SCRIPT_NAME"][$i]) break;
 		// Parse the QUERY_STRING
 		$_SERVER["QUERY_STRING"] = substr($_SERVER["REQUEST_URI"], $i);
 		// Rip INDEX out of the query string
 		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("index-url"), "", $_SERVER["QUERY_STRING"]);
 		// Rip SUFFIX out of the query string
 		$_SERVER["QUERY_STRING"] = str_replace(Jackal::setting("suffix"), "", $_SERVER["QUERY_STRING"]);
-		// echo "<pre>".print_r($_SERVER, 1)."</pre>";
 		
 		// Pull flags out of URI
 		Jackal::flagCheck();
@@ -1332,9 +1331,9 @@ END;
 		}
 		
 		// // Supercede index_url if mod_rewrite configured
-		// if(trim(@self::$_settings["jackal"]["index-url"]) == "?")
-		// 	// If mod_rewrite working
-		// 	if(@$_SERVER["REDIRECT_STATUS"]) self::$_settings["jackal"]["index-url"] = "";
+		if(trim(@self::$_settings["jackal"]["index-url"]) == "?")
+			// If mod_rewrite working
+			if(@$_SERVER["REDIRECT_STATUS"]) self::$_settings["jackal"]["index-url"] = "";
 		
 		// Flaggers duplicates are bugging me
 		self::$_settings["jackal"]["flaggers"] = array_unique((array) self::$_settings["jackal"]["flaggers"]);
