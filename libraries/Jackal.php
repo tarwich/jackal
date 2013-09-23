@@ -266,10 +266,13 @@ class Jackal {
 		@list($module, $action, $segments) = explode("/", $method, 3);
 		
 		// $module doesn't exist, try using the default module
-		if(!@self::getClass($module)) {
-			$segments = $action . '/' . $segments;
-			$action = $module;
-			$module = self::$_settings['jackal']['default-module'];
+		if($module && (!@self::getClass($module))) {
+			// Shift everybody back one and reassign
+			list($module, $action, $segments) = array(
+				self::$_settings['jackal']['default-module'], // Module
+				$module,                                      // Action
+				$action . '/' . $segments                     // Segments
+				);
 		}
 
 		// Improvise with default action
