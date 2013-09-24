@@ -1263,9 +1263,11 @@ END;
 		// Add the hostname
 		$parts[] = $_SERVER["HTTP_HOST"];
 		// Add the dirname() path
-		($directory = trim($_SERVER["PHP_SELF"], "/")) && ($parts[] = $directory);
+		($directory = trim(dirname($_SERVER["SCRIPT_NAME"]), "/"))
+		&& ($parts[] = $directory);
 		// Add the index url
-		($index = Jackal::setting("index-url")) && ($parts[] = Jackal::setting("index-url"));
+		($index = Jackal::setting("index-url"))
+		&& ($parts[] = Jackal::setting("index-url"));
 		// Cache the URL so far
 		self::$_urlPrefix = implode("/", $parts);
 		
@@ -1972,7 +1974,7 @@ END;
 		
 		// If the path DOESN'T have host information (http://)
 		if(!preg_match(',\w+://,', $path)) {
-			$parts = array(self::$_urlPrefix);
+ 			$parts = array(self::$_urlPrefix);
 			
 			if($flags !== false) {
 				// Add the other flags
