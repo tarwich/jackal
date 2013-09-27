@@ -13,14 +13,17 @@
 	#Console table {
 		width: 100%;
 	}
-	#Console .terminal .output-box,
-	#Console .terminal {
-		background: #000000;
-		background: rgba(0,0,0,.80);
+	#Console .terminal .output-box{
 		color: #3E3;
 		font-family: Monaco, "Courier New", Courier, monospace;
 		font-weight: normal;
-		font-size: 8pt;
+		font-size: 9pt;
+		overflow-y: hidden;
+		border: none;
+	}
+	#Console .terminal {
+		background: #000;
+		background: rgba(0,0,0,.9);
 		overflow-y: scroll;
 		border-bottom: 1px solid #666666;
 	}
@@ -28,23 +31,21 @@
 		font-family: Monaco, "Courier New", Courier, monospace;
 		position: absolute;
 		width: 100%;
-		bottom: -26px;
+		bottom: -26px; left: 0;
 		background: #000000;
-		background: rgba(0,0,0,.8) !important;
+		background: rgba(0,0,0,.9) !important;
 		color: #cccccc;
-		border-top: 1px solid #333333;
+		border: none;
 		padding: 0px 5px;
 		height: 26px;
 		line-height: 26px;
-		
-		-moz-box-shadow: 0px 5px 5px rgba(0,0,0,.35);
-		-webkit-box-shadow: 0px 5px 5px rgba(0,0,0,.35);
+		font-size: 9pt;
 	}
 	#Console input:focus {
 		color: #ffffff;
 	}
 	#Console div.output-box {
-		padding: 10px;
+		padding: 13px;
 	}
 	#Console div.output-box p {
 		white-space: pre;
