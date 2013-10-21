@@ -43,7 +43,7 @@ $settings = $spyc->YAMLDump($settings);
 
 // Write the settings to the config file
 if(@file_put_contents($configFile, $settings)) {
-	Jackal::call("Admin/section/$section");
+	Jackal::call("Admin/showSection/$section");
 }
 
 else {
