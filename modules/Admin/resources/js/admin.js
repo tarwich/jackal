@@ -41,7 +41,10 @@
 			// Set the content to show we're loading something
 			.text("...")
 			// Load the something
-			.load( $target.attr("url") || $target.attr("href"))
+			.load( $target.attr("url") || $target.attr("href"), function(html) {
+				// Force inject the content into the target
+				$(this).html(html);
+			})
 		;
 		
 		// Now that the page has loaded, we need to run any outstanding tests
