@@ -30,8 +30,10 @@ foreach($URI as $name=>$value) {
 	// These items are invalid
 	if(is_numeric($name)) continue;
 	if($name == "undefined") continue;
+	// Special case for boolean value
+	if($value === "false") $value = false;
 	// If the value hasn't changed, then leave it alone
-	if(Jackal::setting($name) == $value) continue;
+	if(Jackal::setting($name) === $value) continue;
 	// Deep set this value
 	eval('$settings["' . implode('"]["', explode("/", $name)) . '"] = $value;');
 	// Update Jackal with the setting
