@@ -269,9 +269,9 @@ foreach($methods as $method) {
 	if(count($method["segments"])) {
 		$headerRow = array();
 		$bodyRow = array();
-		foreach ($doc["segments"] as $key=>$segment) {
+		foreach ($method["segments"] as $key=>$segment) {
 			$headerRow[] = "<th>[<b>$key</b>]</th>";
-			$bodyRow[] = "<td>\$$segment</td>";
+			$bodyRow[]   = "<td>\$$segment</td>";
 		}
 		echo "
 					<div class='segments'>

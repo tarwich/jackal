@@ -37,17 +37,30 @@ $comment = preg_replace('/{@link\s+([\S]+)\s*(.*?)}/', '<a href="$1">$2</a>', $c
 
 // Actually find the docs
 preg_match_all('!(?:
-(?P<summary>^.*?(?=\n\s*@|\n\s*\n|\s*$))\s*(?P<description>[^@].*?(?=\n\s*@|$|\n\s*Segments:))? (?# Summary AND description) |
+(?P<summary>^.*?(?=\n\s*@|\n\s*\n|\s*$))\s*(?P<description>[^@].*?(?=\n\s*@|$))? (?# Summary AND description) |
 [\n\s]*@param\s* (?P<parameters>.*?)(?=\n\s*@|$) (?# Param ) |
 [\n\s]*@return\s* (?P<returnType>.+?\b)\s*\|?(?P<returnDescription>.*?)(?=\n\s*@|$) (?# Return ) |
 [\n\s]*@var\s* (?P<type>.*?)(?=\n\s*@|$) (?# Var ) |
 [\n\s]*@example\s* (?P<examples>.*?)(?=\n\s*@|$) (?# Example ) |
-[\n\s]*[Ss]egments:(?<segments>.*?)(?=\n\s*@|$) (?# Segments ) |
 [\n\s]*@nothing (?# Used to reduce typos ) 
 )!xsi', $comment, $matches);
 
-// Remove numbered matches
-$matches = array_diff_key($matches, array_values($matches));
+// Name the matches and remove the numbers
+//  (currently we're assigning the names in the regex, but I'd like to remove that.)
+$matches = array(
+	"summary"           => $matches[1],
+	"description"       => $matches[2],
+	"parameters"        => $matches[3],
+	"returnType"        => $matches[4],
+	"returnDescription" => $matches[5],
+	"type"              => $matches[6],
+	"examples"          => $matches[7],
+);
+
+// Pull out the segments 
+preg_match_all('/(.*?)Segments: (.*)/s', $matches["description"][0], $segments);
+// Put the segments and description back
+list(, $matches["description"], $matches["segments"]) = $segments;
 
 // Make description an array of lines
 $matches["description"] = (array) preg_split("/\n\s*\n/", @$matches["description"][0]);
@@ -80,10 +93,11 @@ foreach($matches as $i=>$match) {
 }
 
 // Some items should not be arrays
-$matches["summary"] = implode("", (array)$matches["summary"]);
-$matches["type"] = implode("", (array)$matches["type"]);
+$matches["summary"]    = trim(implode("", (array)$matches["summary"]));
+$matches["type"]       = implode("", (array)$matches["type"]);
 $matches["returnType"] = implode("", (array)$matches["returnType"]);
-
+// Remove empty descriptions
+$matches["description"] = array_filter($matches["description"], "trim");
 // Split the segments
 $matches["segments"] = array_map("trim", array_filter(explode("/", @$matches["segments"][0])));
 
