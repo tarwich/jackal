@@ -167,6 +167,13 @@ class Jackal {
 	private static $_started = false;
 
 	/**
+	 * The combination of _GET, _POST, _COOKIE after sanitization
+	 * 
+	 * @var array
+	 */
+	public static $URI = array();
+	
+	/**
 	 * Internal cached version of the base url.
 	 *
 	 * When siteURL() is first called, it checks the url for things like port
@@ -1120,6 +1127,8 @@ END;
 		parse_str($parameters, $parameters);
 		// Add any POST vars to parameters
 		$parameters = array_merge($parameters, $_POST);
+		// Store the parameters in Jackal for later retrieval
+		self::$URI = $parameters;
 		
 		/*
 		 * 
