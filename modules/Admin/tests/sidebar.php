@@ -20,7 +20,7 @@ admin:
 			-
 				name     : Foo / Bar
 				self-test: Admin/getSampleMessages
-        testModule2:
+		testModule2:
 			-
 				name     : Bin / Baz
 				self-test: Admin/getSampleMessages
