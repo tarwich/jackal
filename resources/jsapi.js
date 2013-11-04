@@ -60,11 +60,15 @@ This file is supposed to make all the ajax work nicely. I'll try to document wha
 			// Go through all the triggers looking for a match
 			for(var i=0; i<triggers.length; ++i) {
 				// If the url begins with this trigger, then it's a match
-				if(href.match("^" + triggers[i])) {
+				if(href.match(triggers[i])) {
+					// Get the source
+					var source = $this.attr("source");
+					// Make sure source has a space in it
+					if(!source.match(/ /)) source += " >";
 					// Find the target
 					$($this.attr("target") || $this)
 						// Load the url into this node
-						.load($this.attr("source") + " >", ns.makeObject(this));
+						.load(source, ns.makeObject(this));
 					break;
 				}
 			}
