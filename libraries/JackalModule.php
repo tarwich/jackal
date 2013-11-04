@@ -12,52 +12,18 @@
  */
 class JackalModule {
 	/**
-	 * A map from file type to mime type
-	 * 
-	 * This is used by resources() to output the correct HTTP header for the 
-	 * resource requested
+	 * Cached content-actions from settings
 	 * 
 	 * @var array
 	 */
-	protected static $contentTypes = array(
-		"css"	=> "text/css",
-		"js"	=> "text/javascript",
-		"gif"	=> "image/gif",
-		"jpg"	=> "image/jpeg",
-		"jpeg"	=> "image/jpeg",
-		"png"	=> "image/png",
-		"zip"	=> "application/zip",
-		"ttf"	=> "application/x-font-ttf",
-		"xml"	=> "text/xml",
-		"swf"	=> "application/x-shockwave-flash",
-		"svg"	=> "image/svg+xml", 					// Strange, FF likes this one
-//		"svg"	=> "application/xhtml+xml",				// Chrome likes this one and not the other
-		"mp3"	=> "audio/mpeg3"
-	);
+	static $actions = null;
 	
-	/**
-	 * Array of actions to show how to handle each file type.
-	 * 
-	 * This array contains the code to execute for each filetype. Some files 
-	 * are included in order to enable PHP inside that file, while others are 
-	 * sent directly to the browser in order to reduce overhead.
+	/** 
+	 * Cached mime-types from settings
 	 * 
 	 * @var array
 	 */
-	protected static $actions = array(
-		"css"	=> 'include($a)',
-		"js"	=> 'include($a)',
-		"gif"	=> 'readfile($a)',
-		"jpg"	=> 'readfile($a)',
-		"jpeg"	=> 'readfile($a)',
-		"png"	=> 'readfile($a)',
-		"zip"	=> 'readfile($a)',
-		"ttf"	=> 'readfile($a)',
-		"xml"	=> 'readfile($a)',
-		"swf"	=> 'readfile($a)',
-		"svg"	=> 'readfile($a)',
-		"mp3"	=> 'readfile($a)',
-	);
+	static $contentTypes = null;
 	
 	/**
 	 * The glob for the resources folder(s). 
@@ -95,7 +61,6 @@ class JackalModule {
 	 * 			     parameters.
 	 */
 	public function parseParameters($URI, $rules) {
-//		echo "<pre>".htmlentities(print_r(func_get_args(), 1))."</pre>";
 		// Initialize the return values
 		$result = array();
 		
@@ -161,6 +126,8 @@ class JackalModule {
 		$file = end($segments);
 		// Get the type
 		$type = @end(explode(".", $file));
+		// Load the content types
+		self::$contentTypes ?: (self::$contentTypes = Jackal::setting("jackal/mime-types"));
 		// Resolve the content-type
 		$contentType = @self::$contentTypes[$type];
 		if(!$contentType) $contentType = "text/plain";
@@ -185,6 +152,7 @@ class JackalModule {
 		// Reassemble the file from the URI
 		$file = @join("/", $segments);
 		// LPK ~ Include the $URI in the resource
+		self::$actions ?: self::$actions = Jackal::setting("jackal/content-actions");
 		$action = create_function('$a,$URI=null', @self::$actions[$type].";");
 		// Will be used for freshness
 		date_default_timezone_set("GMT");

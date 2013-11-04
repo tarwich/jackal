@@ -3,3 +3,48 @@
 users:
     acl:
         IP * ACCESS JackalModule/resources ALLOW
+jackal:
+	#  _[ Mime Types ]___________________________________
+	# | A map from file type to mime type                |
+	# |                                                  |
+	# | This is used by resources() to output the        |
+	# | correct HTTP header for the resource requested   |
+	# |__________________________________________________|
+	mime-types:
+		css : text/css
+		js  : text/javascript
+		gif : image/gif
+		jpg : image/jpeg
+		jpeg: image/jpeg
+		png : image/png
+		zip : application/zip
+		ttf : application/x-font-ttf
+		xml : text/xml
+		swf : application/x-shockwave-flash
+		svg : image/svg+xml
+		# svg : application/xhtml+xml # Chrome wants this, even though it's wrong
+		mp3 : audio/mpeg3
+
+	#  _[ Content Actions ]______________________________
+	# | Array of actions to show how to handle each file |
+	# | type.                                            |
+	# |                                                  |
+	# | This array contains the code to execute for each |
+	# | filetype. Some files are included in order to    |
+	# | enable PHP inside that file, while others are    |
+	# | sent directly to the browser in order to reduce  |
+	# | overhead.                                        |
+	# |__________________________________________________|
+	content-actions:
+		css : include($a)
+		js  : include($a)
+		gif : readfile($a)
+		jpg : readfile($a)
+		jpeg: readfile($a)
+		png : readfile($a)
+		zip : readfile($a)
+		ttf : readfile($a)
+		xml : readfile($a)
+		swf : readfile($a)
+		svg : readfile($a)
+		mp3 : readfile($a)
