@@ -207,7 +207,7 @@ class JackalModule {
 	 * 
 	 * @return array              The URI
 	 */
-	function toURI($arguments) {
+	public static function toURI($arguments) {
 		// Convert all arguments to arrays
 		foreach($arguments as $k=>$v) $arguments[$k] = (array) $v;
 		// Flatten arguments into one array (only if >1 value)
