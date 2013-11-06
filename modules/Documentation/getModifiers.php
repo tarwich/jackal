@@ -13,6 +13,8 @@
  * @return array
  */
 
+// Get the original function arguments
+// $URI = $func_get_args;
 if(is_object($URI)) $number = $URI->getModifiers();
 elseif(is_int($URI)) $number = $URI;
 elseif(is_object($URI[0])) $number = $URI[0]->getModifiers();

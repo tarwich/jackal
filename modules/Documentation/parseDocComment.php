@@ -57,13 +57,15 @@ $matches = array(
 	"examples"          => $matches[7],
 );
 
+// Flatten the description 
+$matches["description"] = implode(" ", $matches["description"]);
 // Pull out the segments 
-preg_match_all('/(.*?)Segments: (.*)/s', $matches["description"][0], $segments);
+// preg_match_all('/(.*?)Segments: (.*)/s', $matches["description"], $segments);
+@list($matches["description"], $matches["segments"]) = preg_split('/^\s*\*\s*Segments:/mi', $matches["description"]);
 // Put the segments and description back
-list(, $matches["description"], $matches["segments"]) = $segments;
-
+// list(, $matches["description"], $matches["segments"]) = $segments;
 // Make description an array of lines
-$matches["description"] = (array) preg_split("/\n\s*\n/", @$matches["description"][0]);
+$matches["description"] = (array) preg_split("/\n\s*\n/", implode("", (array)@$matches["description"]));
 
 // Process example tags
 foreach($matches["examples"] as $i=>$example) {
@@ -87,7 +89,7 @@ foreach($matches["examples"] as $i=>$example) {
 foreach($matches as $i=>$match) {
 	$matches[$i] = array_values( // <-- Redo the indexes
 		array_filter( // <-- Remove empties 
-			$match
+			(array) $match
 		)
 	);
 }

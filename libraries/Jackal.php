@@ -373,20 +373,16 @@ class Jackal {
 			// If the file begins with _, but not __, then method access is private
 			if(substr($methodName, 0, 2) == '__') {
 				$access = '';
-				$arguments = '';
 				$code = '';
 			} elseif($methodName[0] == '_') {
 				$access = 'private';
-				$arguments = '$URI=array()';
-				$code = '$URI = $this->toURI(func_get_args());';
+				$code = '$URI = $this->toURI($func_get_args=func_get_args());';
 			} elseif($methodName[0] == '#') {
 				$access = 'protected';
-				$arguments = '$URI=array()';
-				$code = '$URI = $this->toURI(func_get_args());';
+				$code = '$URI = $this->toURI($func_get_args=func_get_args());';
 			} else {
 				$access = 'public';
-				$arguments = '$URI=array()';
-				$code = '$URI = $this->toURI(func_get_args());';
+				$code = '$URI = $this->toURI($func_get_args=func_get_args());';
 			}
 				
 			// By default, methods are not static
@@ -398,7 +394,7 @@ class Jackal {
 			$methodName = preg_replace('-\W-', '_', $methodName);
 			// Build the method
 			$methods[] = <<<END
-			$access $static function $methodName($arguments) {
+			$access $static function $methodName() {
 				$code
 				\$result = include("$file_");
 				return \$result;
