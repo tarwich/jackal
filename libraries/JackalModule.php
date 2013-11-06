@@ -209,7 +209,7 @@ class JackalModule {
 	 */
 	public static function toURI($arguments) {
 		// Convert all arguments to arrays
-		foreach($arguments as $k=>$v) $arguments[$k] = (array) $v;
+		foreach($arguments as $k=>$v) $arguments[$k] = is_array($v) ? $v : array($v);
 		// Flatten arguments into one array (only if >1 value)
 		if($arguments) $arguments = call_user_func_array("array_merge", $arguments);
 		
