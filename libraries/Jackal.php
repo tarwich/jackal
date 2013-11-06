@@ -1,8 +1,13 @@
 <?php
 
-$GLOBALS["start"] = microtime(true);
-
 class Jackal {
+	/**
+	 * The root of the Jackal install
+	 * 
+	 * @var string
+	 */
+	public static $BASE_DIR;
+	
 	/**
 	 * Case sensitive list of flags from the URL
 	 *
@@ -19,6 +24,13 @@ class Jackal {
 	private static $_classes = array();
 	
 	/**
+	 * Path to the initial Jackal configuration file
+	 * 
+	 * @var string
+	 */
+	public static $CONFIG_FILE = "";
+	
+	/**
 	 * The current url that invoked the script
 	 *
 	 * When a a request is received, one of the first things that Jackal does
@@ -30,7 +42,7 @@ class Jackal {
 	 *
 	 * @var string
 	 */
-	private static $currentURL = "";
+	private static $currentURL = '';
 	
 	/**
 	 * The glob used to find classes
@@ -44,7 +56,7 @@ class Jackal {
 	 *
 	 * @var string
 	 */
-	private static $DEFAULT_CLASS_PATH = "<ROOT>/{<LOCAL>,<JACKAL>}/{<OTHER>modules,libraries}/{<MODULE>,<MODULE>.php}";
+	private static $DEFAULT_CLASS_PATH = '<ROOT>/{<LOCAL>,<JACKAL>}/{<OTHER>modules,libraries}/{<MODULE>,<MODULE>.php}';
 	
 	/**
 	 * The default <MY_> prefix
@@ -57,7 +69,7 @@ class Jackal {
 	 *
 	 * @var string
 	 */
-	private static $DEFAULT_CUSTOM_PREFIX = "MY_";
+	private static $DEFAULT_CUSTOM_PREFIX = 'MY_';
 	
 	/**
 	 * The default jackal directory
@@ -70,7 +82,7 @@ class Jackal {
 	 *
 	 * @var string
 	 */
-	private static $DEFAULT_JACKAL_DIR = "jackal";
+	private static $DEFAULT_JACKAL_DIR = 'jackal';
 
 	/**
 	 * The default <LOCAL> directory
@@ -83,7 +95,7 @@ class Jackal {
 	 *
 	 * @var string
 	 */
-	private static $DEFAULT_LOCAL_DIR = "private";
+	private static $DEFAULT_LOCAL_DIR = 'private';
 	
 	/**
 	 * Set by Jackal::error() to store the error error level introduced by the
@@ -108,16 +120,6 @@ class Jackal {
 	private static $_functions = array();
 	
 	/**
-	 * Internal array used by Jackal::info() to store calculated information
-	 * about the system, such as BASE_DIR.
-	 *
-	 * When info() is called, it uses this array to cache the results.
-	 *
-	 * @var array
-	 */
-	private static $info = NULL;
-	
-	/**
 	 * Internal cache of model class instances so that subsequent calls to
 	 * Jackal::model() use the same instance.
 	 *
@@ -130,7 +132,7 @@ class Jackal {
 	 * 
 	 * @var float 
 	 */
-	public static $VERSION = "1.3.0";
+	public static $VERSION = '1.3.0';
 	
 	/**
 	 * Internal array of scope hierarchy
@@ -183,7 +185,7 @@ class Jackal {
 	 *
 	 * @var string
 	 */
-	private static $_urlPrefix = "";
+	private static $_urlPrefix = '';
 	
 	
 	/**
@@ -194,7 +196,7 @@ class Jackal {
 	 * accidental instantiations
 	 */
 	public function __construct() {
-		Jackal::error("500", "Cannot instantiate singleton class ".__CLASS__);
+		Jackal::error('500', 'Cannot instantiate singleton class '.__CLASS__);
 	}
 
 	/**
@@ -264,84 +266,34 @@ class Jackal {
 	 * Jackal::call("Foo/bar/one/two", "three", "four");
 	 * </code>
 	 * 
-	 * @param string $method "Object/action" string
-	 * @param array $data (optional) Associative array of parameters to pass
-	 * 		into the destination method
-	 * @return mixed The return value of the called script
+	 * @param  string $method "Object/action" string
+	 * 
+	 * @return mixed  The return value of the called script
 	 */
-	public static function call($method, $data=array()) {
-		@list($module, $action, $segments) = explode("/", $method, 3);
-		
-		// $module doesn't exist, try using the default module
-		if($module && (!@self::getClass($module))) {
-			// Shift everybody back one and reassign
-			list($module, $action, $segments) = array(
-				self::$_settings['jackal']['default-module'], // Module
-				$module,                                      // Action
-				$action . '/' . $segments                     // Segments
-				);
-		}
-
-		// Improvise with default action
-		($module) || ($module = @self::$_settings["jackal"]["default-module"]);
-		($action) || ($action = @self::$_settings["jackal"]["default-action"]);
-
-		// Get the variant arguments
-		$arguments = func_get_args();
-		// First argument not real
-		array_shift($arguments);
-		// Initialize URI
-		$URI = array();
-
-		//
-		// Assign segments
-		//
-		// Because we might need a slash in one of the segments
-		foreach(explode("/", $segments) as $segment) {
-			if($segment !== "") {
-				$URI[] = urldecode($segment);
-			}
-		}
-
-		//
-		// Assign ordered arguments
-		//
-		// Add the variant arguments into the array
-		if(!is_array(@$arguments[0])) $URI = array_merge($URI, $arguments);
-		elseif(count($arguments) > 1) $URI = array_merge($URI, $arguments);
-		// Added to provide compatibility for old $URI[segments]
-
-		//
-		// Incorporate named arguments
-		//
-		// See if there is a first argument
-		if(is_array(@$arguments[0]))
-		// See if the first argument is an associative array
-		if(array_values(@$arguments[0]) !== @$arguments[0]) {
-			// Add the key/value pairs to the URI
-			$URI += @$arguments[0];
-		} else {
-			// Add the key/value pairs to the URI
-			$URI += @$arguments;
-		}
-		//$URI["segments"] = (array) @array_intersect_key($URI, array_values($URI));
-
+	public static function call($method) {
+		// Support Jackal::call("Foo/bar/bin") == $Foo->bar("bin")
+		@list($module, $action, $segments) = explode('/', $method, 3);
+		// Improvise with default module 
+		$module ?: $module = @self::$_settings['jackal']['default-module'];
+		// and action
+		$action ?: $action = @self::$_settings['jackal']['default-action'];
+		// URI is a combination of func_get_args() and explode('/', $segments)
+		$URI = array_merge(explode('/', trim($segments)), array_slice(func_get_args(), 1));
 		// Remember the current scope
 		self::$_scope[] = array($module, $action);
-		
 		// Gather pre-triggers
 		$triggers = @array_merge( 
-			(array) self::$_settings["jackal"]["triggers"]["pre"]["$module/$action"],
-			(array) self::$_settings["jackal"]["triggers"]["pre"]["$module/*"],
-			(array) self::$_settings["jackal"]["triggers"]["pre"]["*/$action"],
-			(array) self::$_settings["jackal"]["triggers"]["pre"]["*/*"]
+			(array) self::$_settings['jackal']['triggers']['pre']["$module/$action"],
+			(array) self::$_settings['jackal']['triggers']['pre']["$module/*"],
+			(array) self::$_settings['jackal']['triggers']['pre']["*/$action"],
+			(array) self::$_settings['jackal']['triggers']['pre']['*/*']
 		);
 		// Remove the current method from the trigger list
 		$triggers = array_diff($triggers, array($method));
 		
 		// Run pre-triggers
 		foreach($triggers as $trigger) {
-			@list($triggerObject, $triggerMethod) = explode("/", $trigger);
+			@list($triggerObject, $triggerMethod) = explode('/', $trigger);
 			self::$_scope[] = array($triggerObject, $triggerMethod);
 			extract((array) self::executeMethod(self::getClass($triggerObject), $triggerMethod, $URI)); 
 			array_pop(self::$_scope);
@@ -349,16 +301,14 @@ class Jackal {
 
 		// Find the object that this belongs to
 		$object = Jackal::getClass($module);
-		
 		// Execute the method
-		$result = Jackal::executeMethod($object, $action, array(  (array) $URI));
-
+		$result = Jackal::executeMethod($object, $action, $URI);
 		// Gather post-triggers
 		$triggers = @array_merge(
-			(array) self::$_settings["jackal"]["triggers"]["post"]["$module/$action"],
-			(array) self::$_settings["jackal"]["triggers"]["post"]["$module/*"],
-			(array) self::$_settings["jackal"]["triggers"]["post"]["*/$action"],
-			(array) self::$_settings["jackal"]["triggers"]["post"]["*/*"]
+			(array) self::$_settings['jackal']['triggers']['post']["$module/$action"],
+			(array) self::$_settings['jackal']['triggers']['post']["$module/*"],
+			(array) self::$_settings['jackal']['triggers']['post']["*/$action"],
+			(array) self::$_settings['jackal']['triggers']['post']['*/*']
 		);
 		// Remove the current method from the trighger list
 		$triggers = array_diff($triggers, array($method));
@@ -404,48 +354,48 @@ class Jackal {
 	 * @param string $path Directory to make the class out of
 	 * @param string $base Base class to extend or blank for no base
 	 */
-	public static function createClass($parameters, $path="", $base="") {
-		extract(Jackal::url2uri($parameters, "name"));
+	public static function createClass($parameters, $path='', $base='') {
+		extract(Jackal::url2uri($parameters, 'name'));
 
 		if(!assert('$name')) return false;
 
-		$files = glob($path."/*.php");
+		$files = glob($path.'/*.php');
 		$methods = array();
 
 		foreach($files as $file) {
 			// Internal use only
-			if($file[0] == "~") continue;
+			if($file[0] == '~') continue;
 			// Add slashes
 			$file_ = addslashes($file);
 
-			$methodName = str_replace(".php", "", basename($file));
+			$methodName = str_replace('.php', '', basename($file));
 				
 			// If the file begins with _, but not __, then method access is private
-			if(substr($methodName, 0, 2) == "__") {
-				$access = "";
-				$arguments = "";
-				$code = "";
-			} elseif($methodName[0] == "_") {
-				$access = "private";
-				$arguments = "\$URI=array()";
-				$code = "\$URI = func_get_args();";
-			} elseif($methodName[0] == "#") {
-				$access = "protected";
-				$arguments = "\$URI=array()";
-				$code = "";
+			if(substr($methodName, 0, 2) == '__') {
+				$access = '';
+				$arguments = '';
+				$code = '';
+			} elseif($methodName[0] == '_') {
+				$access = 'private';
+				$arguments = '$URI=array()';
+				$code = '$URI = $this->toURI(func_get_args());';
+			} elseif($methodName[0] == '#') {
+				$access = 'protected';
+				$arguments = '$URI=array()';
+				$code = '$URI = $this->toURI(func_get_args());';
 			} else {
-				$access = "public";
-				$arguments = "\$URI=array()";
-				$code = "if(func_num_args() > 1) \$URI = func_get_args();";
+				$access = 'public';
+				$arguments = '$URI=array()';
+				$code = '$URI = $this->toURI(func_get_args());';
 			}
 				
 			// By default, methods are not static
-			$static = "";
+			$static = '';
 			// If the file ends with an _, then method is static
-			($methodName[strlen($methodName)-1] == "_") && ($static = "static");
+			($methodName[strlen($methodName)-1] == '_') && ($static = 'static');
 				
 			// Remove non-alphanumeric characters and replace with underscores
-			$methodName = preg_replace('-\W-', "_", $methodName);
+			$methodName = preg_replace('-\W-', '_', $methodName);
 			// Build the method
 			$methods[] = <<<END
 			$access $static function $methodName($arguments) {
@@ -457,10 +407,10 @@ END;
 		}
 		
 		// Allow inheritance to be gleaned from the file system
-		($file = @array_pop(self::files("$path/__extends *"))) && ($base = @end(explode(" ", basename($file), 2)));
+		($file = @array_pop(self::files("$path/__extends *"))) && ($base = @end(explode(' ', basename($file), 2)));
 
 		// Make sure that a base was specified
-		($base) || ($base = "stdclass");
+		($base) || ($base = 'stdclass');
 		// Load the class if necessary
 		if(!class_exists($base)) Jackal::loadLibrary($base);
 
@@ -660,7 +610,7 @@ END;
 		$replaceables = $additionalReplaceables + array(
 			"JACKAL" => Jackal::setting("jackal-dir", self::$DEFAULT_JACKAL_DIR),
 			"LOCAL"  => Jackal::setting("local-dir", self::$DEFAULT_LOCAL_DIR),
-			"ROOT"	 => Jackal::info("BASE_DIR"),
+			"ROOT"	 => self::$BASE_DIR,
 			"MY" 	 => Jackal::setting("custom-prefix", self::$DEFAULT_CUSTOM_PREFIX),
 		0);
 
@@ -684,7 +634,7 @@ END;
 	 *
 	 * <b>&lt;LOCAL&gt;</b>: Becomes the path from the "local-dir" setting()
 	 *
-	 * <b>&lt;ROOT&gt;</b>: Becomes the root of the site, from BASE_DIR info()
+	 * <b>&lt;ROOT&gt;</b>: Becomes the root of the site, from $BASE_DIR
 	 *
 	 * <b>&lt;MY&gt;</b>: Becomes the prefix from "custom-prefix" setting()
 	 *
@@ -1209,6 +1159,10 @@ END;
      * return void
      */
     public static function load($argv=null) {
+    	// Root of the jackal installation
+		self::$BASE_DIR = realpath(dirname(dirname(dirname(__FILE__))));
+		// Initial config file
+		self::$CONFIG_FILE = self::$BASE_DIR.'/jackal/settings.php';
         // TODO: Remove this if we're not using error-based-routing
 		header("HTTP/1.0 200 OK");
 		// Import settings
@@ -2166,40 +2120,4 @@ END;
 
 		return $uri;
 	}
-
-	/**
-	 * Returns calculated information such as the root of the site.
-	 *
-	 * This method exists, because certain calculations don't make sense to 
-	 * make every single request, so this method makes them one time and caches 
-	 * the result.
-	 *
-	 * @param string $name The piece of information to return
-	 * 
-	 * @return mixed The result of the calculation (the calculated field)
-	 */
-	public static function info($name) {
-		if(isset(Jackal::$info[$name])) return Jackal::$info[$name];
-		$function = "_info_$name";
-		return self::$function();
-	}
-
-	/**
-	 * (Called by info()) Returns the path to the parent of the jackal folder
-	 * 
-	 * @return string
-	 */
-	public static function _info_BASE_DIR() {
-		return realpath(dirname(dirname(dirname(__FILE__))));
-	}
-
-	/**
-	 * (Called by info()) Returns the path to the jackal configuration file
-	 * 
-	 * @return string
-	 */
-	public static function _info_SETTINGS_FILE() {
-		return Jackal::info("BASE_DIR")."/jackal/settings.php";
-	}
 }
-

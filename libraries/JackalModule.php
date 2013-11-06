@@ -38,59 +38,6 @@ class JackalModule {
 	public static $DEFAULT_RESOURCE_PATH = "<ROOT>/{<LOCAL>/,<JACKAL>/}{modules/<MODULE>/,}resources/{,<TYPE>}<FILE>";
 	
 	/**
-	 * Consider all the parameters in URI and return an array of parameters as
-	 * requested by the caller.
-	 * 
-	 * If a parameter is not provided, then it will not appear in the result 
-	 * array unless a default is provided for that parameter.
-	 * 
-	 * @param array $URI 		The URI to parse
-	 * @param array $parameters Associative array where the each is the name of 
-	 * 							the resulting variable, and each value is either
-	 * 							a string with the name of the alias for that 
-	 * 							variable, or an associative array with rules on
-	 * 							how to parse that variable. The available keys
-	 * 							for the rules array are as follows:  
-	 * 
-	 * @param $rules[aliases]  An array of names for this variable
-	 * @param $rules[default]  The default value of this variable
-	 * @param $rules[type]     The type that this variable should be
-	 * @param $rules[required] True (or string to throw upon error) if this is 
-	 * 						   a required parameter.  
-	 * @return array The resulting array where keys are the names of the 
-	 * 			     parameters.
-	 */
-	public function parseParameters($URI, $rules) {
-		// Initialize the return values
-		$result = array();
-		
-		// Map the rule aliases
-		foreach($rules as $ruleName=>$rule) {
-			// Save the name as part of the rule
-			$rule["name"] = $ruleName;
-			// Create an array mapping the aliases to the rules
-			$aliases = array_fill_keys((array) @$rule["aliases"], $rule);
-			// Add the rule as an alias
-			$aliases[$ruleName] = $rule;
-			// Add the default value to the result
-			if(isset($rule["default"])) $result[$ruleName] = $rule["default"];
-		} 
-		
-		foreach($URI as $name=>$value) {
-			// Get the rule for this parameter
-			$rule = @$aliases[$name];
-			
-			// The rule will be empty if not found 
-			if($rule) {
-				// Typecast
-				if(@$rule["type"]) settype($value, $rule["type"]);
-			} 
-		}
-		
-		return (array) $result;
-	}
-	
-	/**
 	 * Return the resource specified in the request
 	 * 
 	 * This method looks in the resource path for the file in the HTTP request 
@@ -116,6 +63,8 @@ class JackalModule {
 	 * @return void
 	 */
 	public function resources($URI) {
+		// Make URI into the old-style uri
+		$URI = $this->toURI(func_get_args());
 		// If the template module exists, then disable it
 		//Jackal::call("Template/change/Template/AJAX");
 		Jackal::call("Template/disable");
@@ -234,5 +183,36 @@ class JackalModule {
 		// Do the 404
 		header("HTTP/1.0 404 File not found");
 		echo "404";
+	}
+	
+	/**
+	 * Convert argument functions to the old-style URI
+	 * 
+	 * This method will take an array and flatten all the values into one array
+	 * 
+	 * <code language='php'>
+	 * 	// This call
+	 * 	toURI(array("a", "b", array("c" => "d"), array("x", "y")))
+	 * 	// Returns
+	 * 	array(
+	 * 		"0" => "a",
+	 * 		"1" => "b",
+	 * 		"c" => "d",
+	 * 		"2" => "x",
+	 * 		"3" => "y"
+	 * 	);
+	 * </code>
+	 * 
+	 * @param  array   $arguments The arguments to convert
+	 * 
+	 * @return array              The URI
+	 */
+	function toURI($arguments) {
+		// Convert all arguments to arrays
+		foreach($arguments as $k=>$v) $arguments[$k] = (array) $v;
+		// Flatten arguments into one array (only if >1 value)
+		if($arguments) $arguments = call_user_func_array("array_merge", $arguments);
+		
+		return $arguments;
 	}
 }
