@@ -60,18 +60,7 @@ class JackalModel {
 	 * 
 	 * Array of words that can be passed into the filter that do things other  
 	 * than filter (such as sort). Keywords can be extended by each model by
-	 * adding to this array. The following keywords are available by
-	 * default:
-	 * 
-	 * <b>:SORT</b> @see QueryBuilder::addSort()
-	 * 
-	 * <b>:RSORT</b> Same as :SORT, but DESC
-	 * 
-	 * <b>:GROUP</b> @see QueryBuilder::addGroup()
-	 * 
-	 * <b>:COUNT</b> @see QueryBuilder::addCount()
-	 * 
-	 * <b>:LIMIT</b> @see QueryBuilder::limit()
+	 * adding to this array. 
 	 * 
 	 * @var array 
 	 */
@@ -187,27 +176,30 @@ class JackalModel {
 	 * 
 	 */
 	function __construct() {
+		// Connect to the database
+		$this->db = Jackal::call("ActiveRecord/using", Jackal::setting("database"));
+
 		if(!self::$keywords) {
 			self::$keywords = array();
 			// SORT
-			self::$keywords[":SORT"] = create_function('$data, $query, $model', '$query->addSort($data);');
+			self::$keywords[":SORT"] = create_function('$data, $query, $model', '$query->orderBy($data);');
 			// R SORT
-			self::$keywords[":RSORT"] = create_function('$data, $query, $model', '$query->addSort($data, "DESC");');
+			self::$keywords[":RSORT"] = create_function('$data, $query, $model', '$query->orderBy($data, "DESC");');
 			// GROUP
-			self::$keywords[":GROUP"] = create_function('$data, $query, $model', '$query->addGroup($data);');
+			self::$keywords[":GROUP"] = create_function('$data, $query, $model', '$query->groupBy($data);');
 			// COUNT
 			self::$keywords[":COUNT"] = create_function('$data, $query, $model', '$query->addCount($data);');
 			// LIMIT
 			self::$keywords[":LIMIT"] = create_function('$data, $query, $model', '$query->limit($data);');
 			// OR
-			self::$keywords[":OR"] = create_function('$data, $query, $model', '$query->addFilter($data[0], $data[1], array("glue" => "OR"));');
+			self::$keywords[":OR"] = create_function('$data, $query, $model', '$query->where($data[0], $data[1], array("glue" => "OR"));');
 			// LIKE
-			//self::$keywords[":LIKE"] = create_function('$data, $query, $model', '$query->addFilter($data, NULL, array("operator" => "LIKE"));');
+			//self::$keywords[":LIKE"] = create_function('$data, $query, $model', '$query->where($data, NULL, array("operator" => "LIKE"));');
 			
 			// Assembly language style functions GT, GE, LT, LE, EQ, NE
 			
 			// GT - Greater than
-			self::$keywords[":GT"] = create_function('$data, $query, $model', '$query->addFilter($data[0], $data[1], array("operator" => ">"));');
+			self::$keywords[":GT"] = create_function('$data, $query, $model', '$query->where($data[0], $data[1], array("operator" => ">"));');
 			
 			// Special purpose keywords
 			self::$keywords[":EXACT"] = create_function('', '');
@@ -398,21 +390,21 @@ class JackalModel {
 		$tableStructure = $this->getTable($table, $this->getStructure());
 		// Find the name of the first table
 		$tableName = $tableStructure["name"];
-		// Get the instance of QueryBuilder
-		$query = Jackal::loadLibrary("QueryBuilder");
+		// Get the instance of ActiveRecord
+		$query = Jackal::loadLibrary("ActiveRecord");
 		// Add the table to the query 
-		$query->table($tableName);
+		$query->from($tableName);
 		
 		// See if only the ID was passed 
 		if(is_numeric($filter)) {
 			// Get the primary key of the first table
 			$primaryField = $tableStructure["primary"];
-			$query->addFilter($primaryField, $filter);
+			$query->where($primaryField, '=', $filter);
 		} else {
 			// Iterate over each filter
 			foreach($filter as $name=>$value) {
-				// Add the filter to the querybuilder
-				$query->addFilter($name, $value);
+				// Add the filter to the query
+				$query->where($name, '=', $value);
 			}
 		}
 		
@@ -613,7 +605,7 @@ class JackalModel {
 			$this->fixTable($table["name"], $table["primary"], $table["fields"]);
 			
 			// Find out how many rows are in the table
-			$query = Jackal::loadLibrary("QueryBuilder");  (false) || ($query = new QueryBuilder()); 
+			$query = Jackal::loadLibrary("ActiveRecord");
 			$results = $query->table($table["name"])->addCount("*")->select()->results;
 			if(!$results[0]["count"]) $insertTables[] = $table["name"];
 		}
@@ -648,18 +640,16 @@ class JackalModel {
 	private function fixTable($table, $primary, $fields) {
 		echo '<div class="repair-table">Rebuilding ', $table, '</div>';
 		
-		// Get the QueryBuilder
-		$qb = Jackal::loadLibrary("QueryBuilder");
-		/* @var $qb QueryBuilder */
-		$qb->debug(true);
+		// Get the ActiveRecord instance
+		$db = Jackal::loadLibrary("ActiveRecord");
 		
 		// Get table information
 		echo '<div class="repair-action">', $sql = "DESCRIBE `$table`;", '</div>';
-		$description = $qb->runSQL($sql);
+		$description = $db->run($sql);
 		
 		if(!$description) {
 			// Remove the 'table does not exist' error
-			@array_pop($qb->errors);
+			@array_pop($db->errors);
 			
 			// Table didn't exist, so build from scratch
 			$fieldSet = "";
@@ -673,7 +663,7 @@ class JackalModel {
 			echo '<div class="repair-action">', 
 				$sql = "CREATE TABLE `$table` ($fieldSet $primaries);",
 				'</div>';
-			$qb->run($sql);
+			$db->run($sql);
 		} else {
 			// Keep track of the fields we have yet to implement
 			$fieldsLeft = $fields;
@@ -691,7 +681,7 @@ class JackalModel {
 						echo '<div class="repair-action delete-action">', 
 							$sql = "ALTER TABLE `$table` DROP COLUMN `$fieldName`;",
 							'</div>';
-						$qb->run($sql);
+						$db->run($sql);
 					}
 				} else {
 					// We're supposed to have this field
@@ -699,7 +689,7 @@ class JackalModel {
 					echo '<div class="repair-action change-action">', 
 						$sql = "ALTER TABLE `$table` MODIFY COLUMN `$fieldName` $fieldDefinition;",
 						'</div>';
-					$qb->run($sql);
+					$db->run($sql);
 					// Remove this field from the list of fields we have to implement
 					unset($fieldsLeft[$fieldName]);
 				}
@@ -711,12 +701,12 @@ class JackalModel {
 					echo '<div class="repair-action add-action">', 
 						$sql = "ALTER TABLE `$table` ADD COLUMN `$fieldName` $fieldDefinition PRIMARY KEY;",
 						'</div>';
-					$qb->run($sql);
+					$db->run($sql);
 				} else {
 					echo '<div class="repair-action">', 
 						$sql = "ALTER TABLE `$table` ADD COLUMN `$fieldName` $fieldDefinition;",
 						'</div>';
-					$qb->run($sql);
+					$db->run($sql);
 				}
 			}
 		}
@@ -724,18 +714,16 @@ class JackalModel {
 		//  __________________________________________________
 		// / Output errors                                    \
 		
-		if(count((array) $qb->errors)) {
-			foreach(@ (array) $qb->errors as $error) $errors[] = $error["error"];
+		if(count((array) $db->errors)) {
+			foreach(@ (array) $db->errors as $error) $errors[] = $error["error"];
 			echo '<div class="repair-error">', implode("<br>", $errors), '</div>';
-			$qb->errors = array();
+			$db->errors = array();
 			echo '<div class="repair-information"><b>', $table, '</b> finished rebuilding with errors.</div>';
 		} else {
 			echo '<div class="repair-information"><b>', $table, '</b> rebuilt successfully.</div>';
 		}
 		
 		// \__________________________________________________/
-		
-		$qb->debug(false);
 	}
 	
 	/**
@@ -1115,7 +1103,7 @@ class JackalModel {
 	 * Builds and executes a query and returns the results in an array
 	 * 
 	 * This method will create a query based on the information provided and
-	 * pass it to QueryBuilder, returning the results in an array. 
+	 * pass it to ActiveRecord, returning the results in an array. 
 	 * 
 	 * $tables should be a comma separated string with the name of each table
 	 * to query. The table may be followed by .field in order to include only
@@ -1129,10 +1117,10 @@ class JackalModel {
 	 * and $value is the value desired. If $value is an array, then any of the
 	 * values in that array are valid matches (as opposed to all are required). 
 	 * 
-	 * @param string $tables comma separated list of tables to return
-	 * @param string $filter associative array of filters
-	 * @param string $paths comma separated list of paths (not implemented) 
-	 * @param QueryBuilder $query instance of QueryBuilder to append to
+	 * @param string       $tables comma separated list of tables to return
+	 * @param string       $filter associative array of filters
+	 * @param string       $paths comma separated list of paths (not implemented) 
+	 * @param ActiveRecord $query instance of ActiveRecord to append to
 	 * 
 	 * @return array
 	 */
@@ -1151,8 +1139,6 @@ class JackalModel {
 			'(?:\s*AS\s*([\w+$]+))?'. // AS * (table aliases)
 			',?'                    . // ,    (delimiter)
 		'/i', $tables, $matches, PREG_SET_ORDER);
-//		@list($nothing, $tables["table"], $tables["field"], $tables["tag"]) = @$tables;
-
 		// Change tables from the scan string to the
 		$tables = array();
 
@@ -1164,7 +1150,7 @@ class JackalModel {
 				"alias" => @$result[3],
 			);
 		}
-
+		
 		//  _________________________________
 		// /---------- Table paths ----------\
 		
@@ -1172,8 +1158,8 @@ class JackalModel {
 		$paths = explode(",", implode("", (array) $paths));
 		// Break apart each path by ->
 		foreach($paths as $i=>$path) ($path = $paths[$i] = explode("->", $path)) && ($target = end($path)) && ($paths[$target] = $path); 
-		// Get the QueryBuilder instance
-		if(!$query) $query = Jackal::loadLibrary("QueryBuilder"); /* @var $query QueryBuilder */
+		// Get an ActiveRecord instance for a new query
+		$query ?: $query = $this->db->query();
 		
 		// Replace all instances of a pathed table with the actual path
 		for($i = count($tables)-1; $i>=0; --$i) {
@@ -1221,14 +1207,13 @@ class JackalModel {
 						// Allow all fields in this table to be tagged
 						if($tag = @$table["tag"]) {
 							foreach($fastFields as $fieldName=>$discard) {
-								$FieldName = ucfirst($fieldName);
 								$fields[] = $tableName . '.' . $fieldName . ' AS ' . preg_replace('/(\$\w+)/e', '$1', $tag);
 							}
 						} 
 						// No tag was specified, so add the fields normally
 						else {
 							$fields[] = "$tableName." 
-							. implode(", $tableName.", array_keys($fastFields));
+								. implode(", $tableName.", array_map(array($query, "delimit"), array_keys($fastFields)));
 						}
 					} else {
 						$fields[] = "$tableName.*";
@@ -1255,7 +1240,7 @@ class JackalModel {
 					// Store the table structure
 					$tableStructures[$tableName] = $tableStructure;
 					// Add this table to the query
-					$query->table($tableName);
+					$query->from($tableName);
 					// Remove this table
 					unset($tables[$i]);
 					// Remember that we've found something
@@ -1281,16 +1266,14 @@ class JackalModel {
 						$otherTable = $this->getTable($otherTableName, $this->getStructure());
 						// See if any of the fields in the table link to the destination table
 						if($join = @$otherTable["joins"][$tableName]) {
-							$query->addJoin("$join[localTable].$join[localField]=$join[foreignTable].$join[foreignField]", $join["direction"]);
+							$query->leftJoinD($join['localTable'])->onD($join['localField'], '=', $join['foreignTable'], $join['foreignField']);
 							// Remove this table from the todo list
 							unset($tables[$i]);
 							// We found something, so we should loop again see if there any tables left
 							$somethingFound = true;
 						} elseif($join = @$table["joins"][$otherTableName]) {
 							// The other table actually joins to this one
-							
-							// Add the join
-							$query->addJoin("$join[localTable].$join[localField]=$join[foreignTable].$join[foreignField]", $join["direction"]);
+							$query->leftJoinD($join['localTable'])->onD($join['localField'], '=', $join['foreignTable'], $join['foreignField']);
 							// Remove this table from the todo list
 							unset($tables[$i]);
 							// We found something, so we should loop again see if there any tables left
@@ -1313,7 +1296,7 @@ class JackalModel {
 		//  _______________________________________
 		// /---------- Add select fields ----------\
 		$fields = array_combine($fields, $fields);
-		foreach($fields as $field) $query->addSelect("$field");
+		foreach($fields as $field) $query->select("$field");
 		// \_______________________________________/
 		
 		//  ______________________________
@@ -1323,7 +1306,7 @@ class JackalModel {
 		if(count($keywords)) {
 			foreach($keywords as $function=>$data) {
 				$f = self::$keywords[$function];
-				$f($data, $query, $this);
+				$f($query->delimit($data), $query, $this);
 			}
 			
 			$filter = array_diff_key($filter, $keywords);
@@ -1344,8 +1327,8 @@ class JackalModel {
 				// Find the table this filter pertains to
 				foreach($tableStructures as $tableStructure) {
 					if(@$tableStructure["fields"][$name]) {
-						// Add the filter to the querybuilder
-						$query->addFilter("$tableStructure[name].$name", $value);
+						// Add the filter to the query
+						$query->where("$tableStructure[name].$name", $value);
 						// Quit searching for the table
 						break;
 					}
@@ -1360,7 +1343,7 @@ class JackalModel {
 		// \_____________________________________/
 		
 		// Execute the query
-		$results = $query->select()->results;
+		$results = $query->run();
 		
 		// Finally, return the results 
 		return $results;
@@ -1469,8 +1452,8 @@ class JackalModel {
 		$tableStructure = $this->getTable($tableName, $this->getStructure());
 		// Get the right table name
 		$tableName = $tableStructure["name"];
-		// Get the instance of QueryBuilder
-		$query = Jackal::loadLibrary("QueryBuilder");
+		// Get the instance of ActiveRecord
+		$query = Jackal::loadLibrary("ActiveRecord");
 		// Select the table
 		$query->table($tableName);
 		// Get the name of the primary key
@@ -1523,9 +1506,9 @@ class JackalModel {
 		$tableStructure = $this->getTable($tableName, $this->getStructure());
 		// Get the right table name
 		$tableName = $tableStructure["name"];
-		// Get the instance of QueryBuilder
-		$query = Jackal::loadLibrary("QueryBuilder"); 
-		/** @var QueryBuilder $query */  
+		// Get the instance of ActiveRecord
+		$query = Jackal::loadLibrary("ActiveRecord"); 
+		/** @var ActiveRecord $query */  
 		// Select the table
 		$query->table($tableName);
 		

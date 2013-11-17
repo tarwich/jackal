@@ -7,10 +7,10 @@
  */
 
 @list($discard, $sql) = preg_split("/\s+/", $URI["line"], 2);
-$query = Jackal::loadLibrary("QueryBuilder");
-/* @var $query QueryBuilder */
-Jackal::loadLibrary("QueryBuilder")->debug(true);
-$results = $query->runSQL($sql);
-Jackal::loadLibrary("QueryBuilder")->debug(false);
+$query = Jackal::loadLibrary("ActiveRecord");
+/* @var $query ActiveRecord */
+Jackal::loadLibrary("ActiveRecord")->debug(true);
+$results = $query->run($sql);
+Jackal::loadLibrary("ActiveRecord")->debug(false);
 
 echo "<p>".htmlentities($this->asciiTable(array($results)))."</p>";

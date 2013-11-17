@@ -98,6 +98,13 @@ class Jackal {
 	private static $DEFAULT_LOCAL_DIR = 'private';
 	
 	/**
+	 * Flag for Jackal::call to tell it to expand the next array
+	 * 
+	 * @var stdclass
+	 */
+	public static $EXPAND;
+	
+	/**
 	 * Set by Jackal::error() to store the error error level introduced by the
 	 * previous call.
 	 *
@@ -273,12 +280,31 @@ class Jackal {
 	public static function call($method) {
 		// Support Jackal::call("Foo/bar/bin") == $Foo->bar("bin")
 		@list($module, $action, $segments) = explode('/', $method, 3);
-		// Improvise with default module 
-		$module ?: $module = @self::$_settings['jackal']['default-module'];
-		// and action
-		$action ?: $action = @self::$_settings['jackal']['default-action'];
 		// URI is a combination of func_get_args() and explode('/', $segments)
-		$URI = array_merge(explode('/', trim($segments)), array_slice(func_get_args(), 1));
+		$URI = array_merge(
+			// Split segments and pass into array_filter to remove empties
+			array_filter(explode('/', $segments)),
+			// Get all the function arguments after $method
+			array_slice(func_get_args(), 1)
+			);
+		
+		// Expand URI items which are preceeded by Jackal::$EXPAND
+		foreach($URI as $key=>$value) {
+			// If the previous key was EXPAND, then expand and merge this value
+			if(@$previousValue === self::$EXPAND) {
+				// Remove these two keys, because they're no longer valid
+				unset($URI[$previousKey], $URI[$key]);
+				// Merge in the value
+				$URI = array_merge($URI, $value);
+			} 
+			
+			// Remember the key / value for next time
+			$previousKey   = $key;
+			$previousValue = $value;
+		}
+		
+		// Clean up stack space
+		unset($key, $value, $previousKey, $previousValue);
 		// Remember the current scope
 		self::$_scope[] = array($module, $action);
 		// Gather pre-triggers
@@ -298,7 +324,7 @@ class Jackal {
 			extract((array) self::executeMethod(self::getClass($triggerObject), $triggerMethod, $URI)); 
 			array_pop(self::$_scope);
 		}
-
+		
 		// Find the object that this belongs to
 		$object = Jackal::getClass($module);
 		// Execute the method
@@ -576,8 +602,14 @@ END;
 	public static function executeMethod($object, $methodName, $parameters) {
 		$methodName = str_replace(".php", "", basename($methodName));
 		$methodName = preg_replace('-\W-', "_", $methodName);
-
-		if(method_exists($object, $methodName)) {
+		
+		// If no method passed, then assume constructor
+		if(!$methodName) {
+			// Wrap the class in a reflector so we can call the constructor
+			$instance = new ReflectionClass($object);
+			// Call the constructor with varargs
+			return $instance->newInstanceArgs($parameters);
+		} else if(method_exists($object, $methodName)) {
 			return call_user_func_array(array($object, $methodName), $parameters);
 		} else {
 			if(error_reporting())
@@ -1075,6 +1107,10 @@ END;
 		$parameters = array_merge($parameters, $_POST);
 		// Store the parameters in Jackal for later retrieval
 		self::$URI = $parameters;
+		// Default module 
+		$module ?: $module = self::$_settings['jackal']['default-module'];
+		// Default action
+		$action ?: $action = self::$_settings['jackal']['default-action'];
 		
 		/*
 		 * 
@@ -1155,6 +1191,8 @@ END;
      * return void
      */
     public static function load($argv=null) {
+    	// Expand constant must be set at runtime, because new... isn't a constant expression
+    	self::$EXPAND = new stdclass();
     	// Root of the jackal installation
 		self::$BASE_DIR = realpath(dirname(dirname(dirname(__FILE__))));
 		// Initial config file
