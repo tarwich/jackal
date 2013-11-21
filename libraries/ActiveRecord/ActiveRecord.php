@@ -2,7 +2,7 @@
 
 Jackal::loadLibrary("ActiveRecordJoin", "ActiveRecordWhere");
 
-class ActiveRecord implements ArrayAccess, Iterator {
+class ActiveRecord implements ArrayAccess, Countable, Iterator {
 	/**
 	 * The database to which we will connect
 	 */
@@ -14,6 +14,7 @@ class ActiveRecord implements ArrayAccess, Iterator {
 	 * @var array
 	 */
 	public static $log = array();
+	public static $debug = true;
 	
 	// List of aliases and table names in order to get the last one used (for joining purposes)
 	public $aliases      = array();
@@ -66,6 +67,8 @@ class ActiveRecord implements ArrayAccess, Iterator {
 		return $this;
 	}
 	
+	public function count() { return $this->db->count(); }
+	
 	public function current() { return $this->db->current(); }
 	
 	/**
@@ -80,7 +83,7 @@ class ActiveRecord implements ArrayAccess, Iterator {
 	}
 	
 	public function escape($text) {
-		return $text;
+		return $this->db->escape($text);
 	}
 	
 	public function explain($isExplain=true) {
@@ -94,7 +97,8 @@ class ActiveRecord implements ArrayAccess, Iterator {
 	
 	public function from($table) {
 		// Add each table in func_get_args() to the tables 
-		foreach(func_get_args() as $table) {
+		foreach(func_get_args() as $argument) 
+		foreach((array)$argument as $table) {
 			// Add this table to the list of tables
 			$this->tables[$table] = $table;
 			// Add this table to the aliases for joins
@@ -103,6 +107,18 @@ class ActiveRecord implements ArrayAccess, Iterator {
 		
 		// For chaining
 		return $this; 
+	}
+	
+	/**
+	 * Calls from() after delimiting the arguments
+	 * 
+	 * @return ActiveRecord The current instance for chaining
+	 */
+	public function fromD() {
+		// Delimit the arguments
+		$arguments = array_map(array($this, "delimit"), func_get_args());
+		// Delegate to from()
+		return $this->from($arguments);
 	}
 	
 	/**
@@ -232,9 +248,8 @@ class ActiveRecord implements ArrayAccess, Iterator {
 		foreach($this->whereClauses as $clause) {
 			// Add the glue
 			$result .= 
-				($useGlue ? " $clause[glue] " : " WHERE ")
-				. implode(" ", array_filter(array($clause["key"], $clause["comparator"], $clause["value"])));
-			
+				($useGlue ? " $clause->glue " : " WHERE ")
+				. "$clause";
 			$useGlue = true;
 		}
 		
@@ -248,19 +263,27 @@ class ActiveRecord implements ArrayAccess, Iterator {
 		$this->groups[] = $field;
 	}
 
-	public function insert($fields) {
+	public function insert() {
 		// Update the core type
 		$this->coreType = "INSERT";
-
-		// Add each of the fields that will be inserted
-		foreach(func_get_args() as $field) 
-			// Add this field to the list of fields
-			$this->fields[$field] = !preg_match('/\W/', $field) ? "`$field`" : $field;
-
+		
+		return $this;
+	}
+	
+	public function insertOrUpdate() {
+		// Run the select version of this query to see if the record exists
+		$this->select()->run();
+		// If a record was found, then update, otherwise insert
+		if(count($this)) $this->update()->run();
+		// Otherwise insert
+		else $this->insert()->run();
+		
 		return $this;
 	}
 
 	public function into($table) {
+		// Change query type ot insert, because it's the only query in which you might call into()
+		$this->coreType = "INSERT";
 		// Add this table to the list of tables
 		$this->tables[$table] = $table;
 
@@ -314,6 +337,10 @@ class ActiveRecord implements ArrayAccess, Iterator {
 		return $this;
 	}
 	
+	public function lastAlias() {
+		return @end($this->aliases);
+	}
+	
 	/**
 	 * Calls leftJoin after delimiting its arguments
 	 * 
@@ -326,15 +353,31 @@ class ActiveRecord implements ArrayAccess, Iterator {
 		return call_user_func_array(array($this, "leftJoin"), $arguments);
 	}
 	
-	public function lastAlias() {
-		return @end($this->aliases);
-	}
-	
 	public function limit() {
 		// Process the function arguments
 		@list($this->limitTo, $this->limitFrom) = array_reverse(func_get_args());
 		
 		return $this;
+	}
+	
+	public function makeWhere($URI) {
+		$URI = JackalModule::toURI(func_get_args());
+		// Make a where clause
+		$where = new ActiveRecordWhere();
+		// Find the argument that is a valid operator
+		$i = key(array_intersect($URI, ActiveRecordWhere::$OPERATORS));
+		
+		switch($i) {
+			case 1: $where->leftHand = $URI[0]; break;
+			case 2: $where->leftHand = "$URI[0].$URI[1]"; break;
+		}
+		
+		switch(count($URI)-$i) {
+			case 2: $where->rightHand = $URI[$i+1]; break;
+			case 3: $where->rightHand = "{$URI[$i+1]}.{$URI[$i+2]}";
+		}
+		
+		return $where;
 	}
 	
 	public function next() {
@@ -355,25 +398,8 @@ class ActiveRecord implements ArrayAccess, Iterator {
 	public function on($whereClause) {
 		// Get the last join we added
 		$join = $this->getJoin(-1);
-		// Make a where clause
-		$where = new ActiveRecordWhere();
-		// Get all the function arguments for the purpose of iteration
-		$arguments = func_get_args();
-		// Find the argument that is a valid operator
-		$i = key(array_intersect($arguments, ActiveRecordWhere::$OPERATORS));
-		
-		switch($i) {
-			case 1: $where->leftHand = $arguments[0]; break;
-			case 2: $where->leftHand = "$arguments[0].$arguments[1]"; break;
-		}
-		
-		switch(count($arguments)-$i) {
-			case 2: $where->rightHand = $arguments[$i+1]; break;
-			case 3: $where->rightHand = "{$arguments[$i+1]}.{$arguments[$i+2]}";
-		}
-		
 		// Set the on clause of the join to the where clause we created
-		$join->onClause = $where;
+		$join->onClause = $this->makeWhere(func_get_args());
 		
 		// Return this for chaining
 		return $this;
@@ -414,18 +440,27 @@ class ActiveRecord implements ArrayAccess, Iterator {
 		return $this;
 	}
 	
+	/**
+	 * Pass the value to the DB driver for quoting
+	 * 
+	 * @param  string $text The text to quote
+	 * @return string       The quoted value
+	 */
+	public function quote($text) { return $this->db->quote($text); }
+	
 	public function rewind() { return $this->db->rewind(); }
 	
 	public function run($sql="") {
 		if(!$sql) $sql = "$this";
 		// Log the SQL
 		self::$log[] = $sql;
+		if(self::$debug) error_log("SQL: $sql");
 		$this->db->query($sql);
 
 		return (@$this->coreType === "SELECT") ? $this : $this->db->connection->insert_id;
 	}
 	
-	public function select($field) {
+	public function select($field=array()) {
 		// Set the core query type
 		$this->coreType = "SELECT";
 		// Add each field to the list of fields
@@ -444,13 +479,36 @@ class ActiveRecord implements ArrayAccess, Iterator {
 		return call_user_func_array(array($this, "select"), $arguments);
 	}
 
-	public function set($fields) {
-		// Add each of the fields that will be inserted
-		foreach(func_get_args() as $field) 
-			// Add this field to the list of fields
-			$this->fields[$field] = !preg_match('/\W/', $field) ? "`$field`" : $field;
-
+	/**
+	 * Store a field and value for later insert or update queries
+	 * 
+	 * This is designed for update queries, but will work perfectly for insert queries.
+	 * 
+	 * NOTE: Value will not be quoted. To quote / escape the value, use setD()
+	 * 
+	 * @param string $field The name of the field to set
+	 * @param mixed  $value The value to set
+	 */
+	public function set($field, $value) {
+		// Store the field we're going to update
+		$this->fields[] = $field;
+		// Store the value for this field
+		$this->values[] = $value;
+		
 		return $this;
+	}
+	
+	/**
+	 * Like set, but delimits and quotes
+	 * 
+	 * @param string        $field The field to set
+	 * @param mixed         $value The value to set
+	 * 
+	 * @return ActiveRecord        The current instance for chaining
+	 */
+	public function setD($field, $value) {
+		// Delegate to set after delimiting and quoting
+		return $this->set($this->delimit($field), $this->quote($value));
 	}
 	
 	public function smartLeftJoin($pattern) {
@@ -499,11 +557,11 @@ class ActiveRecord implements ArrayAccess, Iterator {
 		}
 	}
 	
-	public function update($table) {
+	public function update($table = "") {
 		// Update coretype
 		$this->coreType = "UPDATE";
 		// Add this table to the list of tables
-		$this->tables[$table] = $table;
+		if($table) $this->from($table);
 
 		// For chaining
 		return $this;
@@ -542,61 +600,43 @@ class ActiveRecord implements ArrayAccess, Iterator {
 	public function values($values) {
 		// Store all of the values
 		foreach(func_get_args() as $value) $this->values[] = "'$value'";
-
+		
 		return $this;
 	}
 	
 	public function where() {
-		switch(func_num_args()) {
-			case 0: break;
+		// Get the variadic arguments
+		$arguments = func_get_args();
+		
+		switch(count($arguments)) {
+			// TODO: Should this throw an error?
+			case 0: $where = ""; break; 
+			// Currently not implemented
+			case 1: $where = $this->makeWhere($arguments); break;
 			
-			case 1: 
-				// Setup the where clause
-				$this->whereClauses[] = array(
-					"key" => func_get_args()
-				); 
-				break;
-				
-			case 2:
-				// Get the arguments for this variant
-				list($key, $value) = func_get_args();
-				// Quote the value
-				if(is_string($value)) $value = "'".$this->escape($value)."'";
-				// Setup the where clause
-				$this->whereClauses[] = array(
-					"key"        => $key,
-					"value"      => $value,
-					"comparator" => "=",
-					"glue"       => "AND",
-				);
+			// Two arguments implies $0 = $1
+			case 2: 
+				// Delegate to makeWhere, but insert an equals sign
+				$where = $this->makeWhere(array(
+					$this->delimit($arguments[0]), 
+					"=", 
+					$this->quote($arguments[1]
+					)));
 				break;
 			
-			case 3:
-				// Get the arguments for this variant
-				list($key, $comparator, $value) = func_get_args();
-				// Quote the value
-				if(is_string($value)) $value = "'".$this->escape($value)."'";
-				$this->whereClauses[] = array(
-					"key"        => $key,
-					"value"      => $value,
-					"comparator" => $comparator,
-					"glue"       => "AND",
-				);
-				break;
-				
-			case 4:
-				// Get the arguments for this variant
-				list($key, $comparator, $value, $glue) = func_get_args();
-				// Quote the value
-				if(is_string($value)) $value = "'".$this->escape($value)."'";
-				$this->whereClauses[] = array(
-					"key"        => $key,
-					"value"      => $value,
-					"comparator" => $comparator,
-					"glue"       => $glue,
-				);
+			// Everything > 2 should be processed by makeWhere
+			default: 
+				// Convert the arguments to a where clause
+				$where = $this->makeWhere($arguments);
+				// Delimit left hand side
+				$where->leftHand = $this->delimit($where->leftHand);
+				// For the version of this function that has multiple arguments, always quote the right hand side
+				$where->rightHand = $this->quote($where->rightHand); 
 				break;
 		}
+		
+		// Add this clause to the pile
+		$this->whereClauses[] = $where;
 		
 		return $this;
 	}

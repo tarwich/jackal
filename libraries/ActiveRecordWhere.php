@@ -13,6 +13,13 @@ class ActiveRecordWhere {
 	public $driver = null;
 	
 	/**
+	 * How to concatenate this clause to preceeding clauses
+	 * 
+	 * @var string
+	 */
+	public $glue = "AND";
+	
+	/**
 	 * The left hand side (lhs) of the expression
 	 * 
 	 * @var mixed

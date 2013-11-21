@@ -7,7 +7,7 @@
  * 
  * Note: This class should not be used to connect to the database. It is a base class (Interface) only.
  */
-abstract class ActiveRecordDriver {
+abstract class ActiveRecordDriver implements ArrayAccess, Countable, Iterator {
 	/**
 	 * Creates a new instance of the ActiveRecord driver
 	 * 
@@ -18,6 +18,13 @@ abstract class ActiveRecordDriver {
 	public function __construct($connection=null) {
 		$this->connection = $connection;
 	}
+	
+	/**
+	 * Returns the number of records in the result set
+	 * 
+	 * @return int The number of records in the result set
+	 */
+	abstract public function count();
 	
 	/**
 	 * Return the current row
@@ -86,6 +93,14 @@ abstract class ActiveRecordDriver {
 	 * @return void
 	 */
 	abstract public function query($sql);
+	
+	/**
+	 * Returns a quoted version of $text as quoted by the underlying engine
+	 * 
+	 * @param  string $text The text to quote
+	 * @return string       The quoted text
+	 */
+	abstract public function quote($text);
 	
 	/**
 	 * Tell the underlying database to go back to the beginning of the result set

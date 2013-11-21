@@ -16,12 +16,16 @@ class ActiveRecord_MySQLI extends ActiveRecordDriver {
 		parent::__construct($this->connection);
 	}
 	
+	public function count() {
+		return @$this->results->num_rows ?: 0;
+	}
+	
 	public function current() {
 		return $this->current;
 	}
 	
 	public function delimit($text) {
-		return '`'.str_replace('`', '\`', $text).'`';
+		return preg_replace('/(\w+)/', '`$1`', $text);
 	}
 	
 	public function init($connection=null) {
@@ -90,6 +94,14 @@ class ActiveRecord_MySQLI extends ActiveRecordDriver {
 		}
 		
 		return $this;
+	}
+	
+	public function quote($text) {
+		// Escape any quotes
+		$text = str_replace('"', '\"', $text);
+		// Quote and return
+		
+		return "\"$text\"";
 	}
 	
 	public function rewind() {
