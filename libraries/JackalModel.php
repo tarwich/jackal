@@ -430,7 +430,7 @@ class JackalModel {
 	 * 
 	 * @return array
 	 */
-	public final function find($URI) {
+	public final function _delete_find($URI) {
 		// Set the defaults
 		$tables = array(); $derivation = 0;
 		// Parse the URI
@@ -466,7 +466,7 @@ class JackalModel {
 	 * 
 	 * @return array of join information or null if no join available 
 	 */
-	public static function findJoin($fromTable, $toTable) {
+	public static function _delete_findJoin($fromTable, $toTable) {
 		$fromTable = $this->getTable($fromTable);
 		$toTable = $this->getTable($toTable);
 		
@@ -495,7 +495,7 @@ class JackalModel {
 	 * 
 	 * @return array The first record in the result set
 	 */
-	public final function findOne($URI) {
+	public final function _delete_findOne($URI) {
 		// If exact isn't set, then set it to true
 		$URI = ((array) $URI) + array(":EXACT" => true);
 		// Execute the find
@@ -517,7 +517,7 @@ class JackalModel {
 	 * 
 	 * @return array 
 	 */
-	public final function findOrBlank($URI) {
+	public final function _delete_findOrBlank($URI) {
 		// Execute the find
 		$result = (array) $this->findOne($URI);
 		// If nothing found, then create a blank
@@ -1124,7 +1124,7 @@ class JackalModel {
 	 * 
 	 * @return array
 	 */
-	protected function load($tables, $filter, $paths="", $query=null) {
+	protected function _delete_load($tables, $filter, $paths="", $query=null) {
 		// Initialize variables
 		$fields 			= array(); // A list of fields we're going to add
 		$currentTables 		= array(); // A list of tables already present in the query
@@ -1356,7 +1356,7 @@ class JackalModel {
 	 * 
 	 * @return array
 	 */
-	protected function loadOrBlank() {
+	protected function _delete_loadOrBlank() {
 		$URI = func_get_args();
 		$result = call_user_func_array(array($this, "load"), $URI);
 		@list($result) = $result;
@@ -1510,6 +1510,7 @@ class JackalModel {
 		$query = Jackal::loadLibrary("ActiveRecord"); 
 		/** @var ActiveRecord $query */  
 		// Select the table
+		echo "<pre>".print_r(debug_backtrace(false), 1)."</pre>";
 		$query->table($tableName);
 		
 		//  __________________________________________________
