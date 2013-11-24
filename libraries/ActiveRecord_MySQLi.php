@@ -8,6 +8,7 @@ Jackal::loadLibrary("ActiveRecordDriver");
 class ActiveRecord_MySQLI extends ActiveRecordDriver {
 	public $current = null;
 	public $results = null;
+	public $key = 0;
 	
 	public function __construct($connection=null) {
 		// Connect to the database
@@ -51,11 +52,12 @@ class ActiveRecord_MySQLI extends ActiveRecordDriver {
 	}
 	
 	public function key() {
-		// Try to return the key from the row
-		return @reset($this->current);
+		return $this->key;
 	}
 	
 	public function next() {
+		// Move to the next key
+		++$this->key;
 		// Advance the cursor and return the new current row
 		return $this->current = $this->results->fetch_array(MYSQLI_ASSOC);
 	}
@@ -66,6 +68,8 @@ class ActiveRecord_MySQLI extends ActiveRecordDriver {
 	}
 	
 	public function offsetGet($offset) {
+		// Protection against null result sets
+		if(!$this->results) return array();
 		// The function is MySQL is identical to PHP
 		$this->results->data_seek($offset);	
 		// Now that we're at the Nth offset, return the data
@@ -87,6 +91,8 @@ class ActiveRecord_MySQLI extends ActiveRecordDriver {
 		if($this->results instanceof mysqli_result) $this->results->free();
 		// Get a new result set
 		$this->results = $this->connection->query($sql);
+		// Reset the key
+		$this->key = -1;
 		
 		if($this->connection->errno) {
 			Jackal::error(500, $this->connection->error);
@@ -99,16 +105,16 @@ class ActiveRecord_MySQLI extends ActiveRecordDriver {
 	public function quote($text) {
 		// Escape any quotes
 		$text = str_replace('"', '\"', $text);
-		// Quote and return
 		
+		// Quote and return
 		return "\"$text\"";
 	}
 	
 	public function rewind() {
-		// Get the current row
-		$this->next();
 		// Go to the first result
 		$this->results->data_seek(-1);
+		// Get the current row
+		$this->next();
 	}
 	
 	public function valid() {

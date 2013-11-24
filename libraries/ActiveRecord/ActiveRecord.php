@@ -454,7 +454,7 @@ class ActiveRecord implements ArrayAccess, Countable, Iterator {
 		if(!$sql) $sql = "$this";
 		// Log the SQL
 		self::$log[] = $sql;
-		if(self::$debug) error_log("SQL: $sql");
+		// if(self::$debug) error_log("SQL: $sql");
 		$this->db->query($sql);
 
 		return (@$this->coreType === "SELECT") ? $this : $this->db->connection->insert_id;
@@ -541,6 +541,31 @@ class ActiveRecord implements ArrayAccess, Countable, Iterator {
 		}
 		
 		return $this;
+	}
+	
+	/**
+	 * Returns all the records in the result set as an array 
+	 * 
+	 * @return array The results of the query
+	 */
+	public function toArray() {
+		// Make sure we always return an array
+		$results = array();
+		
+		// Currently foreach doesn't work well if there are no results
+		if(count($this)) {
+			// Row iterator
+			foreach($this as $record) {
+				// We have to build our own row object, because this one is an Interable, not an array
+				$result = array();
+				// Put each item into the row object
+				foreach($record as $key=>$value) $result[$key] = $value;
+				// Push the row object onto the result array
+				$results[] = $result;
+			}
+		}
+		
+		return $results;
 	}
 	
 	public function __toString() {
