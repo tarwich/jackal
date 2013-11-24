@@ -63,6 +63,8 @@ This file is supposed to make all the ajax work nicely. I'll try to document wha
 				if(href.match(triggers[i])) {
 					// Get the source
 					var source = $this.attr("source");
+					// Polite error information
+					if(!source) throw "The 'triggers' attribute must accompany a 'source' attribute";
 					// Make sure source has a space in it
 					if(!source.match(/ /)) source += " >";
 					// Find the target
@@ -118,7 +120,7 @@ This file is supposed to make all the ajax work nicely. I'll try to document wha
 	// --------------------------------------------------
 	// onUrlClick
 	// --------------------------------------------------
-	ns.onUrlClick = function() {
+	ns.onUrlClick = function(e) {
 		var $this = $(this);
 		
 		// Find the right target
