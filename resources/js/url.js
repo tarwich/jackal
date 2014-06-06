@@ -24,9 +24,6 @@ window.suffix="<?php echo(Jackal::setting("suffix")); ?>";
 function url(path, flags) {
 	var parts = [];
 	
-	// Do not allow flags for the sake of browsers with cross-site ajax
-	flags = false;
-	
 	// Add the base path if it isn't already there
 	if( !String(path).match(/\w+:\/\//) ) {
 		// Append the baseURL to the parts
